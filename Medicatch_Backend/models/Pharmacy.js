@@ -15,7 +15,7 @@ const pharmacySchema = new mongoose.Schema({
   },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "userModel",
+    ref: "User",
     required: true,
   },
 });

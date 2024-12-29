@@ -203,7 +203,7 @@ app.get("/api/articles/:id/feedback", async (req, res) => {
     res.status(500).json({ message: "Error fetching feedback", error });
   }
 });
-// --------------------------------------------------------------------------------------------------
+
 // Pharmacy
 app.post("/pharmacies", async (req, res) => {
   const { name, password, location, createdBy } = req.body;
@@ -212,6 +212,7 @@ app.post("/pharmacies", async (req, res) => {
       message: "Name, password, location, and createdBy are required.",
     });
   }
+
   try {
     const pharmacy = await pharmacyModel.create({
       name,
@@ -219,6 +220,7 @@ app.post("/pharmacies", async (req, res) => {
       location,
       createdBy,
     });
+
     res
       .status(201)
       .json({ message: "Pharmacy created successfully", pharmacy });
@@ -226,85 +228,119 @@ app.post("/pharmacies", async (req, res) => {
     res.status(500).json({ message: "Error creating pharmacy", error });
   }
 });
+
+// Get user's pharmacy
+app.get("/pharmacies", async (req, res) => {
+  const userId = req.body.userId;
+
+  try {
+    const pharmacy = await pharmacyModel.findOne({ createdBy: userId });
+
+    if (!pharmacy) {
+      return res.status(404).json({ message: "Pharmacy not found" });
+    }
+
+    res
+      .status(200)
+      .json({ message: "Pharmacies fetched successfully", pharmacy });
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching pharmacy", error });
+  }
+});
+// Update pharmacy
+app.put("/pharmacies/:id", async (req, res) => {
+  const { id } = req.params; // Pharmacy id
+  const { stock, location } = req.body;
+  const userId = req.body.userId;
+
+  try {
+    const pharmacy = await pharmacyModel.findOne({
+      _id: id,
+      createdBy: userId,
+    });
+
+    if (!pharmacy) {
+      return res
+        .status(404)
+        .json({ message: "Pharmacy not found or unauthorized" });
+    }
+    if (stock) {
+      pharmacy.stock = stock;
+    }
+    if (location) {
+      pharmacy.location = location;
+    }
+
+    await pharmacy.save();
+    res
+      .status(200)
+      .json({ message: "Pharmacy updated successfully", pharmacy });
+  } catch (error) {
+    res.status(500).json({ message: "Error updating pharmacy", error });
+  }
+});
+
+// Delete pharmacy
+app.delete("/pharmacies/:id", async (req, res) => {
+  const { id } = req.params;
+  const userId = req.body.userId;
+
+  try {
+    const pharmacy = await pharmacyModel.findOne({
+      _id: id,
+      createdBy: userId,
+    });
+
+    if (!pharmacy) {
+      return res
+        .status(404)
+        .json({ message: "Pharmacy not found or unauthorized" });
+    }
+
+    await pharmacyModel.findByIdAndDelete(id);
+    res.status(200).json({ message: "Pharmacy deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Error deleting pharmacy", error });
+  }
+});
+
 // Add stock to pharmacy
 app.put("/pharmacies/:id/stock", async (req, res) => {
   const { id } = req.params;
   const { medicineName, quantity } = req.body;
+  const userId = req.body.userId;
+
   if (!medicineName || !quantity) {
     return res
       .status(400)
       .json({ message: "Medicine name and quantity are required." });
   }
+
   try {
-    const pharmacy = await pharmacyModel.findByIdAndUpdate(
-      id,
-      { $push: { stock: { medicineName, quantity } } },
-      { new: true }
-    );
+    const pharmacy = await pharmacyModel.findOne({
+      _id: id,
+      createdBy: userId,
+    });
     if (!pharmacy) {
-      return res.status(404).json({ message: "Pharmacy not found" });
+      return res
+        .status(404)
+        .json({ message: "Pharmacy not found or unauthorized" });
     }
-    res.status(200).json({ message: "Stock added successfully", pharmacy });
+
+    const stockIndex = pharmacy.stock.findIndex(
+      (item) => item.medicineName === medicineName
+    );
+
+    if (stockIndex >= 0) {
+      pharmacy.stock[stockIndex].quantity = quantity;
+    } else {
+      pharmacy.stock.push({ medicineName, quantity });
+    }
+    await pharmacy.save();
+    res.status(200).json({ message: "Stock updated successfully", pharmacy });
   } catch (error) {
     res.status(500).json({ message: "Error updating stock", error });
   }
 });
 
-// Update pharmacy location
-app.put("/pharmacies/:id/location", async (req, res) => {
-  const { id } = req.params;
-  const { latitude, longitude } = req.body;
-  if (!latitude || !longitude) {
-    return res
-      .status(400)
-      .json({ message: "Latitude and longitude are required." });
-  }
-  try {
-    const pharmacy = await pharmacyModel.findByIdAndUpdate(
-      id,
-      { location: { latitude, longitude } },
-      { new: true }
-    );
-    if (!pharmacy) {
-      return res.status(404).json({ message: "Pharmacy not found" });
-    }
-    res
-      .status(200)
-      .json({ message: "Location updated successfully", pharmacy });
-  } catch (error) {
-    res.status(500).json({ message: "Error updating location", error });
-  }
-});
-
-// Get pharmacy details by ID
-app.get("/pharmacies/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const pharmacy = await pharmacyModel
-      .findById(id)
-      .populate("createdBy", "username");
-    if (!pharmacy) {
-      return res.status(404).json({ message: "Pharmacy not found" });
-    }
-    res.status(200).json(pharmacy);
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching pharmacy", error });
-  }
-});
-
-// Delete a pharmacy
-app.delete("/pharmacies/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const deletedPharmacy = await pharmacyModel.findByIdAndDelete(id);
-    if (!deletedPharmacy) {
-      return res.status(404).json({ message: "Pharmacy not found" });
-    }
-    res
-      .status(200)
-      .json({ message: "Pharmacy deleted successfully", deletedPharmacy });
-  } catch (error) {
-    res.status(500).json({ message: "Error deleting pharmacy", error });
-  }
-});
 app.listen(3000);
