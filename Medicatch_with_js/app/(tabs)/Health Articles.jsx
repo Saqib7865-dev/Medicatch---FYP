@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -6,84 +6,58 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
-  Dimensions,
+  ActivityIndicator,
+  Alert,
 } from "react-native";
 import { Feather } from "@expo/vector-icons"; // Install using: npm install @expo/vector-icons
+import { useRouter } from "expo-router"; // Use router for navigation
 
-const articles = [
-  {
-    id: 1,
-    title: "COVID-19: A Brief Guide",
-    date: "2023-10-20T09:15:00Z", // Different date
-    image: require("./../../assets/home1.png"),
-  },
-  {
-    id: 2,
-    title: "Balanced: Weight Loss",
-    date: "2023-09-15T14:30:00Z", // Different date
-    image: require("./../../assets/home1.png"),
-  },
-  {
-    id: 3,
-    title: "Essential Tips: Prevent Cancer",
-    date: "2023-11-01T12:00:00Z", // Different date
-    image: require("./../../assets/home1.png"),
-  },
-  {
-    id: 4,
-    title: "Side Effects of Excessive Tea",
-    date: "2023-08-05T08:45:00Z", // Different date
-    image: require("./../../assets/home1.png"),
-  },
-  {
-    id: 4,
-    title: "Side Effects of Excessive Tea",
-    date: "2023-08-05T08:45:00Z", // Different date
-    image: require("./../../assets/home1.png"),
-  },
-  {
-    id: 4,
-    title: "Side Effects of Excessive Tea",
-    date: "2023-08-05T08:45:00Z", // Different date
-    image: require("./../../assets/home1.png"),
-  },
-  {
-    id: 4,
-    title: "Side Effects of Excessive Tea",
-    date: "2023-08-05T08:45:00Z", // Different date
-    image: require("./../../assets/home1.png"),
-  },
-  {
-    id: 4,
-    title: "Side Effects of Excessive Tea",
-    date: "2023-08-05T08:45:00Z", // Different date
-    image: require("./../../assets/home1.png"),
-  },
-  {
-    id: 4,
-    title: "Side Effects of Excessive Tea",
-    date: "2023-08-05T08:45:00Z", // Different date
-    image: require("./../../assets/home1.png"),
-  },
-  {
-    id: 4,
-    title: "Side Effects of Excessive Tea",
-    date: "2023-08-05T08:45:00Z", // Different date
-    image: require("./../../assets/home1.png"),
-  },
-];
+const API_URL = "http://localhost:3000/api/articles"; // Replace with your backend API URL
 
-// Function to format the date
 const formatDate = (dateString) => {
+  if (!dateString) return "Unknown Date";
   const date = new Date(dateString);
-  return date.toLocaleDateString("en-GB", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  });
+  if (isNaN(date.getTime())) return "Invalid Date";
+  const day = date.getDate();
+  const month = date.toLocaleString("default", { month: "long" });
+  const year = date.getFullYear();
+  return `${day} ${month} ${year}`;
 };
 
 const HealthArticles = () => {
+  const [articles, setArticles] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [allLoaded, setAllLoaded] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(true); // Mock admin status
+  const router = useRouter();
+
+  const fetchArticles = async (pageNumber = 1) => {
+    if (loading || allLoaded) return;
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_URL}?page=${pageNumber}&limit=10`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch articles");
+      }
+      const data = await response.json();
+      if (data.length === 0) {
+        setAllLoaded(true);
+      } else {
+        setArticles((prevArticles) => [...prevArticles, ...data]);
+        setPage(pageNumber);
+      }
+    } catch (error) {
+      Alert.alert("Error", error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchArticles();
+  }, []);
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {/* Header Section */}
@@ -94,16 +68,47 @@ const HealthArticles = () => {
         <Text style={styles.headerTitle}>Health Articles</Text>
       </View>
 
+      {/* Admin "Create Article" Button */}
+      {isAdmin && (
+        <TouchableOpacity
+          style={styles.createButton}
+          onPress={() => router.push("/Screens/CreateArticle")}
+        >
+          <Text style={styles.createButtonText}>Create Article</Text>
+        </TouchableOpacity>
+      )}
+
       {/* Articles List */}
       {articles.map((article) => (
         <View key={article.id} style={styles.articleCard}>
-          <Image source={article.image} style={styles.articleImage} />
+          <Image source={{ uri: article.image }} style={styles.articleImage} />
           <View style={styles.articleContent}>
             <Text style={styles.articleTitle}>{article.title}</Text>
-            <Text style={styles.articleDate}>{formatDate(article.date)}</Text>
+            <Text style={styles.articleDate}>
+              {formatDate(article.createdAt)}
+            </Text>
           </View>
         </View>
       ))}
+
+      {/* Load More Button */}
+      {!allLoaded && (
+        <TouchableOpacity
+          style={styles.loadMoreButton}
+          onPress={() => fetchArticles(page + 1)}
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator size="small" color="#fff" />
+          ) : (
+            <Text style={styles.loadMoreText}>Load More</Text>
+          )}
+        </TouchableOpacity>
+      )}
+
+      {allLoaded && (
+        <Text style={styles.endMessage}>No more articles to load</Text>
+      )}
     </ScrollView>
   );
 };
@@ -123,6 +128,18 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     marginLeft: 10,
+  },
+  createButton: {
+    backgroundColor: "#4173A1",
+    padding: 10,
+    borderRadius: 10,
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  createButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
   articleCard: {
     flexDirection: "row",
@@ -154,6 +171,24 @@ const styles = StyleSheet.create({
   articleDate: {
     fontSize: 14,
     color: "#555",
+  },
+  loadMoreButton: {
+    backgroundColor: "#4173A1",
+    padding: 10,
+    borderRadius: 10,
+    alignItems: "center",
+    marginTop: 10,
+  },
+  loadMoreText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  endMessage: {
+    marginTop: 10,
+    fontSize: 14,
+    color: "#555",
+    textAlign: "center",
   },
 });
 
