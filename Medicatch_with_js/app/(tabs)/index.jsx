@@ -1,229 +1,163 @@
+import React from "react";
 import {
   StyleSheet,
   Text,
   View,
-  Dimensions,
   TextInput,
+  TouchableOpacity,
+  Image,
   ScrollView,
+  Dimensions,
 } from "react-native";
-import React, { useState } from "react";
-import { Link } from "expo-router";
+import { Feather } from "@expo/vector-icons"; // Icon for search (Install with: npm install @expo/vector-icons)
 
 const Home = () => {
-  const [medicine, setMedicine] = useState("");
-  const handleSearch = () => {};
   return (
-    <ScrollView
-      contentContainerStyle={{
-        display: "flex",
-        paddingVertical: 20,
-        alignItems: "center",
-        height: `${Dimensions.get("window").height}`,
-      }}
-    >
-      <View
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          marginBottom: 30,
-        }}
-      >
+    <ScrollView contentContainerStyle={styles.container}>
+      {/* Header Section */}
+      <View style={styles.header}>
+        <TouchableOpacity>
+          <Feather name="menu" size={24} color="#000" />
+        </TouchableOpacity>
+        <Text style={styles.welcomeText}>Welcome</Text>
+      </View>
+
+      {/* Search Bar */}
+      <View style={styles.searchContainer}>
         <TextInput
-          style={{
-            borderWidth: 1,
-            borderColor: "gray",
-            borderRadius: 8,
-            borderRightWidth: 0,
-            borderTopRightRadius: 0,
-            borderBottomRightRadius: 0,
-            width: "75%",
-          }}
-          placeholder="Search for medicine"
-          value={medicine}
-          onChangeText={(text) => setMedicine(text)}
-          keyboardType="default"
-        ></TextInput>
-        <Link
-          href="/"
-          style={{
-            borderWidth: 1,
-            borderColor: "gray",
-            borderRadius: 8,
-            borderTopLeftRadius: 0,
-            borderBottomLeftRadius: 0,
-            borderLeftWidth: 0,
-            paddingHorizontal: 8,
-            paddingVertical: 11,
-            backgroundColor: "blue",
-            color: "white",
-            outline: "none",
-          }}
-          onPress={handleSearch}
-        >
-          <Text>Search</Text>
-        </Link>
+          style={styles.searchInput}
+          placeholder="Search for Pharmacy"
+          placeholderTextColor="#999"
+        />
+        <TouchableOpacity style={styles.searchButton}>
+          <Feather name="search" size={20} color="#fff" />
+        </TouchableOpacity>
       </View>
-      <View
-        style={{
-          borderWidth: 0,
-          borderColor: "gray",
-          borderRadius: 8,
-          marginBottom: 8,
-          width: `90%`,
-          paddingHorizontal: 20,
-          paddingVertical: 30,
-          backgroundColor: "blue",
-          outline: "none",
-        }}
-      >
-        <Text
+
+      {/* Articles Grid */}
+
+      <View style={styles.articlesGrid}>
+        {/* Health Articles Section */}
+        <View style={styles.articlesHeader}>
+          <Text style={styles.articlesTitle}>Health Articles</Text>
+          <TouchableOpacity>
+            <Text style={styles.viewAllText}>View All</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View
           style={{
-            fontSize: 32,
-            fontWeight: "bold",
-            fontFamily: "sans",
-            marginBottom: 50,
-            color: "white",
+            width: "100%",
           }}
         >
-          Read Article
-        </Text>
-        <View>
-          <Link href={"/Health Articles"}>
-            <Text
-              style={{
-                color: "red",
-                fontSize: 16,
-                textAlign: "right",
-                fontWeight: "bold",
-              }}
-            >
-              Go to Articles
-            </Text>
-          </Link>
+          <Image
+            source={require("./../../assets/home1.png")}
+            style={styles.articleImage}
+          />
         </View>
-      </View>
-      <View
-        style={{
-          borderWidth: 0,
-          borderColor: "gray",
-          borderRadius: 8,
-          marginBottom: 8,
-          width: `90%`,
-          paddingHorizontal: 20,
-          paddingVertical: 30,
-          backgroundColor: "blue",
-          outline: "none",
-        }}
-      >
-        <Text
+        <View
           style={{
-            fontSize: 32,
-            fontWeight: "bold",
-            fontFamily: "sans",
-            marginBottom: 50,
-            color: "white",
+            flexDirection: "row",
+            gap: 20,
+            width: Dimensions.get("window").width,
           }}
         >
-          Read Article
-        </Text>
-        <View>
-          <Link href={"/Health Articles"}>
-            <Text
-              style={{
-                color: "red",
-                fontSize: 16,
-                textAlign: "right",
-                fontWeight: "bold",
-              }}
-            >
-              Go to Articles
-            </Text>
-          </Link>
+          <Image
+            source={require("./../../assets/home1.png")}
+            style={{
+              width: Dimensions.get("window").width / 2 - 30,
+              height: 120,
+              borderRadius: 10,
+              marginBottom: 10,
+            }}
+          />
+          <Image
+            source={require("./../../assets/home1.png")}
+            style={{
+              width: Dimensions.get("window").width / 2 - 30,
+              height: 120,
+              borderRadius: 10,
+              marginBottom: 10,
+            }}
+            // style={styles.articleImage}
+          />
         </View>
-      </View>
-      <View
-        style={{
-          borderWidth: 0,
-          borderColor: "gray",
-          borderRadius: 8,
-          marginBottom: 8,
-          width: `90%`,
-          paddingHorizontal: 20,
-          paddingVertical: 30,
-          backgroundColor: "blue",
-          outline: "none",
-        }}
-      >
-        <Text
-          style={{
-            fontSize: 32,
-            fontWeight: "bold",
-            fontFamily: "sans",
-            marginBottom: 50,
-            color: "white",
-          }}
-        >
-          Read Article
-        </Text>
-        <View>
-          <Link href={"/Health Articles"}>
-            <Text
-              style={{
-                color: "red",
-                fontSize: 16,
-                textAlign: "right",
-                fontWeight: "bold",
-              }}
-            >
-              Go to Articles
-            </Text>
-          </Link>
-        </View>
-      </View>
-      <View
-        style={{
-          borderWidth: 0,
-          borderColor: "gray",
-          borderRadius: 8,
-          marginBottom: 8,
-          width: `90%`,
-          paddingHorizontal: 20,
-          paddingVertical: 30,
-          backgroundColor: "blue",
-          outline: "none",
-        }}
-      >
-        <Text
-          style={{
-            fontSize: 32,
-            fontWeight: "bold",
-            fontFamily: "sans",
-            marginBottom: 50,
-            color: "white",
-          }}
-        >
-          Read Article
-        </Text>
-        <View>
-          <Link href={"/Health Articles"}>
-            <Text
-              style={{
-                color: "red",
-                fontSize: 16,
-                textAlign: "right",
-                fontWeight: "bold",
-              }}
-            >
-              Go to Articles
-            </Text>
-          </Link>
-        </View>
+        <Image
+          source={require("./../../assets/home1.png")}
+          style={styles.articleImage}
+        />
       </View>
     </ScrollView>
   );
 };
 
-export default Home;
+const styles = StyleSheet.create({
+  container: {
+    flexGrow: 1,
+    backgroundColor: "#c6e6f3",
+    padding: 20,
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  welcomeText: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginLeft: 10,
+  },
+  searchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  searchInput: {
+    flex: 1,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: "#D1D9E6",
+    borderRadius: 10,
+    backgroundColor: "#fff",
+    fontSize: 16,
+  },
+  searchButton: {
+    backgroundColor: "#4173A1",
+    padding: 10,
+    borderRadius: 10,
+    marginLeft: 10,
+  },
+  articlesHeader: {
+    alignSelf: "stretch",
+    width: Dimensions.get("window").width - 40,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 10,
+  },
 
-const styles = StyleSheet.create({});
+  articlesTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  viewAllText: {
+    fontSize: 14,
+    color: "#4173A1",
+    fontWeight: "bold",
+  },
+  articlesGrid: {
+    flexDirection: "column",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    flex: 1,
+  },
+  articleImage: {
+    // width: Dimensions.get("window").width / 2 - 30,
+    width: "100%",
+    height: 120,
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+});
+
+export default Home;

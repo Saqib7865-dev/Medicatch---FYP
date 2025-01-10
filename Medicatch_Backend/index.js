@@ -343,4 +343,4 @@ app.put("/pharmacies/:id/stock", async (req, res) => {
   }
 });
 
-app.listen(3000);
+app.listen(3000, () => console.log("Application is running at localhost 3000"));

@@ -6,33 +6,58 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
+  ScrollView,
   Image,
 } from "react-native";
 
-const loginScreen = () => {
+const SignUp = () => {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handleLogin = () => {
-    if (email === "" || password === "") {
-      Alert.alert("Error", "Please fill in both fields");
-    } else {
-      Alert.alert("Success", `Logged in with email: ${email}`);
-      // Add login logic here
+  const handleSignup = () => {
+    if (!name || !email || !password || !confirmPassword) {
+      Alert.alert("Error", "Please fill in all fields");
+      return;
     }
+
+    if (password !== confirmPassword) {
+      Alert.alert("Error", "Passwords do not match");
+      return;
+    }
+
+    if (password.length < 6) {
+      Alert.alert("Error", "Password must be at least 6 characters");
+      return;
+    }
+
+    Alert.alert("Success", `Welcome, ${name}!`);
+    // Add signup logic here (e.g., API call)
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
+      {/* Logo */}
       <Image
         source={require("./../../assets/logo.png")} // Update the path as needed
         style={styles.logo}
       />
+
       <Text style={styles.title}>Sign Up</Text>
 
       <TextInput
         style={styles.input}
+        placeholder="Full Name"
+        placeholderTextColor="#999"
+        value={name}
+        onChangeText={(text) => setName(text)}
+      />
+
+      <TextInput
+        style={styles.input}
         placeholder="Email"
+        placeholderTextColor="#999"
         keyboardType="email-address"
         value={email}
         onChangeText={(text) => setEmail(text)}
@@ -41,15 +66,32 @@ const loginScreen = () => {
       <TextInput
         style={styles.input}
         placeholder="Password"
+        placeholderTextColor="#999"
         secureTextEntry={true}
         value={password}
         onChangeText={(text) => setPassword(text)}
       />
 
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Login</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Confirm Password"
+        placeholderTextColor="#999"
+        secureTextEntry={true}
+        value={confirmPassword}
+        onChangeText={(text) => setConfirmPassword(text)}
+      />
+
+      <TouchableOpacity style={styles.button} onPress={handleSignup}>
+        <Text style={styles.buttonText}>Sign Up</Text>
       </TouchableOpacity>
-    </View>
+
+      <View style={styles.loginPrompt}>
+        <Text style={styles.promptText}>Already have an account?</Text>
+        <TouchableOpacity>
+          <Text style={styles.loginText}> Log in</Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
   );
 };
 
@@ -106,6 +148,19 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
   },
+  loginPrompt: {
+    flexDirection: "row",
+    marginTop: 20,
+  },
+  promptText: {
+    fontSize: 16,
+    color: "#555",
+  },
+  loginText: {
+    fontSize: 16,
+    color: "#4173A1",
+    fontWeight: "bold",
+  },
 });
 
-export default loginScreen;
+export default SignUp;
