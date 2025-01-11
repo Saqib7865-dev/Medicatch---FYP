@@ -12,7 +12,7 @@ import {
 import { Feather } from "@expo/vector-icons"; // Install using: npm install @expo/vector-icons
 import { useRouter } from "expo-router"; // Use router for navigation
 
-const API_URL = "http://localhost:3000/api/articles"; // Replace with your backend API URL
+const API_URL = "http://IPV4Address:3000/api/articles"; // Replace with your backend API URL
 
 const formatDate = (dateString) => {
   if (!dateString) return "Unknown Date";
@@ -80,7 +80,7 @@ const HealthArticles = () => {
 
       {/* Articles List */}
       {articles.map((article) => (
-        <View key={article.id} style={styles.articleCard}>
+        <View key={article._id} style={styles.articleCard}>
           <Image source={{ uri: article.image }} style={styles.articleImage} />
           <View style={styles.articleContent}>
             <Text style={styles.articleTitle}>{article.title}</Text>

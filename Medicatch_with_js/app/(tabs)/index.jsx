@@ -10,6 +10,7 @@ import {
   Dimensions,
 } from "react-native";
 import { Feather } from "@expo/vector-icons"; // Icon for search (Install with: npm install @expo/vector-icons)
+import { router } from "expo-router";
 
 const Home = () => {
   return (
@@ -41,7 +42,12 @@ const Home = () => {
         <View style={styles.articlesHeader}>
           <Text style={styles.articlesTitle}>Health Articles</Text>
           <TouchableOpacity>
-            <Text style={styles.viewAllText}>View All</Text>
+            <Text
+              style={styles.viewAllText}
+              onPress={() => router.push("/Health Articles")}
+            >
+              View All
+            </Text>
           </TouchableOpacity>
         </View>
 
