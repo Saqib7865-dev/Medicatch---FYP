@@ -1,13 +1,8 @@
 import React from "react";
-import MapView from "react-native-maps";
 import { StyleSheet, View } from "react-native";
 
 const Profile = () => {
-  return (
-    <View style={styles.container}>
-      <MapView style={styles.map} />
-    </View>
-  );
+  return <View style={styles.container}></View>;
 };
 
 export default Profile;
