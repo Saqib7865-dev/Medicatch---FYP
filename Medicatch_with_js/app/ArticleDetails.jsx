@@ -1,9 +1,28 @@
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { useLocalSearchParams } from "expo-router";
-import React from "react";
+import React, { useEffect } from "react";
+// import { fetch } from "expo/fetch";
 
 const ArticleDetails = () => {
   const params = useLocalSearchParams();
+  console.log("first111");
+  console.log(fetch);
+  // const [data , setData]
+
+  const getUser = async () => {
+    try {
+      const resp = await fetch("http://localhost:3000/users");
+      const data = await resp.json();
+      console.log("Data: ", data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    getUser();
+  }, []);
+
   return (
     <ScrollView
       contentContainerStyle={{
