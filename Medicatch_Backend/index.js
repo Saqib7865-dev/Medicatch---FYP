@@ -15,7 +15,6 @@ mongoose.connect("mongodb://localhost:27017/Medicatch");
 // Register a user
 app.post("/register", async (req, res) => {
   const { username, password, role } = req.body;
-
   if (!username || !password) {
     return res
       .status(400)
@@ -127,7 +126,12 @@ app.get("/api/articles/search", async (req, res) => {
         { tags: { $regex: query, $options: "i" } },
       ],
     });
-    res.status(200).json(articles);
+    if (articles.length > 0) {
+      res.status(200).json(articles);
+      return;
+    } else {
+      res.json({ message: "No matching article found." });
+    }
   } catch (error) {
     res.status(500).json({ message: "Error searching articles", error });
   }
@@ -343,4 +347,6 @@ app.put("/pharmacies/:id/stock", async (req, res) => {
   }
 });
 
-app.listen(3000);
+app.listen(3000, () => {
+  console.log("Application is running at localhost 3000");
+});
