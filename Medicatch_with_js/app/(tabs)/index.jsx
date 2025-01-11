@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -12,7 +12,24 @@ import {
 import { Feather } from "@expo/vector-icons"; // Icon for search (Install with: npm install @expo/vector-icons)
 import { router } from "expo-router";
 
+const quotes = [
+  "An apple a day keeps the doctor away.",
+  "Health is wealth.",
+  "A fit body leads to a fit mind.",
+  "Take care of your body. It's the only place you have to live.",
+  "Early to bed and early to rise makes a person healthy, wealthy, and wise.",
+  "The groundwork for all happiness is good health.",
+  "Your health is your greatest wealth.",
+];
+
 const Home = () => {
+  const [quote, setQuote] = useState("");
+
+  useEffect(() => {
+    // Pick a random quote when the component mounts
+    setQuote(quotes[Math.floor(Math.random() * quotes.length)]);
+  }, []);
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {/* Header Section */}
@@ -35,8 +52,12 @@ const Home = () => {
         </TouchableOpacity>
       </View>
 
-      {/* Articles Grid */}
+      {/* Quote Section */}
+      <View style={styles.quoteContainer}>
+        <Text style={styles.quoteText}>{quote}</Text>
+      </View>
 
+      {/* Articles Grid */}
       <View style={styles.articlesGrid}>
         {/* Health Articles Section */}
         <View style={styles.articlesHeader}>
@@ -51,16 +72,13 @@ const Home = () => {
           </TouchableOpacity>
         </View>
 
-        <View
-          style={{
-            width: "100%",
-          }}
-        >
+        <View style={{ width: "100%" }}>
           <Image
             source={require("./../../assets/home1.png")}
             style={styles.articleImage}
           />
         </View>
+
         <View
           style={{
             flexDirection: "row",
@@ -85,7 +103,6 @@ const Home = () => {
               borderRadius: 10,
               marginBottom: 10,
             }}
-            // style={styles.articleImage}
           />
         </View>
         <Image
@@ -113,11 +130,31 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginLeft: 10,
   },
+  quoteContainer: {
+    backgroundColor: "#228a03",
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+
+  quoteText: {
+    fontSize: 16,
+    fontStyle: "italic",
+    color: "#fff",
+    textAlign: "center",
+  },
+
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 20,
   },
+
   searchInput: {
     flex: 1,
     padding: 10,
@@ -134,14 +171,11 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   articlesHeader: {
-    alignSelf: "stretch",
-    width: Dimensions.get("window").width - 40,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 10,
   },
-
   articlesTitle: {
     fontSize: 18,
     fontWeight: "bold",
@@ -153,12 +187,10 @@ const styles = StyleSheet.create({
   },
   articlesGrid: {
     flexDirection: "column",
-    flexWrap: "wrap",
     justifyContent: "center",
     flex: 1,
   },
   articleImage: {
-    // width: Dimensions.get("window").width / 2 - 30,
     width: "100%",
     height: 120,
     borderRadius: 10,
