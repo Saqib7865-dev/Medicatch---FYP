@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 
-const API_URL = "http://IPV4Address:3000/api/articles"; // Replace with your backend API URL
+const API_URL = "http://192.168.100.21:3000/articles"; // Replace with your backend API URL
 
 const CreateArticle = () => {
   const [title, setTitle] = useState("");

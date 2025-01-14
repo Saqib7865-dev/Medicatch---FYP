@@ -12,7 +12,7 @@ import {
 import { Feather } from "@expo/vector-icons"; // Install using: npm install @expo/vector-icons
 import { useRouter } from "expo-router"; // Use router for navigation
 
-const API_URL = "http://localhost:3000/api/articles"; // Replace with your backend API URL
+const API_URL = "http://192.168.100.21:3000/articles"; // Replace with your backend API URL
 
 const formatDate = (dateString) => {
   if (!dateString) return "Unknown Date";
@@ -36,7 +36,7 @@ const HealthArticles = () => {
     if (loading || allLoaded) return;
     setLoading(true);
     try {
-      const response = await fetch(`${API_URL}?page=${pageNumber}&limit=10`);
+      const response = await fetch(`${API_URL}`);
       if (!response.ok) {
         throw new Error("Failed to fetch articles");
       }
