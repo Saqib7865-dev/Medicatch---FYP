@@ -6,10 +6,16 @@ const {
   updateAnArticle,
   deleteAnArticle,
 } = require("../controllers/articlesControllers");
+const { verifyToken, allowRole } = require("../middleware/auth");
 const articleRouter = express.Router();
-articleRouter.post("/", createArticle);
+articleRouter.post("/", verifyToken, allowRole(["admin"]), createArticle);
 articleRouter.get("/", getAllArticles);
 articleRouter.get("/search", getIndividualArticle);
-articleRouter.put("/:id", updateAnArticle);
-articleRouter.delete("/:id", deleteAnArticle);
+articleRouter.put("/:id", verifyToken, allowRole(["admin"]), updateAnArticle);
+articleRouter.delete(
+  "/:id",
+  verifyToken,
+  allowRole(["admin"]),
+  deleteAnArticle
+);
 module.exports = articleRouter;

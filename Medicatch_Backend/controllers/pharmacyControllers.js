@@ -24,9 +24,10 @@ exports.createPharmacy = async (req, res) => {
 };
 
 exports.getUsersPharmacy = async (req, res) => {
-  const userId = req.body.userId;
   try {
-    const pharmacy = await pharmacyModel.findOne({ createdBy: userId });
+    const pharmacy = await pharmacyModel.findOne({
+      createdBy: req.user.userId,
+    });
 
     if (!pharmacy) {
       return res.status(404).json({ message: "Pharmacy not found" });
