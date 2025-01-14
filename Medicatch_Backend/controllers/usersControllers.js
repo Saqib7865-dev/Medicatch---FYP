@@ -1,7 +1,9 @@
 const userModel = require("../models/Users");
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
 exports.registerUser = async (req, res) => {
   const { username, password, role } = req.body;
-  if (!username || !password) {
+  if (!username || !password || !role) {
     return res
       .status(400)
       .json({ message: "Username and password are required." });
@@ -13,11 +15,15 @@ exports.registerUser = async (req, res) => {
     if (existingUser) {
       return res.status(400).json({ message: "Username already exists." });
     }
-
-    const newUser = await userModel.create({
-      username,
-      password,
-      role: role || "user",
+    let newUser;
+    bcrypt.genSalt(saltRounds, function (err, salt) {
+      bcrypt.hash(password, salt, async function (err, hash) {
+        newUser = await userModel.create({
+          username,
+          password: hash,
+          role: role || "user",
+        });
+      });
     });
 
     res
@@ -43,11 +49,14 @@ exports.loginUser = async (req, res) => {
       return res.status(404).json({ message: "User not found." });
     }
 
-    if (user.password != password) {
-      return res.status(401).json({ message: "Invalid credentials." });
-    } else {
-      res.status(200).json({ message: "Login successful" });
-    }
+    bcrypt.compare(password, user.password, (err, isMatch) => {
+      if (err) console.log("Error comparing password: ", err);
+      else if (isMatch) {
+        return res.status(200).json({ message: "Login successful" });
+      } else {
+        return res.status(401).json({ message: "Invalid credentials." });
+      }
+    });
   } catch (error) {
     res.status(500).json({ message: "Error during login", error });
   }
