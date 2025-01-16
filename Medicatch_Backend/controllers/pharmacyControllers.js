@@ -8,6 +8,16 @@ exports.createPharmacy = async (req, res) => {
   }
 
   try {
+    const existingPharmacy = await pharmacyModel.findOne({
+      createdBy: req.user.userId,
+    });
+
+    if (existingPharmacy) {
+      return res.status(400).json({
+        message:
+          "You already have a pharmacy. Only one pharmacy is allowed per user.",
+      });
+    }
     const pharmacy = await pharmacyModel.create({
       name,
       password,

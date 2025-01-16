@@ -19,4 +19,4 @@ app.use("/feedback", feedbackRouter);
 // Pharmacy
 app.use("/pharmacy", pharmacyRouter);
 
-app.listen(3000, () => console.log("Application is running at port: 3000"));
+app.listen(3001, () => console.log("Application is running at port: 3001"));
