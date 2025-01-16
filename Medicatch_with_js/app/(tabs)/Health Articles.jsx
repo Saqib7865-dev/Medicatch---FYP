@@ -12,7 +12,7 @@ import {
 import { Feather } from "@expo/vector-icons"; // Install using: npm install @expo/vector-icons
 import { useRouter } from "expo-router"; // Use router for navigation
 
-const API_URL = "http://IPV4Address:3000/api/articles"; // Replace with your backend API URL
+const API_URL = "http://192.168.0.104:3001/articles"; // Replace with your backend API URL
 
 const formatDate = (dateString) => {
   if (!dateString) return "Unknown Date";

@@ -4,7 +4,7 @@ const saltRounds = 10;
 const jwt = require("jsonwebtoken");
 exports.registerUser = async (req, res) => {
   const { username, password, role } = req.body;
-  if (!username || !password || !role) {
+  if (!username || !password) {
     return res
       .status(400)
       .json({ message: "Username, password and role are required." });
@@ -55,12 +55,12 @@ exports.loginUser = async (req, res) => {
       else if (isMatch) {
         const token = jwt.sign(
           { id: user._id, role: user.role },
-          "PakistanZindabad",
+          "PakistanZindabad", //secret key
           { expiresIn: "1h" }
         );
         return res.status(200).json({ message: "Login successful", token });
       } else {
-        return res.status(401).json({ message: "Invalid credentials." });
+        return res.status(401).json({ message: "Invalid credentials" });
       }
     });
   } catch (error) {
