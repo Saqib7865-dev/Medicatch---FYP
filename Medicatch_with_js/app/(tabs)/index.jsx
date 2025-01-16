@@ -44,7 +44,7 @@ const Home = () => {
           <TouchableOpacity>
             <Text
               style={styles.viewAllText}
-              onPress={() => router.push("/Health Articles")}
+              onPress={() => router.push("/(auth)/LoginScreen")}
             >
               View All
             </Text>

@@ -1,3 +1,4 @@
+import { Link } from "expo-router";
 import React, { useState } from "react";
 import {
   StyleSheet,
@@ -88,7 +89,10 @@ const SignUp = () => {
       <View style={styles.loginPrompt}>
         <Text style={styles.promptText}>Already have an account?</Text>
         <TouchableOpacity>
-          <Text style={styles.loginText}> Log in</Text>
+          <Text style={styles.loginText}>
+            {" "}
+            <Link href="./LoginScreen">Log in</Link>
+          </Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

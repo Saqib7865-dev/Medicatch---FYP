@@ -1,3 +1,4 @@
+import { Link } from "expo-router";
 import React, { useState } from "react";
 import {
   StyleSheet,
@@ -28,7 +29,7 @@ const loginScreen = () => {
         source={require("./../../assets/logo.png")} // Update the path as needed
         style={styles.logo}
       />
-      <Text style={styles.title}>Sign Up</Text>
+      <Text style={styles.title}>Sign In</Text>
 
       <TextInput
         style={styles.input}
@@ -49,6 +50,9 @@ const loginScreen = () => {
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
+      <Link href="/SignUpScreen" style={styles.Link}>
+        Don't have any account?
+      </Link>
     </View>
   );
 };
@@ -105,6 +109,12 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 18,
     fontWeight: "bold",
+  },
+  Link: {
+    color: "#4173A1",
+    fontWeight: "bold",
+    fontSize: 16,
+    marginTop: 10,
   },
 });
 
