@@ -72,7 +72,7 @@ const PharmacyLocation = ({ onConfirm }) => {
             handleLocationSelect(lat, lng);
           }}
           query={{
-            key: "YOUR_GOOGLE_MAPS_API_KEY", // Replace with your API key
+            key: "AIzaSyAAwyaPSL1ZPGV_AnIuTPXcbFQIsADeESU", // Replace with your API key
             language: "en",
           }}
           fetchDetails={true}

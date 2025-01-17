@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
+  Linking,
 } from "react-native";
 import PharmacyLocation from "../Screens/PharmacyLocation";
 
@@ -29,6 +30,17 @@ const Search = () => {
   const handleLocationSelect = (latitude, longitude) => {
     setLocation({ latitude, longitude });
     setShowMap(false);
+  };
+
+  const handleShowInGoogleMaps = () => {
+    if (location) {
+      const googleMapsUrl = `https://www.google.com/maps?q=${location.latitude},${location.longitude}`;
+      Linking.openURL(googleMapsUrl).catch((err) =>
+        console.error("Failed to open Google Maps:", err)
+      );
+    } else {
+      Alert.alert("Error", "Location is not set!");
+    }
   };
 
   const handleRegister = () => {
@@ -109,6 +121,7 @@ const Search = () => {
             onChangeText={setAddress}
           />
 
+          {/* Display Selected Location */}
           {location && (
             <Text style={styles.locationText}>
               Selected Location: Latitude {location.latitude}, Longitude{" "}
@@ -116,6 +129,17 @@ const Search = () => {
             </Text>
           )}
 
+          {/* Show in Google Maps Button */}
+          {location && (
+            <TouchableOpacity
+              style={styles.showInGoogleMapsButton}
+              onPress={handleShowInGoogleMaps}
+            >
+              <Text style={styles.buttonText}>Show in Google Maps</Text>
+            </TouchableOpacity>
+          )}
+
+          {/* Set Location Button */}
           <TouchableOpacity
             style={styles.setLocationButton}
             onPress={handleSetLocation}
@@ -170,6 +194,13 @@ const styles = StyleSheet.create({
   locationText: {
     fontSize: 14,
     color: "#007BFF",
+    marginBottom: 15,
+  },
+  showInGoogleMapsButton: {
+    backgroundColor: "#28A745",
+    padding: 15,
+    borderRadius: 10,
+    alignItems: "center",
     marginBottom: 15,
   },
   setLocationButton: {
