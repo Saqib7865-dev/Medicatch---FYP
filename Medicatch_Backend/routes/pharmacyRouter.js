@@ -6,6 +6,7 @@ const {
   deletePharmacy,
   addStock,
 } = require("../controllers/pharmacyControllers");
+const csvUpload = require("../config/csvUploadConfig");
 const { verifyToken, allowRole } = require("../middleware/auth");
 const pharmacyRouter = express.Router();
 pharmacyRouter.post("/", createPharmacy);
@@ -24,8 +25,9 @@ pharmacyRouter.delete(
 );
 pharmacyRouter.put(
   "/:id/stock",
-  verifyToken,
-  allowRole(["pharmacy"]),
+  // verifyToken,
+  // allowRole(["pharmacy"]),
+  csvUpload,
   addStock
 );
 module.exports = pharmacyRouter;
