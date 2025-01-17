@@ -13,10 +13,13 @@ const pharmacySchema = new mongoose.Schema({
     latitude: { type: Number, required: true },
     longitude: { type: Number, required: true },
   },
+  address: { type: String, required: true, unique: true },
+  contact: { type: String, required: true, unique: true },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
+    unique: true,
   },
 });
 

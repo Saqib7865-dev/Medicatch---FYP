@@ -1,3 +1,4 @@
+import { Link, useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
   StyleSheet,
@@ -15,8 +16,8 @@ const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
-  const handleSignup = () => {
+  let router = useRouter();
+  const handleSignup = async () => {
     if (!name || !email || !password || !confirmPassword) {
       Alert.alert("Error", "Please fill in all fields");
       return;
@@ -27,13 +28,30 @@ const SignUp = () => {
       return;
     }
 
-    if (password.length < 6) {
-      Alert.alert("Error", "Password must be at least 6 characters");
+    if (password.length < 8) {
+      Alert.alert("Error", "Password must be at least 8 characters");
       return;
     }
-
-    Alert.alert("Success", `Welcome, ${name}!`);
-    // Add signup logic here (e.g., API call)
+    let userRegister = await fetch("http://192.168.0.103:3001/users/register", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({ username: email, password }),
+    });
+    if (!userRegister.ok) return Alert.alert("User registration failed");
+    let userRegisterJson = await userRegister.json();
+    if (userRegisterJson.message)
+      if (userRegisterJson.message === "User registered successfully") {
+        Alert.alert("Success", userRegisterJson.message);
+        setTimeout(() => {
+          setEmail("");
+          setName("");
+          setPassword("");
+          setConfirmPassword("");
+          router.push("/LoginScreen");
+        }, 2000);
+      } else return Alert.alert("Message", userRegisterJson.message);
   };
 
   return (
@@ -56,7 +74,7 @@ const SignUp = () => {
 
       <TextInput
         style={styles.input}
-        placeholder="Email"
+        placeholder="Username"
         placeholderTextColor="#999"
         keyboardType="email-address"
         value={email}
@@ -88,7 +106,10 @@ const SignUp = () => {
       <View style={styles.loginPrompt}>
         <Text style={styles.promptText}>Already have an account?</Text>
         <TouchableOpacity>
-          <Text style={styles.loginText}> Log in</Text>
+          <Text style={styles.loginText}>
+            {" "}
+            <Link href="./LoginScreen">Log in</Link>
+          </Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

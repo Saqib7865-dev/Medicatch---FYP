@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -8,9 +8,12 @@ import {
   Image,
   ScrollView,
   Dimensions,
+  ActivityIndicator,
+  AppState,
 } from "react-native";
-import { Feather } from "@expo/vector-icons"; // Icon for search (Install with: npm install @expo/vector-icons)
-import { router } from "expo-router";
+import { Feather } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import { getToken, removeToken } from "../../utils/tokenStorage";
 
 const quotes = [
   "An apple a day keeps the doctor away.",
@@ -23,12 +26,57 @@ const quotes = [
 ];
 
 const Home = () => {
-  const [quote, setQuote] = useState("");
-
+  const router = useRouter();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
-    // Pick a random quote when the component mounts
-    setQuote(quotes[Math.floor(Math.random() * quotes.length)]);
+    const checkAuthentication = async () => {
+      const token = await getToken();
+      if (!token) {
+        router.replace("/(auth)/LoginScreen"); // Redirect before rendering
+      } else {
+        setIsAuthenticated(true);
+      }
+      setIsLoading(false); // Stop the loading indicator
+    };
+
+    const handleAppStateChange = async (nextAppState) => {
+      if (nextAppState === "background" || nextAppState === "inactive") {
+        // Remove token when app goes to background or becomes inactive
+        await removeToken();
+      }
+    };
+
+    checkAuthentication();
+
+    // Add AppState listener
+    const subscription = AppState.addEventListener(
+      "change",
+      handleAppStateChange
+    );
+
+    return () => {
+      subscription.remove();
+    };
   }, []);
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#3798CE" />
+        <Text style={styles.loadingText}>Loading...</Text>
+      </View>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null; // Avoid rendering anything if unauthenticated
+  }
+  // const [quote, setQuote] = useState();
+
+  // useEffect(() => {
+  //   // Pick a random quote when the component mounts
+  //   setQuote(quotes[Math.floor(Math.random() * quotes.length)]);
+  // }, []);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -39,7 +87,6 @@ const Home = () => {
         </TouchableOpacity>
         <Text style={styles.welcomeText}>Welcome</Text>
       </View>
-
       {/* Search Bar */}
       <View style={styles.searchContainer}>
         <TextInput
@@ -53,9 +100,9 @@ const Home = () => {
       </View>
 
       {/* Quote Section */}
-      <View style={styles.quoteContainer}>
+      {/* <View style={styles.quoteContainer}>
         <Text style={styles.quoteText}>{quote}</Text>
-      </View>
+      </View> */}
 
       {/* Articles Grid */}
       <View style={styles.articlesGrid}>
@@ -65,7 +112,7 @@ const Home = () => {
           <TouchableOpacity>
             <Text
               style={styles.viewAllText}
-              onPress={() => router.push("/Health Articles")}
+              onPress={() => router.push("/(auth)/LoginScreen")}
             >
               View All
             </Text>
@@ -195,6 +242,16 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 10,
     marginBottom: 10,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: "#3798CE",
   },
 });
 

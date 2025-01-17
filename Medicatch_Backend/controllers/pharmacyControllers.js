@@ -1,18 +1,31 @@
 const pharmacyModel = require("../models/Pharmacy");
 exports.createPharmacy = async (req, res) => {
-  const { name, password, location, createdBy } = req.body;
-  if (!name || !password || !location || !createdBy) {
+  const { name, password, location, createdBy, address, contact } = req.body;
+  if (!name || !password || !location || !createdBy || !address || !contact) {
     return res.status(400).json({
-      message: "Name, password, location, and createdBy are required.",
+      message:
+        "Name, password, location, address and contact details are required.",
     });
   }
 
   try {
+    const existingPharmacy = await pharmacyModel.findOne({
+      createdBy: req.user.userId,
+    });
+
+    if (existingPharmacy) {
+      return res.status(400).json({
+        message:
+          "You already have a pharmacy. Only one pharmacy is allowed per user.",
+      });
+    }
     const pharmacy = await pharmacyModel.create({
       name,
       password,
       location,
       createdBy,
+      address,
+      contact,
     });
 
     res
@@ -24,9 +37,10 @@ exports.createPharmacy = async (req, res) => {
 };
 
 exports.getUsersPharmacy = async (req, res) => {
-  const userId = req.body.userId;
   try {
-    const pharmacy = await pharmacyModel.findOne({ createdBy: userId });
+    const pharmacy = await pharmacyModel.findOne({
+      createdBy: req.user.userId,
+    });
 
     if (!pharmacy) {
       return res.status(404).json({ message: "Pharmacy not found" });
@@ -42,7 +56,7 @@ exports.getUsersPharmacy = async (req, res) => {
 
 exports.updatePharmacy = async (req, res) => {
   const { id } = req.params; // Pharmacy id
-  const { stock, location } = req.body;
+  const { stock, location, address, contact } = req.body;
   const userId = req.body.userId;
 
   try {
@@ -62,7 +76,12 @@ exports.updatePharmacy = async (req, res) => {
     if (location) {
       pharmacy.location = location;
     }
-
+    if (address) {
+      pharmacy.address = address;
+    }
+    if (contact) {
+      pharmacy.contact = contact;
+    }
     await pharmacy.save();
     res
       .status(200)

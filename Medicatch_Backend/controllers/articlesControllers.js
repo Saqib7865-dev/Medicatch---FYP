@@ -1,8 +1,16 @@
 const articleModel = require("../models/Articles");
+const upload = require("../config/multerConfig");
 exports.createArticle = async (req, res) => {
+  if (req.user.role !== "admin") {
+    return res.status(403).json({ message: "Access denied. Admins only." });
+  }
   try {
     const { title, content } = req.body;
-    const article = new articleModel({ title, content });
+    const article = new articleModel({
+      title,
+      content,
+      image: req.file ? req.file.path : null,
+    });
     await article.save();
     res.status(201).json({ message: "Article created successfully", article });
   } catch (error) {
@@ -41,6 +49,9 @@ exports.getIndividualArticle = async (req, res) => {
 };
 
 exports.updateAnArticle = async (req, res) => {
+  if (req.user.role !== "admin") {
+    return res.status(403).json({ message: "Access denied. Admins only." });
+  }
   try {
     const { id } = req.params;
     const { title, content } = req.body;
@@ -62,6 +73,9 @@ exports.updateAnArticle = async (req, res) => {
 };
 
 exports.deleteAnArticle = async (req, res) => {
+  if (req.user.role !== "admin") {
+    return res.status(403).json({ message: "Access denied. Admins only." });
+  }
   try {
     const { id } = req.params;
     const article = await articleModel.findByIdAndDelete(id);
@@ -74,4 +88,4 @@ exports.deleteAnArticle = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "Error deleting article", error });
   }
-}
+};

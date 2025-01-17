@@ -5,6 +5,7 @@ const userRouter = require("./routes/userRouter");
 const articleRouter = require("./routes/articleRouter");
 const feedbackRouter = require("./routes/feedbackRouter");
 const pharmacyRouter = require("./routes/pharmacyRouter");
+const path = require("path");
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -19,4 +20,7 @@ app.use("/feedback", feedbackRouter);
 // Pharmacy
 app.use("/pharmacy", pharmacyRouter);
 
-app.listen(3000, () => console.log("Application is running at port: 3000"));
+// In your main app.js or server.js file
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+app.listen(3001, () => console.log("Application is running at port: 3001"));

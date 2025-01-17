@@ -1,3 +1,4 @@
+import { Link, useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
   StyleSheet,
@@ -8,17 +9,35 @@ import {
   Alert,
   Image,
 } from "react-native";
+import { storeToken } from "../../utils/tokenStorage";
 
 const loginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  const handleLogin = () => {
+  let router = useRouter();
+  const handleLogin = async () => {
     if (email === "" || password === "") {
       Alert.alert("Error", "Please fill in both fields");
+      return;
     } else {
-      Alert.alert("Success", `Logged in with email: ${email}`);
-      // Add login logic here
+      let userLogin = await fetch(`http://192.168.0.104:3001/users/login`, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({ username: email, password }),
+      });
+      let userLoginJson = await userLogin.json();
+      if (userLoginJson.message) {
+        if (userLoginJson.message === "Login successful") {
+          await storeToken(userLoginJson.token);
+          console.log("welcome");
+          Alert.alert("Success", userLoginJson.message);
+          setTimeout(() => {
+            router.push("/(tabs)");
+          }, 2000);
+        } else return Alert.alert("message:", userLoginJson.message);
+      }
     }
   };
 
@@ -28,11 +47,11 @@ const loginScreen = () => {
         source={require("./../../assets/logo1.png")} // Update the path as needed
         style={styles.logo}
       />
-      <Text style={styles.title}>Sign Up</Text>
+      <Text style={styles.title}>Sign In</Text>
 
       <TextInput
         style={styles.input}
-        placeholder="Email"
+        placeholder="username"
         keyboardType="email-address"
         value={email}
         onChangeText={(text) => setEmail(text)}
@@ -49,6 +68,9 @@ const loginScreen = () => {
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
+      <Link href="/SignUpScreen" style={styles.Link}>
+        Don't have any account?
+      </Link>
     </View>
   );
 };
@@ -105,6 +127,12 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 18,
     fontWeight: "bold",
+  },
+  Link: {
+    color: "#4173A1",
+    fontWeight: "bold",
+    fontSize: 16,
+    marginTop: 10,
   },
 });
 

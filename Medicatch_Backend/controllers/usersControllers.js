@@ -1,12 +1,13 @@
 const userModel = require("../models/Users");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
+const jwt = require("jsonwebtoken");
 exports.registerUser = async (req, res) => {
   const { username, password, role } = req.body;
-  if (!username || !password || !role) {
+  if (!username || !password) {
     return res
       .status(400)
-      .json({ message: "Username and password are required." });
+      .json({ message: "Username, password and role are required." });
   }
 
   try {
@@ -52,9 +53,14 @@ exports.loginUser = async (req, res) => {
     bcrypt.compare(password, user.password, (err, isMatch) => {
       if (err) console.log("Error comparing password: ", err);
       else if (isMatch) {
-        return res.status(200).json({ message: "Login successful" });
+        const token = jwt.sign(
+          { id: user._id, role: user.role },
+          "PakistanZindabad", //secret key
+          { expiresIn: "1h" }
+        );
+        return res.status(200).json({ message: "Login successful", token });
       } else {
-        return res.status(401).json({ message: "Invalid credentials." });
+        return res.status(401).json({ message: "Invalid credentials" });
       }
     });
   } catch (error) {
