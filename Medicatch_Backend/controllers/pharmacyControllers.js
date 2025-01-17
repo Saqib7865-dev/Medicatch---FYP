@@ -1,4 +1,5 @@
 const pharmacyModel = require("../models/Pharmacy");
+const csv = require("csvtojson");
 exports.createPharmacy = async (req, res) => {
   const { name, password, location, createdBy, address, contact } = req.body;
   if (!name || !password || !location || !createdBy || !address || !contact) {
@@ -115,15 +116,15 @@ exports.deletePharmacy = async (req, res) => {
 
 exports.addStock = async (req, res) => {
   const { id } = req.params;
-  const { medicineName, quantity } = req.body;
+  // const { medicineName, quantity } = req.body;
   const userId = req.body.userId;
 
-  if (!medicineName || !quantity) {
-    return res
-      .status(400)
-      .json({ message: "Medicine name and quantity are required." });
-  }
-
+  // if (!medicineName || !quantity) {
+  //   return res
+  //     .status(400)
+  //     .json({ message: "Medicine name and quantity are required." });
+  // }
+  if (!req.file) res.status(404).send({ message: "CSV file is required" });
   try {
     const pharmacy = await pharmacyModel.findOne({
       _id: id,
@@ -134,18 +135,45 @@ exports.addStock = async (req, res) => {
         .status(404)
         .json({ message: "Pharmacy not found or unauthorized" });
     }
+    let userData = [];
+    csv()
+      .fromFile(req.file.path)
+      .then(async (response) => {
+        for (let i = 0; i < response.length; i++) {
+          userData.push({
+            medicineName: response[i].medicineName,
+            quantity: response[i].quantity,
+          });
+        }
+        for (let i = 0; i < userData.length; i++) {
+          const { medicineName, quantity } = userData[i];
 
-    const stockIndex = pharmacy.stock.findIndex(
-      (item) => item.medicineName === medicineName
-    );
+          // Ensure both fields exist
+          if (!medicineName || !quantity) {
+            return res.status(400).json({ message: "Invalid CSV data format" });
+          }
 
-    if (stockIndex >= 0) {
-      pharmacy.stock[stockIndex].quantity = quantity;
-    } else {
-      pharmacy.stock.push({ medicineName, quantity });
-    }
-    await pharmacy.save();
-    res.status(200).json({ message: "Stock updated successfully", pharmacy });
+          // Check if the medicine already exists in stock
+          const stockIndex = pharmacy.stock.findIndex(
+            (item) => item.medicineName === medicineName
+          );
+
+          if (stockIndex >= 0) {
+            // Update quantity if medicine exists
+            pharmacy.stock[stockIndex].quantity = parseInt(quantity);
+          } else {
+            // Add new medicine to stock
+            pharmacy.stock.push({
+              medicineName,
+              quantity: parseInt(quantity),
+            });
+          }
+        }
+        await pharmacy.save();
+        res
+          .status(200)
+          .json({ message: "Stock updated successfully", pharmacy });
+      });
   } catch (error) {
     res.status(500).json({ message: "Error updating stock", error });
   }
