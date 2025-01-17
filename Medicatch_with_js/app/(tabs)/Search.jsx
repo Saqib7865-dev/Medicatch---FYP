@@ -6,6 +6,7 @@ import {
   TextInput,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from "react-native";
 
 const Search = () => {
@@ -13,14 +14,12 @@ const Search = () => {
   const [ownerName, setOwnerName] = useState("");
   const [contactNumber, setContactNumber] = useState("");
   const [address, setAddress] = useState("");
-  const [error, setError] = useState("");
 
   const handleRegister = () => {
     if (!pharmacyName || !ownerName || !contactNumber || !address) {
-      setError("All fields are required!");
+      Alert.alert("Error", "All fields are required!");
       return;
     }
-    setError("");
 
     const formData = {
       pharmacyName,
@@ -36,18 +35,19 @@ const Search = () => {
     setOwnerName("");
     setContactNumber("");
     setAddress("");
+
+    Alert.alert("Success", "Pharmacy registered successfully!");
   };
 
   const handleSetLocation = () => {
     console.log("Set Location button pressed");
+    Alert.alert("Location", "Navigate to the map to set your location.");
     // Navigation to the map screen will be handled later
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.header}>Register Pharmacy</Text>
-
-      {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
       {/* Pharmacy Name */}
       <Text style={styles.label}>Pharmacy Name</Text>
@@ -135,12 +135,6 @@ const styles = StyleSheet.create({
   },
   textArea: {
     height: 80,
-  },
-  errorText: {
-    color: "#D9534F",
-    fontSize: 14,
-    marginBottom: 15,
-    textAlign: "center",
   },
   setLocationButton: {
     backgroundColor: "#FF8C00",
