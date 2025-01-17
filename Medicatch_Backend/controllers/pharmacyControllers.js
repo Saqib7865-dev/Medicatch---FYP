@@ -1,9 +1,10 @@
 const pharmacyModel = require("../models/Pharmacy");
 exports.createPharmacy = async (req, res) => {
-  const { name, password, location, createdBy } = req.body;
-  if (!name || !password || !location || !createdBy) {
+  const { name, password, location, createdBy, address, contact } = req.body;
+  if (!name || !password || !location || !createdBy || !address || !contact) {
     return res.status(400).json({
-      message: "Name, password, location, and createdBy are required.",
+      message:
+        "Name, password, location, address and contact details are required.",
     });
   }
 
@@ -23,6 +24,8 @@ exports.createPharmacy = async (req, res) => {
       password,
       location,
       createdBy,
+      address,
+      contact,
     });
 
     res
@@ -53,7 +56,7 @@ exports.getUsersPharmacy = async (req, res) => {
 
 exports.updatePharmacy = async (req, res) => {
   const { id } = req.params; // Pharmacy id
-  const { stock, location } = req.body;
+  const { stock, location, address, contact } = req.body;
   const userId = req.body.userId;
 
   try {
@@ -73,7 +76,12 @@ exports.updatePharmacy = async (req, res) => {
     if (location) {
       pharmacy.location = location;
     }
-
+    if (address) {
+      pharmacy.address = address;
+    }
+    if (contact) {
+      pharmacy.contact = contact;
+    }
     await pharmacy.save();
     res
       .status(200)

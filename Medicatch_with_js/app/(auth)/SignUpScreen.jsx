@@ -58,7 +58,7 @@ const SignUp = () => {
     <ScrollView contentContainerStyle={styles.container}>
       {/* Logo */}
       <Image
-        source={require("./../../assets/logo.png")} // Update the path as needed
+        source={require("./../../assets/logo1.png")} // Update the path as needed
         style={styles.logo}
       />
 

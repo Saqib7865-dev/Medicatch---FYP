@@ -5,8 +5,8 @@ import {
   View,
   TextInput,
   TouchableOpacity,
-  Alert,
 } from "react-native";
+import Toast from "react-native-toast-message";
 
 const daysOfWeek = ["SU", "M", "T", "W", "TR", "F", "S"];
 
@@ -15,6 +15,7 @@ const MedicationReminder = () => {
   const [medicineType, setMedicineType] = useState("");
   const [medicineAmount, setMedicineAmount] = useState("");
   const [selectedDays, setSelectedDays] = useState([]);
+  const [errors, setErrors] = useState({});
 
   const toggleDaySelection = (day) => {
     if (selectedDays.includes(day)) {
@@ -24,16 +25,58 @@ const MedicationReminder = () => {
     }
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!medicineName.trim())
+      newErrors.medicineName = "Medicine name is required.";
+    if (!medicineType.trim())
+      newErrors.medicineType = "Medicine type is required.";
+    if (
+      !medicineAmount.trim() ||
+      isNaN(medicineAmount) ||
+      Number(medicineAmount) <= 0
+    )
+      newErrors.medicineAmount = "Enter a valid amount of medicine.";
+
+    if (selectedDays.length === 0)
+      newErrors.selectedDays = "Please select at least one day.";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0; // Return true if no errors
+  };
+
   const handleSave = () => {
-    if (!medicineName || !medicineType || !medicineAmount) {
-      Alert.alert("Error", "Please fill in all fields.");
+    if (!validateForm()) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Please fix the errors before saving.",
+      });
       return;
     }
 
-    Alert.alert("Success", "Medication reminder saved successfully!", [
-      { text: "OK" },
-    ]);
-    // Add logic to save reminder (e.g., API call or local storage)
+    const formData = {
+      medicineName,
+      medicineType,
+      medicineAmount,
+      selectedDays,
+    };
+
+    console.log("Form Data:", formData);
+
+    Toast.show({
+      type: "success",
+      text1: "Success",
+      text2: "Medication reminder saved successfully!",
+    });
+
+    // Clear form after saving
+    setMedicineName("");
+    setMedicineType("");
+    setMedicineAmount("");
+    setSelectedDays([]);
+    setErrors({});
   };
 
   const handleDiscard = () => {
@@ -41,7 +84,12 @@ const MedicationReminder = () => {
     setMedicineType("");
     setMedicineAmount("");
     setSelectedDays([]);
-    Alert.alert("Discarded", "Your changes have been discarded.");
+    setErrors({});
+    Toast.show({
+      type: "info",
+      text1: "Discarded",
+      text2: "Your changes have been discarded.",
+    });
   };
 
   return (
@@ -56,6 +104,9 @@ const MedicationReminder = () => {
         value={medicineName}
         onChangeText={setMedicineName}
       />
+      {errors.medicineName && (
+        <Text style={styles.errorText}>{errors.medicineName}</Text>
+      )}
 
       {/* Medicine Type */}
       <Text style={styles.label}>Select Medicine Type:</Text>
@@ -65,6 +116,9 @@ const MedicationReminder = () => {
         value={medicineType}
         onChangeText={setMedicineType}
       />
+      {errors.medicineType && (
+        <Text style={styles.errorText}>{errors.medicineType}</Text>
+      )}
 
       {/* Medicine Amount */}
       <Text style={styles.label}>Enter Amount of medicine to be taken:</Text>
@@ -75,6 +129,9 @@ const MedicationReminder = () => {
         value={medicineAmount}
         onChangeText={setMedicineAmount}
       />
+      {errors.medicineAmount && (
+        <Text style={styles.errorText}>{errors.medicineAmount}</Text>
+      )}
 
       {/* Days Selection */}
       <Text style={styles.label}>Select days for taking medication:</Text>
@@ -99,6 +156,9 @@ const MedicationReminder = () => {
           </TouchableOpacity>
         ))}
       </View>
+      {errors.selectedDays && (
+        <Text style={styles.errorText}>{errors.selectedDays}</Text>
+      )}
 
       {/* Save and Discard Buttons */}
       <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
@@ -137,7 +197,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: "#fff",
     fontSize: 16,
-    marginBottom: 15,
+    marginBottom: 5,
+  },
+  errorText: {
+    color: "#D9534F",
+    fontSize: 14,
+    marginBottom: 10,
   },
   daysContainer: {
     flexDirection: "row",

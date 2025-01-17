@@ -36,7 +36,7 @@ const HealthArticles = () => {
     if (loading || allLoaded) return;
     setLoading(true);
     try {
-      const response = await fetch(`${API_URL}?page=${pageNumber}&limit=10`);
+      const response = await fetch(`${API_URL}`);
       if (!response.ok) {
         throw new Error("Failed to fetch articles");
       }
