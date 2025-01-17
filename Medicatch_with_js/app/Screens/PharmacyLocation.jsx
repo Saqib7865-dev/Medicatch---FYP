@@ -11,13 +11,74 @@
 
 // export default PharmacyLocation;
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
+import MapView, { Marker } from "react-native-maps";
+import * as Location from "expo-location";
+
 const PharmacyLocation = () => {
+  const [location, setLocation] = useState(null);
+  const [region, setRegion] = useState(null);
+
+  useEffect(() => {
+    (async () => {
+      // Request location permission
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        console.log("Permission to access location was denied");
+        return;
+      }
+
+      // Get current location with high accuracy
+      let { coords } = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.High, // Use high accuracy
+      });
+
+      setLocation(coords);
+      setRegion({
+        latitude: coords.latitude,
+        longitude: coords.longitude,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01,
+      });
+    })();
+  }, []);
+
+  console.log(location, "location....................................");
+  console.log(region, "region....................................");
+
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Create New Article</Text>
+      <View style={styles.container}>
+        {region ? (
+          <MapView
+            style={styles.map}
+            initialRegion={region}
+            onPoiClick={(event) => {
+              console.log(event, "eeeeeeeeeeeeeeeee");
+            }}
+          >
+            {location && (
+              <Marker
+                draggable={true}
+                onDrag={(event) => {
+                  console.log(event, "EMEMEMEMEMEME");
+                }}
+                coordinate={{
+                  latitude: location.latitude,
+                  longitude: location.longitude,
+                }}
+                title="You are here"
+              />
+            )}
+          </MapView>
+        ) : (
+          <View style={styles.loadingContainer}>
+            <Text style={styles.loadingText}>Loading map...</Text>
+          </View>
+        )}
+      </View>
     </View>
   );
 };
@@ -25,40 +86,19 @@ const PharmacyLocation = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    justifyContent: "center",
-    backgroundColor: "#c6e6f3",
   },
-  header: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
-    textAlign: "center",
-  },
-  input: {
+  map: {
     width: "100%",
-    padding: 10,
-    borderWidth: 1,
-    borderColor: "#D1D9E6",
-    borderRadius: 10,
-    backgroundColor: "#fff",
-    fontSize: 16,
-    marginBottom: 15,
+    height: "100%",
   },
-  textArea: {
-    height: 100,
-    textAlignVertical: "top",
-  },
-  button: {
-    backgroundColor: "#4173A1",
-    padding: 15,
-    borderRadius: 10,
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
     alignItems: "center",
   },
-  buttonText: {
-    color: "#fff",
+  loadingText: {
     fontSize: 16,
-    fontWeight: "bold",
+    color: "#666",
   },
 });
 
