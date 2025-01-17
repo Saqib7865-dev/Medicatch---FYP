@@ -7,8 +7,8 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
-  Linking,
 } from "react-native";
+import * as DocumentPicker from "expo-document-picker";
 import PharmacyLocation from "../Screens/PharmacyLocation";
 
 const Search = () => {
@@ -17,6 +17,7 @@ const Search = () => {
   const [contactNumber, setContactNumber] = useState("");
   const [address, setAddress] = useState("");
   const [location, setLocation] = useState(null);
+  const [csvFile, setCsvFile] = useState(null); // To store selected CSV file
   const [showMap, setShowMap] = useState(false);
 
   const handleSetLocation = () => {
@@ -32,14 +33,20 @@ const Search = () => {
     setShowMap(false);
   };
 
-  const handleShowInGoogleMaps = () => {
-    if (location) {
-      const googleMapsUrl = `https://www.google.com/maps?q=${location.latitude},${location.longitude}`;
-      Linking.openURL(googleMapsUrl).catch((err) =>
-        console.error("Failed to open Google Maps:", err)
-      );
-    } else {
-      Alert.alert("Error", "Location is not set!");
+  const handleCSVUpload = async () => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: "text/csv",
+      });
+      if (result.type === "success") {
+        setCsvFile(result);
+        Alert.alert("Success", "CSV file selected successfully!");
+      } else {
+        Alert.alert("Cancelled", "No file selected.");
+      }
+    } catch (error) {
+      console.error("Error selecting file:", error);
+      Alert.alert("Error", "Failed to select file.");
     }
   };
 
@@ -54,12 +61,18 @@ const Search = () => {
       return;
     }
 
+    if (!csvFile) {
+      Alert.alert("Error", "Please upload a CSV file!");
+      return;
+    }
+
     const formData = {
       pharmacyName,
       ownerName,
       contactNumber,
       address,
       location,
+      csvFile, // Include the file metadata
     };
 
     console.log("Pharmacy Details:", formData);
@@ -70,6 +83,7 @@ const Search = () => {
     setContactNumber("");
     setAddress("");
     setLocation(null);
+    setCsvFile(null);
 
     Alert.alert("Success", "Pharmacy registered successfully!");
   };
@@ -121,7 +135,6 @@ const Search = () => {
             onChangeText={setAddress}
           />
 
-          {/* Display Selected Location */}
           {location && (
             <Text style={styles.locationText}>
               Selected Location: Latitude {location.latitude}, Longitude{" "}
@@ -129,22 +142,18 @@ const Search = () => {
             </Text>
           )}
 
-          {/* Show in Google Maps Button */}
-          {location && (
-            <TouchableOpacity
-              style={styles.showInGoogleMapsButton}
-              onPress={handleShowInGoogleMaps}
-            >
-              <Text style={styles.buttonText}>Show in Google Maps</Text>
-            </TouchableOpacity>
-          )}
-
-          {/* Set Location Button */}
           <TouchableOpacity
             style={styles.setLocationButton}
             onPress={handleSetLocation}
           >
             <Text style={styles.buttonText}>Set Location</Text>
+          </TouchableOpacity>
+
+          {/* CSV Upload Button */}
+          <TouchableOpacity style={styles.csvButton} onPress={handleCSVUpload}>
+            <Text style={styles.buttonText}>
+              {csvFile ? "CSV File Selected" : "Upload CSV File"}
+            </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -196,15 +205,15 @@ const styles = StyleSheet.create({
     color: "#007BFF",
     marginBottom: 15,
   },
-  showInGoogleMapsButton: {
-    backgroundColor: "#28A745",
+  setLocationButton: {
+    backgroundColor: "#FF8C00",
     padding: 15,
     borderRadius: 10,
     alignItems: "center",
     marginBottom: 15,
   },
-  setLocationButton: {
-    backgroundColor: "#FF8C00",
+  csvButton: {
+    backgroundColor: "#28A745",
     padding: 15,
     borderRadius: 10,
     alignItems: "center",
