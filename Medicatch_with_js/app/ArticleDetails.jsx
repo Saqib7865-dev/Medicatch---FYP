@@ -9,15 +9,15 @@ const ArticleDetails = () => {
   console.log(fetch);
   // const [data , setData]
 
-  const getUser = async () => {
-    try {
-      const resp = await fetch("http://localhost:3000/users");
-      const data = await resp.json();
-      console.log("Data: ", data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  // const getUser = async () => {
+  //   try {
+  //     const resp = await fetch("http://localhost:3000/users");
+  //     const data = await resp.json();
+  //     console.log("Data: ", data);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
   useEffect(() => {
     getUser();

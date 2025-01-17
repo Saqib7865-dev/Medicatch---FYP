@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
   StyleSheet,
@@ -14,13 +15,13 @@ const Search = () => {
   const [ownerName, setOwnerName] = useState("");
   const [contactNumber, setContactNumber] = useState("");
   const [address, setAddress] = useState("");
+  const router = useRouter();
 
   const handleRegister = () => {
     if (!pharmacyName || !ownerName || !contactNumber || !address) {
       Alert.alert("Error", "All fields are required!");
       return;
     }
-
     const formData = {
       pharmacyName,
       ownerName,
@@ -42,6 +43,10 @@ const Search = () => {
   const handleSetLocation = () => {
     console.log("Set Location button pressed");
     Alert.alert("Location", "Navigate to the map to set your location.");
+
+    // router.push("Screens/CreateArticle/");
+    router.push("Screens/PharmacyLocation/");
+
     // Navigation to the map screen will be handled later
   };
 
