@@ -1,95 +1,171 @@
-// import React from "react";
-// import { View } from "react-native";
-
-// const PharmacyLocation = () => {
-//   return (
-//     <View>
-//       <Text>PharmacyLocation</Text>
-//     </View>
-//   );
-// };
-
-// export default PharmacyLocation;
-
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
-
+import {
+  StyleSheet,
+  View,
+  Text,
+  Dimensions,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
 import MapView, { Marker } from "react-native-maps";
+import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import * as Location from "expo-location";
 
-const PharmacyLocation = () => {
-  const [location, setLocation] = useState(null);
-  const [region, setRegion] = useState(null);
+const PharmacyLocation = ({ onConfirm }) => {
+  const [region, setRegion] = useState(null); // Current map region
+  const [selectedLocation, setSelectedLocation] = useState(null); // Marker location
 
   useEffect(() => {
     (async () => {
       // Request location permission
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
-        console.log("Permission to access location was denied");
+        Alert.alert("Permission Denied", "Location permission is required.");
         return;
       }
 
       // Get current location with high accuracy
       let { coords } = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.High, // Use high accuracy
+        accuracy: Location.Accuracy.High,
       });
 
-      setLocation(coords);
       setRegion({
         latitude: coords.latitude,
         longitude: coords.longitude,
         latitudeDelta: 0.01,
         longitudeDelta: 0.01,
       });
+
+      setSelectedLocation({
+        latitude: coords.latitude,
+        longitude: coords.longitude,
+      });
     })();
   }, []);
 
-  console.log(location, "location....................................");
-  console.log(region, "region....................................");
+  const handleLocationSelect = (latitude, longitude) => {
+    setRegion({
+      latitude,
+      longitude,
+      latitudeDelta: 0.01,
+      longitudeDelta: 0.01,
+    });
+    setSelectedLocation({ latitude, longitude });
+  };
+
+  const handleConfirmLocation = () => {
+    if (selectedLocation) {
+      onConfirm(selectedLocation.latitude, selectedLocation.longitude);
+    } else {
+      Alert.alert("Error", "Please select a location before confirming.");
+    }
+  };
 
   return (
     <View style={styles.container}>
-      <View style={styles.container}>
-        {region ? (
-          <MapView
-            style={styles.map}
-            initialRegion={region}
-            onPoiClick={(event) => {
-              console.log(event, "eeeeeeeeeeeeeeeee");
-            }}
-          >
-            {location && (
-              <Marker
-                draggable={true}
-                onDrag={(event) => {
-                  console.log(event, "EMEMEMEMEMEME");
-                }}
-                coordinate={{
-                  latitude: location.latitude,
-                  longitude: location.longitude,
-                }}
-                title="You are here"
-              />
-            )}
-          </MapView>
-        ) : (
-          <View style={styles.loadingContainer}>
-            <Text style={styles.loadingText}>Loading map...</Text>
-          </View>
-        )}
+      {/* Google Places Autocomplete */}
+      <View style={styles.searchContainer}>
+        <GooglePlacesAutocomplete
+          placeholder="Search for a location"
+          onPress={(data, details = null) => {
+            const { lat, lng } = details.geometry.location;
+            handleLocationSelect(lat, lng);
+          }}
+          query={{
+            key: "YOUR_GOOGLE_MAPS_API_KEY", // Replace with your API key
+            language: "en",
+          }}
+          fetchDetails={true}
+          styles={{
+            container: { flex: 0 },
+            textInput: {
+              backgroundColor: "#FFFFFF",
+              height: 50,
+              borderRadius: 5,
+              paddingVertical: 5,
+              paddingHorizontal: 10,
+              marginHorizontal: 10,
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.2,
+              shadowRadius: 2,
+              elevation: 2,
+            },
+          }}
+        />
       </View>
+
+      {/* Map View */}
+      {region ? (
+        <MapView
+          style={styles.map}
+          initialRegion={region}
+          region={region}
+          onPress={(event) => {
+            const { latitude, longitude } = event.nativeEvent.coordinate;
+            handleLocationSelect(latitude, longitude);
+          }}
+        >
+          {/* Marker */}
+          {selectedLocation && (
+            <Marker
+              draggable
+              coordinate={selectedLocation}
+              onDragEnd={(event) => {
+                const { latitude, longitude } = event.nativeEvent.coordinate;
+                handleLocationSelect(latitude, longitude);
+              }}
+              title="Selected Location"
+            />
+          )}
+        </MapView>
+      ) : (
+        <View style={styles.loadingContainer}>
+          <Text style={styles.loadingText}>Loading map...</Text>
+        </View>
+      )}
+
+      {/* Confirm Button */}
+      <TouchableOpacity
+        style={styles.confirmButton}
+        onPress={handleConfirmLocation}
+      >
+        <Text style={styles.confirmButtonText}>Confirm Location</Text>
+      </TouchableOpacity>
     </View>
   );
 };
+
+export default PharmacyLocation;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  map: {
+  searchContainer: {
+    position: "absolute",
+    top: 10,
     width: "100%",
-    height: "100%",
+    zIndex: 10, // Ensure the search bar is above the map
+  },
+  map: {
+    width: Dimensions.get("window").width,
+    height: Dimensions.get("window").height,
+  },
+  confirmButton: {
+    position: "absolute",
+    bottom: 20,
+    left: 20,
+    right: 20,
+    backgroundColor: "#4173A1",
+    padding: 15,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  confirmButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "bold",
   },
   loadingContainer: {
     flex: 1,
@@ -101,5 +177,3 @@ const styles = StyleSheet.create({
     color: "#666",
   },
 });
-
-export default PharmacyLocation;

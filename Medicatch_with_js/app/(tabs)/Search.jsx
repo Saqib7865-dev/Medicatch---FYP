@@ -1,4 +1,3 @@
-import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
   StyleSheet,
@@ -9,24 +8,46 @@ import {
   ScrollView,
   Alert,
 } from "react-native";
+import PharmacyLocation from "../Screens/PharmacyLocation";
 
 const Search = () => {
   const [pharmacyName, setPharmacyName] = useState("");
   const [ownerName, setOwnerName] = useState("");
   const [contactNumber, setContactNumber] = useState("");
   const [address, setAddress] = useState("");
-  const router = useRouter();
+  const [location, setLocation] = useState(null);
+  const [showMap, setShowMap] = useState(false);
+
+  const handleSetLocation = () => {
+    if (!pharmacyName || !ownerName || !contactNumber || !address) {
+      Alert.alert("Error", "Please fill all fields before setting a location.");
+      return;
+    }
+    setShowMap(true);
+  };
+
+  const handleLocationSelect = (latitude, longitude) => {
+    setLocation({ latitude, longitude });
+    setShowMap(false);
+  };
 
   const handleRegister = () => {
     if (!pharmacyName || !ownerName || !contactNumber || !address) {
       Alert.alert("Error", "All fields are required!");
       return;
     }
+
+    if (!location) {
+      Alert.alert("Error", "Please set the pharmacy location!");
+      return;
+    }
+
     const formData = {
       pharmacyName,
       ownerName,
       contactNumber,
       address,
+      location,
     };
 
     console.log("Pharmacy Details:", formData);
@@ -36,76 +57,81 @@ const Search = () => {
     setOwnerName("");
     setContactNumber("");
     setAddress("");
+    setLocation(null);
 
     Alert.alert("Success", "Pharmacy registered successfully!");
   };
 
-  const handleSetLocation = () => {
-    console.log("Set Location button pressed");
-    Alert.alert("Location", "Navigate to the map to set your location.");
-
-    // router.push("Screens/CreateArticle/");
-    router.push("Screens/PharmacyLocation/");
-
-    // Navigation to the map screen will be handled later
-  };
-
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.header}>Register Pharmacy</Text>
+    <>
+      {showMap ? (
+        <PharmacyLocation
+          onConfirm={(latitude, longitude) =>
+            handleLocationSelect(latitude, longitude)
+          }
+        />
+      ) : (
+        <ScrollView contentContainerStyle={styles.container}>
+          <Text style={styles.header}>Register Pharmacy</Text>
 
-      {/* Pharmacy Name */}
-      <Text style={styles.label}>Pharmacy Name</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter Pharmacy Name"
-        value={pharmacyName}
-        onChangeText={setPharmacyName}
-      />
+          <Text style={styles.label}>Pharmacy Name</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter Pharmacy Name"
+            value={pharmacyName}
+            onChangeText={setPharmacyName}
+          />
 
-      {/* Owner Name */}
-      <Text style={styles.label}>Owner's Name</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter Owner's Name"
-        value={ownerName}
-        onChangeText={setOwnerName}
-      />
+          <Text style={styles.label}>Owner's Name</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter Owner's Name"
+            value={ownerName}
+            onChangeText={setOwnerName}
+          />
 
-      {/* Contact Number */}
-      <Text style={styles.label}>Contact Number</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter Contact Number"
-        value={contactNumber}
-        keyboardType="phone-pad"
-        onChangeText={setContactNumber}
-      />
+          <Text style={styles.label}>Contact Number</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter Contact Number"
+            value={contactNumber}
+            keyboardType="phone-pad"
+            onChangeText={setContactNumber}
+          />
 
-      {/* Address */}
-      <Text style={styles.label}>Address</Text>
-      <TextInput
-        style={[styles.input, styles.textArea]}
-        placeholder="Enter Pharmacy Address"
-        value={address}
-        multiline
-        numberOfLines={4}
-        onChangeText={setAddress}
-      />
+          <Text style={styles.label}>Address</Text>
+          <TextInput
+            style={[styles.input, styles.textArea]}
+            placeholder="Enter Pharmacy Address"
+            value={address}
+            multiline
+            numberOfLines={4}
+            onChangeText={setAddress}
+          />
 
-      {/* Set Location Button */}
-      <TouchableOpacity
-        style={styles.setLocationButton}
-        onPress={handleSetLocation}
-      >
-        <Text style={styles.buttonText}>Set Location</Text>
-      </TouchableOpacity>
+          {location && (
+            <Text style={styles.locationText}>
+              Selected Location: Latitude {location.latitude}, Longitude{" "}
+              {location.longitude}
+            </Text>
+          )}
 
-      {/* Register Button */}
-      <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
-        <Text style={styles.buttonText}>Register</Text>
-      </TouchableOpacity>
-    </ScrollView>
+          <TouchableOpacity
+            style={styles.setLocationButton}
+            onPress={handleSetLocation}
+          >
+            <Text style={styles.buttonText}>Set Location</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.registerButton}
+            onPress={handleRegister}
+          >
+            <Text style={styles.buttonText}>Register</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      )}
+    </>
   );
 };
 
@@ -140,6 +166,11 @@ const styles = StyleSheet.create({
   },
   textArea: {
     height: 80,
+  },
+  locationText: {
+    fontSize: 14,
+    color: "#007BFF",
+    marginBottom: 15,
   },
   setLocationButton: {
     backgroundColor: "#FF8C00",
