@@ -116,14 +116,7 @@ exports.deletePharmacy = async (req, res) => {
 
 exports.addStock = async (req, res) => {
   const { id } = req.params;
-  // const { medicineName, quantity } = req.body;
   const userId = req.body.userId;
-
-  // if (!medicineName || !quantity) {
-  //   return res
-  //     .status(400)
-  //     .json({ message: "Medicine name and quantity are required." });
-  // }
   if (!req.file) res.status(404).send({ message: "CSV file is required" });
   try {
     const pharmacy = await pharmacyModel.findOne({
