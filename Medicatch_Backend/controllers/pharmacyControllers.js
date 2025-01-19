@@ -2,7 +2,7 @@ const pharmacyModel = require("../models/Pharmacy");
 const csv = require("csvtojson");
 exports.createPharmacy = async (req, res) => {
   const { name, password, location, createdBy, address, contact } = req.body;
-  if (!name || !password || !location || !createdBy || !address || !contact) {
+  if (!name || !location || !createdBy || !address || !contact) {
     return res.status(400).json({
       message:
         "Name, password, location, address and contact details are required.",
@@ -22,7 +22,7 @@ exports.createPharmacy = async (req, res) => {
     }
     const pharmacy = await pharmacyModel.create({
       name,
-      password,
+
       location,
       createdBy,
       address,
