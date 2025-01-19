@@ -10,8 +10,13 @@ import {
 } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
 import PharmacyLocation from "../Screens/PharmacyLocation";
+import { useAppContext } from "../context/context";
+import { useRouter } from "expo-router";
 
 const Search = () => {
+  const { user } = useAppContext();
+  const router = useRouter();
+
   const [pharmacyName, setPharmacyName] = useState("");
   const [ownerName, setOwnerName] = useState("");
   const [contactNumber, setContactNumber] = useState("");
@@ -50,7 +55,7 @@ const Search = () => {
     }
   };
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     if (!pharmacyName || !ownerName || !contactNumber || !address) {
       Alert.alert("Error", "All fields are required!");
       return;
@@ -61,10 +66,10 @@ const Search = () => {
       return;
     }
 
-    if (!csvFile) {
-      Alert.alert("Error", "Please upload a CSV file!");
-      return;
-    }
+    // if (!csvFile) {
+    //   Alert.alert("Error", "Please upload a CSV file!");
+    //   return;
+    // }
 
     const formData = {
       pharmacyName,
@@ -77,15 +82,44 @@ const Search = () => {
 
     console.log("Pharmacy Details:", formData);
 
+    try {
+      const resp = await fetch("http://192.168.0.115:3001/pharmacy", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: pharmacyName,
+          location,
+          createdBy: user.id,
+          contact: "1",
+          address: "11",
+        }),
+      });
+
+      const data = await resp.json();
+      if (resp.ok) {
+        console.log(data);
+      } else {
+        console.log(data);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+
     // Clear form after submission
-    setPharmacyName("");
-    setOwnerName("");
-    setContactNumber("");
-    setAddress("");
-    setLocation(null);
-    setCsvFile(null);
+    // setPharmacyName("");
+    // setOwnerName("");
+    // setContactNumber("");
+    // setAddress("");
+    // setLocation(null);
+    // setCsvFile(null);
 
     Alert.alert("Success", "Pharmacy registered successfully!");
+    router.push({
+      pathname: "Screens/PharmacyDetails",
+      params: { ...formData },
+    });
   };
 
   return (

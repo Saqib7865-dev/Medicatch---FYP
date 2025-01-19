@@ -11,8 +11,10 @@ import {
 } from "react-native";
 import { storeToken } from "../../utils/tokenStorage";
 import { jwtDecode } from "jwt-decode";
+import { useAppContext } from "../context/context";
 
 const loginScreen = () => {
+  const { setUser } = useAppContext();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   let router = useRouter();
@@ -64,7 +66,7 @@ const loginScreen = () => {
 
           // Decode the token
           const decodedToken = jwtDecode(token);
-          console.log("Decoded Token:", decodedToken);
+          setUser(decodedToken);
 
           await storeToken(token);
           console.log("welcome");

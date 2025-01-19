@@ -22,7 +22,6 @@ exports.createPharmacy = async (req, res) => {
     }
     const pharmacy = await pharmacyModel.create({
       name,
-
       location,
       createdBy,
       address,
