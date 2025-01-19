@@ -49,11 +49,11 @@ const Tabslayout = () => {
           }}
         ></Tabs.Screen>
         <Tabs.Screen
-          name="Profile"
+          name="Search"
           options={{
-            title: "Profile",
+            title: "Search",
             tabBarIcon: ({ color }) => (
-              <AntDesign name="profile" size={24} color={color} />
+              <AntDesign name="search1" size={24} color={color} />
             ),
           }}
         ></Tabs.Screen>

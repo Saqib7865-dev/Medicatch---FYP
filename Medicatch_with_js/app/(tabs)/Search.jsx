@@ -6,27 +6,73 @@ import {
   TextInput,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from "react-native";
+import * as DocumentPicker from "expo-document-picker";
+import PharmacyLocation from "../Screens/PharmacyLocation";
 
 const Search = () => {
   const [pharmacyName, setPharmacyName] = useState("");
   const [ownerName, setOwnerName] = useState("");
   const [contactNumber, setContactNumber] = useState("");
   const [address, setAddress] = useState("");
-  const [error, setError] = useState("");
+  const [location, setLocation] = useState(null);
+  const [csvFile, setCsvFile] = useState(null); // To store selected CSV file
+  const [showMap, setShowMap] = useState(false);
+
+  const handleSetLocation = () => {
+    if (!pharmacyName || !ownerName || !contactNumber || !address) {
+      Alert.alert("Error", "Please fill all fields before setting a location.");
+      return;
+    }
+    setShowMap(true);
+  };
+
+  const handleLocationSelect = (latitude, longitude) => {
+    setLocation({ latitude, longitude });
+    setShowMap(false);
+  };
+
+  const handleCSVUpload = async () => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: "text/csv",
+      });
+      if (result.type === "success") {
+        setCsvFile(result);
+        Alert.alert("Success", "CSV file selected successfully!");
+      } else {
+        Alert.alert("Cancelled", "No file selected.");
+      }
+    } catch (error) {
+      console.error("Error selecting file:", error);
+      Alert.alert("Error", "Failed to select file.");
+    }
+  };
 
   const handleRegister = () => {
     if (!pharmacyName || !ownerName || !contactNumber || !address) {
-      setError("All fields are required!");
+      Alert.alert("Error", "All fields are required!");
       return;
     }
-    setError("");
+
+    if (!location) {
+      Alert.alert("Error", "Please set the pharmacy location!");
+      return;
+    }
+
+    if (!csvFile) {
+      Alert.alert("Error", "Please upload a CSV file!");
+      return;
+    }
 
     const formData = {
       pharmacyName,
       ownerName,
       contactNumber,
       address,
+      location,
+      csvFile, // Include the file metadata
     };
 
     console.log("Pharmacy Details:", formData);
@@ -36,71 +82,89 @@ const Search = () => {
     setOwnerName("");
     setContactNumber("");
     setAddress("");
-  };
+    setLocation(null);
+    setCsvFile(null);
 
-  const handleSetLocation = () => {
-    console.log("Set Location button pressed");
-    // Navigation to the map screen will be handled later
+    Alert.alert("Success", "Pharmacy registered successfully!");
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.header}>Register Pharmacy</Text>
+    <>
+      {showMap ? (
+        <PharmacyLocation
+          onConfirm={(latitude, longitude) =>
+            handleLocationSelect(latitude, longitude)
+          }
+        />
+      ) : (
+        <ScrollView contentContainerStyle={styles.container}>
+          <Text style={styles.header}>Register Pharmacy</Text>
 
-      {error ? <Text style={styles.errorText}>{error}</Text> : null}
+          <Text style={styles.label}>Pharmacy Name</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter Pharmacy Name"
+            value={pharmacyName}
+            onChangeText={setPharmacyName}
+          />
 
-      {/* Pharmacy Name */}
-      <Text style={styles.label}>Pharmacy Name</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter Pharmacy Name"
-        value={pharmacyName}
-        onChangeText={setPharmacyName}
-      />
+          <Text style={styles.label}>Owner's Name</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter Owner's Name"
+            value={ownerName}
+            onChangeText={setOwnerName}
+          />
 
-      {/* Owner Name */}
-      <Text style={styles.label}>Owner's Name</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter Owner's Name"
-        value={ownerName}
-        onChangeText={setOwnerName}
-      />
+          <Text style={styles.label}>Contact Number</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter Contact Number"
+            value={contactNumber}
+            keyboardType="phone-pad"
+            onChangeText={setContactNumber}
+          />
 
-      {/* Contact Number */}
-      <Text style={styles.label}>Contact Number</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter Contact Number"
-        value={contactNumber}
-        keyboardType="phone-pad"
-        onChangeText={setContactNumber}
-      />
+          <Text style={styles.label}>Address</Text>
+          <TextInput
+            style={[styles.input, styles.textArea]}
+            placeholder="Enter Pharmacy Address"
+            value={address}
+            multiline
+            numberOfLines={4}
+            onChangeText={setAddress}
+          />
 
-      {/* Address */}
-      <Text style={styles.label}>Address</Text>
-      <TextInput
-        style={[styles.input, styles.textArea]}
-        placeholder="Enter Pharmacy Address"
-        value={address}
-        multiline
-        numberOfLines={4}
-        onChangeText={setAddress}
-      />
+          {location && (
+            <Text style={styles.locationText}>
+              Selected Location: Latitude {location.latitude}, Longitude{" "}
+              {location.longitude}
+            </Text>
+          )}
 
-      {/* Set Location Button */}
-      <TouchableOpacity
-        style={styles.setLocationButton}
-        onPress={handleSetLocation}
-      >
-        <Text style={styles.buttonText}>Set Location</Text>
-      </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.setLocationButton}
+            onPress={handleSetLocation}
+          >
+            <Text style={styles.buttonText}>Set Location</Text>
+          </TouchableOpacity>
 
-      {/* Register Button */}
-      <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
-        <Text style={styles.buttonText}>Register</Text>
-      </TouchableOpacity>
-    </ScrollView>
+          {/* CSV Upload Button */}
+          <TouchableOpacity style={styles.csvButton} onPress={handleCSVUpload}>
+            <Text style={styles.buttonText}>
+              {csvFile ? "CSV File Selected" : "Upload CSV File"}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.registerButton}
+            onPress={handleRegister}
+          >
+            <Text style={styles.buttonText}>Register</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      )}
+    </>
   );
 };
 
@@ -136,14 +200,20 @@ const styles = StyleSheet.create({
   textArea: {
     height: 80,
   },
-  errorText: {
-    color: "#D9534F",
+  locationText: {
     fontSize: 14,
+    color: "#007BFF",
     marginBottom: 15,
-    textAlign: "center",
   },
   setLocationButton: {
     backgroundColor: "#FF8C00",
+    padding: 15,
+    borderRadius: 10,
+    alignItems: "center",
+    marginBottom: 15,
+  },
+  csvButton: {
+    backgroundColor: "#28A745",
     padding: 15,
     borderRadius: 10,
     alignItems: "center",
