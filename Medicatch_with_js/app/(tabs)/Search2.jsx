@@ -175,7 +175,7 @@ const MedicineSearch = () => {
                   handleOpenGoogleMaps(item.latitude, item.longitude)
                 }
               >
-                <Text style={styles.locateButtonText}>Locate Pharmacy</Text>
+                <Text style={styles.locateButtonText}>Locate </Text>
               </TouchableOpacity>
             </View>
           )}
