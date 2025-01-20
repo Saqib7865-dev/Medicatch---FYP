@@ -55,7 +55,7 @@ const loginScreen = () => {
         headers: {
           "content-type": "application/json",
         },
-        body: JSON.stringify({ username: "Ahmad", password: "11223344" }),
+        body: JSON.stringify({ username: "Admin", password: "11223344" }),
       });
 
       let userLoginJson = await userLogin.json();
@@ -69,7 +69,7 @@ const loginScreen = () => {
           setUser(decodedToken);
 
           await storeToken(token);
-          console.log("welcome");
+          console.log("welcome", decodedToken);
           Alert.alert("Success", userLoginJson.message);
           setTimeout(() => {
             router.push("/(tabs)");

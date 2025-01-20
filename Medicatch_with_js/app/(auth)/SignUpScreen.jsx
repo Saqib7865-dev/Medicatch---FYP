@@ -33,7 +33,7 @@ const SignUp = () => {
       return;
     }
 
-    let userRegister = await fetch("http://192.168.0.110:3001/users/register", {
+    let userRegister = await fetch("http://192.168.0.115:3001/users/register", {
       method: "POST",
       headers: {
         "content-type": "application/json",

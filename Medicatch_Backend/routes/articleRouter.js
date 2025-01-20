@@ -12,17 +12,22 @@ const articleRouter = express.Router();
 articleRouter.post(
   "/",
   upload.single("image"),
-  verifyToken,
-  allowRole(["admin"]),
+  // verifyToken,
+  // allowRole(["admin"]),
   createArticle
 );
 articleRouter.get("/", getAllArticles);
 articleRouter.get("/search", getIndividualArticle);
-articleRouter.put("/:id", verifyToken, allowRole(["admin"]), updateAnArticle);
+articleRouter.put(
+  "/:id",
+  // verifyToken,
+  //  allowRole(["admin"]),
+  updateAnArticle
+);
 articleRouter.delete(
   "/:id",
-  verifyToken,
-  allowRole(["admin"]),
+  // verifyToken,
+  // allowRole(["admin"]),
   deleteAnArticle
 );
 module.exports = articleRouter;

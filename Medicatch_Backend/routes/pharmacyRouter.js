@@ -14,14 +14,14 @@ pharmacyRouter.get("/:id", getUsersPharmacy);
 // pharmacyRouter.get("/", verifyToken, allowRole(["pharmacy"]), getUsersPharmacy);
 pharmacyRouter.put(
   "/:id",
-  verifyToken,
-  allowRole(["pharmacy"]),
+  // verifyToken,
+  // allowRole(["pharmacy"]),
   updatePharmacy
 );
 pharmacyRouter.delete(
   "/:id",
-  verifyToken,
-  allowRole(["pharmacy"]),
+  // verifyToken,
+  // allowRole(["pharmacy"]),
   deletePharmacy
 );
 pharmacyRouter.put(
