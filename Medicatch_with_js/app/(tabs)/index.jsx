@@ -14,6 +14,7 @@ import {
 import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { getToken, removeToken } from "../../utils/tokenStorage";
+import SideDrawer from "../components/side-drawer";
 
 const quotes = [
   "An apple a day keeps the doctor away.",
@@ -29,6 +30,8 @@ const Home = () => {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [quote, setQuote] = useState(""); // Ensure quote is initialized as an empty string
+
   useEffect(() => {
     const checkAuthentication = async () => {
       const token = await getToken();
@@ -47,6 +50,9 @@ const Home = () => {
       }
     };
 
+    // Set a random quote on component mount
+    setQuote(quotes[Math.floor(Math.random() * quotes.length)]);
+
     checkAuthentication();
 
     // Add AppState listener
@@ -59,6 +65,7 @@ const Home = () => {
       subscription.remove();
     };
   }, []);
+
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
@@ -71,15 +78,10 @@ const Home = () => {
   if (!isAuthenticated) {
     return null; // Avoid rendering anything if unauthenticated
   }
-  // const [quote, setQuote] = useState();
-
-  // useEffect(() => {
-  //   // Pick a random quote when the component mounts
-  //   setQuote(quotes[Math.floor(Math.random() * quotes.length)]);
-  // }, []);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      {/* <SideDrawer isOpen={true} /> */}
       {/* Header Section */}
       <View style={styles.header}>
         <TouchableOpacity>
@@ -100,9 +102,9 @@ const Home = () => {
       </View>
 
       {/* Quote Section */}
-      {/* <View style={styles.quoteContainer}>
+      <View style={styles.quoteContainer}>
         <Text style={styles.quoteText}>{quote}</Text>
-      </View> */}
+      </View>
 
       {/* Articles Grid */}
       <View style={styles.articlesGrid}>
@@ -188,20 +190,17 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
-
   quoteText: {
     fontSize: 16,
     fontStyle: "italic",
     color: "#fff",
     textAlign: "center",
   },
-
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 20,
   },
-
   searchInput: {
     flex: 1,
     padding: 10,

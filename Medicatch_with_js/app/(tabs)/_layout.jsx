@@ -49,7 +49,17 @@ const Tabslayout = () => {
           }}
         ></Tabs.Screen>
         <Tabs.Screen
-          name="Search"
+          name="Register"
+          options={{
+            title: "Register",
+            tabBarIcon: ({ color }) => (
+              <Entypo name="location-pin" size={24} color={color} />
+              // <AntDesign name="search1" size={24} color={color} />
+            ),
+          }}
+        ></Tabs.Screen>
+        <Tabs.Screen
+          name="Search2"
           options={{
             title: "Search",
             tabBarIcon: ({ color }) => (

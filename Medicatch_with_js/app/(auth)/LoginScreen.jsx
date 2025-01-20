@@ -1,5 +1,5 @@
 import { Link, useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -10,36 +10,81 @@ import {
   Image,
 } from "react-native";
 import { storeToken } from "../../utils/tokenStorage";
+import { jwtDecode } from "jwt-decode";
+import { useAppContext } from "../context/context";
 
 const loginScreen = () => {
+  const { setUser } = useAppContext();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   let router = useRouter();
   const handleLogin = async () => {
-    if (email === "" || password === "") {
-      Alert.alert("Error", "Please fill in both fields");
-      return;
-    } else {
+    try {
+      if (email === "" || password === "") {
+        Alert.alert("Error", "Please fill in both fields");
+        return;
+      } else {
+        let userLogin = await fetch(`http://192.168.0.104:3001/users/login`, {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify({ username: email, password }),
+        });
+        let userLoginJson = await userLogin.json();
+        if (userLoginJson.message) {
+          if (userLoginJson.message === "Login successful") {
+            await storeToken(userLoginJson.token);
+            Alert.alert("Success", userLoginJson.message);
+            setTimeout(() => {
+              router.push("/(tabs)");
+            }, 2000);
+          } else return Alert.alert("message:", userLoginJson.message);
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const myLogin = async () => {
+    try {
       let userLogin = await fetch(`http://192.168.1.4:3001/users/login`, {
         method: "POST",
         headers: {
           "content-type": "application/json",
         },
-        body: JSON.stringify({ username: email, password }),
+        body: JSON.stringify({ username: "Ahmad", password: "11223344" }),
       });
+
       let userLoginJson = await userLogin.json();
+
       if (userLoginJson.message) {
         if (userLoginJson.message === "Login successful") {
-          await storeToken(userLoginJson.token);
+          const token = userLoginJson.token;
+
+          // Decode the token
+          const decodedToken = jwtDecode(token);
+          setUser(decodedToken);
+
+          await storeToken(token);
           console.log("welcome");
           Alert.alert("Success", userLoginJson.message);
           setTimeout(() => {
             router.push("/(tabs)");
           }, 2000);
-        } else return Alert.alert("message:", userLoginJson.message);
+        } else {
+          return Alert.alert("Message:", userLoginJson.message);
+        }
       }
+    } catch (e) {
+      console.error(e);
     }
   };
+
+  useEffect(() => {
+    myLogin();
+  }, []);
 
   return (
     <View style={styles.container}>

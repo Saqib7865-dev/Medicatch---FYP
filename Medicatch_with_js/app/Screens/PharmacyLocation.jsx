@@ -10,6 +10,7 @@ import {
 import MapView, { Marker } from "react-native-maps";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import * as Location from "expo-location";
+import "react-native-get-random-values";
 
 const PharmacyLocation = ({ onConfirm }) => {
   const [region, setRegion] = useState(null); // Current map region
@@ -72,7 +73,7 @@ const PharmacyLocation = ({ onConfirm }) => {
             handleLocationSelect(lat, lng);
           }}
           query={{
-            key: "AIzaSyAAwyaPSL1ZPGV_AnIuTPXcbFQIsADeESU", // Replace with your API key
+            key: "AIzaSyBENAB06JOT3-qUoLm-fNqLZDMCsca6BKk", // Replace with your API key
             language: "en",
           }}
           fetchDetails={true}
