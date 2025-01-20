@@ -1,28 +1,26 @@
 const pharmacyModel = require("../models/Pharmacy");
 const csv = require("csvtojson");
 exports.createPharmacy = async (req, res) => {
-  const { name, password, location, createdBy, address, contact } = req.body;
-  if (!name || !password || !location || !createdBy || !address || !contact) {
+  const { name, location, createdBy, address, contact } = req.body;
+  if (!name || !location || !createdBy || !address || !contact) {
     return res.status(400).json({
-      message:
-        "Name, password, location, address and contact details are required.",
+      message: "Please provide all the credentials.",
     });
   }
 
   try {
-    const existingPharmacy = await pharmacyModel.findOne({
-      createdBy: req.user.userId,
-    });
+    // const existingPharmacy = await pharmacyModel.findOne({
+    //   createdBy: req.user.userId,
+    // });
 
-    if (existingPharmacy) {
-      return res.status(400).json({
-        message:
-          "You already have a pharmacy. Only one pharmacy is allowed per user.",
-      });
-    }
+    // if (existingPharmacy) {
+    //   return res.status(400).json({
+    //     message:
+    //       "You already have a pharmacy. Only one pharmacy is allowed per user.",
+    //   });
+    // }
     const pharmacy = await pharmacyModel.create({
       name,
-      password,
       location,
       createdBy,
       address,

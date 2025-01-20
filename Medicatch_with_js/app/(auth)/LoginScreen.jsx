@@ -20,7 +20,7 @@ const loginScreen = () => {
       Alert.alert("Error", "Please fill in both fields");
       return;
     } else {
-      let userLogin = await fetch(`http://192.168.0.110:3001/users/login`, {
+      let userLogin = await fetch(`http://192.168.1.4:3001/users/login`, {
         method: "POST",
         headers: {
           "content-type": "application/json",

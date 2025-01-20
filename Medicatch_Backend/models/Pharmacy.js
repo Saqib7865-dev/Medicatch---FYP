@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 
 const pharmacySchema = new mongoose.Schema({
   name: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
   stock: [
     {
       medicineName: { type: String, required: true },
