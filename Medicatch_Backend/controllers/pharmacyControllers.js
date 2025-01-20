@@ -10,16 +10,16 @@ exports.createPharmacy = async (req, res) => {
   }
 
   try {
-    const existingPharmacy = await pharmacyModel.findOne({
-      createdBy: req.user.userId,
-    });
+    // const existingPharmacy = await pharmacyModel.findOne({
+    //   createdBy: req.user.userId,
+    // });
 
-    if (existingPharmacy) {
-      return res.status(400).json({
-        message:
-          "You already have a pharmacy. Only one pharmacy is allowed per user.",
-      });
-    }
+    // if (existingPharmacy) {
+    //   return res.status(400).json({
+    //     message:
+    //       "You already have a pharmacy. Only one pharmacy is allowed per user.",
+    //   });
+    // }
     const pharmacy = await pharmacyModel.create({
       name,
       location,
@@ -39,8 +39,12 @@ exports.createPharmacy = async (req, res) => {
 exports.getUsersPharmacy = async (req, res) => {
   try {
     const pharmacy = await pharmacyModel.findOne({
-      createdBy: req.user.userId,
+      createdBy: req.params.id,
     });
+
+    // const pharmacy = await pharmacyModel.findOne({
+    //   createdBy: req.user.userId,
+    // });
 
     if (!pharmacy) {
       return res.status(404).json({ message: "Pharmacy not found" });
@@ -123,11 +127,13 @@ exports.addStock = async (req, res) => {
   //     .status(400)
   //     .json({ message: "Medicine name and quantity are required." });
   // }
+
+  console.log("called....");
   if (!req.file) res.status(404).send({ message: "CSV file is required" });
   try {
     const pharmacy = await pharmacyModel.findOne({
       _id: id,
-      createdBy: userId,
+      // createdBy: userId,
     });
     if (!pharmacy) {
       return res

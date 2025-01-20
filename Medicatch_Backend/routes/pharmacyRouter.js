@@ -10,7 +10,8 @@ const csvUpload = require("../config/csvUploadConfig");
 const { verifyToken, allowRole } = require("../middleware/auth");
 const pharmacyRouter = express.Router();
 pharmacyRouter.post("/", createPharmacy);
-pharmacyRouter.get("/", verifyToken, allowRole(["pharmacy"]), getUsersPharmacy);
+pharmacyRouter.get("/:id", getUsersPharmacy);
+// pharmacyRouter.get("/", verifyToken, allowRole(["pharmacy"]), getUsersPharmacy);
 pharmacyRouter.put(
   "/:id",
   verifyToken,
