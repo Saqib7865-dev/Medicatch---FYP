@@ -50,7 +50,7 @@ const SignUp = () => {
           setName("");
           setPassword("");
           setConfirmPassword("");
-          router.push("/LoginScreen");
+          router.replace("/LoginScreen");
         }, 2000);
       } else return Alert.alert("Message", userRegisterJson.message);
   };

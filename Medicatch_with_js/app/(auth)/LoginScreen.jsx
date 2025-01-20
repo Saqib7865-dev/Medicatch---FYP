@@ -38,7 +38,7 @@ const loginScreen = () => {
             console.log("welcome");
             Alert.alert("Success", userLoginJson.message);
             setTimeout(() => {
-              router.push("/(tabs)");
+              router.replace("/(tabs)");
             }, 2000);
           } else return Alert.alert("message:", userLoginJson.message);
         }
@@ -93,7 +93,7 @@ const loginScreen = () => {
         source={require("./../../assets/logo1.png")} // Update the path as needed
         style={styles.logo}
       />
-      <Text style={styles.title}>Sign In</Text>
+      <Text style={styles.title}>Log In</Text>
 
       <TextInput
         style={styles.input}
