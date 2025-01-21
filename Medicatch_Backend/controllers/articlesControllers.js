@@ -1,9 +1,9 @@
 const articleModel = require("../models/Articles");
 const upload = require("../config/multerConfig");
 exports.createArticle = async (req, res) => {
-  if (req.user.role !== "admin") {
-    return res.status(403).json({ message: "Access denied. Admins only." });
-  }
+  // if (req.user.role !== "admin") {
+  //   return res.status(403).json({ message: "Access denied. Admins only." });
+  // }
   try {
     const { title, content } = req.body;
     const article = new articleModel({
@@ -73,9 +73,10 @@ exports.updateAnArticle = async (req, res) => {
 };
 
 exports.deleteAnArticle = async (req, res) => {
-  if (req.user.role !== "admin") {
-    return res.status(403).json({ message: "Access denied. Admins only." });
-  }
+  // if (req.user.role !== "admin") {
+  //   return res.status(403).json({ message: "Access denied. Admins only." });
+  // }
+
   try {
     const { id } = req.params;
     const article = await articleModel.findByIdAndDelete(id);

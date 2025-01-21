@@ -1,4 +1,5 @@
 const pharmacyModel = require("../models/Pharmacy");
+const userModel = require("../models/Users");
 const csv = require("csvtojson");
 exports.createPharmacy = async (req, res) => {
   const { name, location, createdBy, address, contact } = req.body;
@@ -26,7 +27,10 @@ exports.createPharmacy = async (req, res) => {
       address,
       contact,
     });
-
+    let user = await userModel.findOne({ _id: createdBy });
+    console.log(user);
+    user.role = "pharmacy";
+    await user.save();
     res
       .status(201)
       .json({ message: "Pharmacy created successfully", pharmacy });
@@ -38,8 +42,12 @@ exports.createPharmacy = async (req, res) => {
 exports.getUsersPharmacy = async (req, res) => {
   try {
     const pharmacy = await pharmacyModel.findOne({
-      createdBy: req.user.userId,
+      createdBy: req.params.id,
     });
+
+    // const pharmacy = await pharmacyModel.findOne({
+    //   createdBy: req.user.userId,
+    // });
 
     if (!pharmacy) {
       return res.status(404).json({ message: "Pharmacy not found" });
@@ -115,11 +123,19 @@ exports.deletePharmacy = async (req, res) => {
 exports.addStock = async (req, res) => {
   const { id } = req.params;
   const userId = req.body.userId;
+
+  // if (!medicineName || !quantity) {
+  //   return res
+  //     .status(400)
+  //     .json({ message: "Medicine name and quantity are required." });
+  // }
+
+  console.log("called....");
   if (!req.file) res.status(404).send({ message: "CSV file is required" });
   try {
     const pharmacy = await pharmacyModel.findOne({
       _id: id,
-      createdBy: userId,
+      // createdBy: userId,
     });
     if (!pharmacy) {
       return res

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -22,7 +22,6 @@ const Search = () => {
   const [contactNumber, setContactNumber] = useState("");
   const [address, setAddress] = useState("");
   const [location, setLocation] = useState(null);
-  const [csvFile, setCsvFile] = useState(null); // To store selected CSV file
   const [showMap, setShowMap] = useState(false);
 
   const handleSetLocation = () => {
@@ -38,23 +37,6 @@ const Search = () => {
     setShowMap(false);
   };
 
-  const handleCSVUpload = async () => {
-    try {
-      const result = await DocumentPicker.getDocumentAsync({
-        type: "text/csv",
-      });
-      if (result.type === "success") {
-        setCsvFile(result);
-        Alert.alert("Success", "CSV file selected successfully!");
-      } else {
-        Alert.alert("Cancelled", "No file selected.");
-      }
-    } catch (error) {
-      console.error("Error selecting file:", error);
-      Alert.alert("Error", "Failed to select file.");
-    }
-  };
-
   const handleRegister = async () => {
     if (!pharmacyName || !ownerName || !contactNumber || !address) {
       Alert.alert("Error", "All fields are required!");
@@ -66,18 +48,13 @@ const Search = () => {
       return;
     }
 
-    // if (!csvFile) {
-    //   Alert.alert("Error", "Please upload a CSV file!");
-    //   return;
-    // }
-
     const formData = {
       pharmacyName,
       ownerName,
       contactNumber,
       address,
       location,
-      csvFile, // Include the file metadata
+      // Include the file metadata
     };
 
     console.log("Pharmacy Details:", formData);
@@ -108,12 +85,11 @@ const Search = () => {
     }
 
     // Clear form after submission
-    // setPharmacyName("");
-    // setOwnerName("");
-    // setContactNumber("");
-    // setAddress("");
-    // setLocation(null);
-    // setCsvFile(null);
+    setPharmacyName("");
+    setOwnerName("");
+    setContactNumber("");
+    setAddress("");
+    setLocation(null);
 
     Alert.alert("Success", "Pharmacy registered successfully!");
     router.push({
@@ -121,6 +97,10 @@ const Search = () => {
       params: { ...formData },
     });
   };
+
+  useEffect(() => {
+    router.push("/Screens/PharmacyDetails");
+  }, []);
 
   return (
     <>
@@ -184,11 +164,6 @@ const Search = () => {
           </TouchableOpacity>
 
           {/* CSV Upload Button */}
-          <TouchableOpacity style={styles.csvButton} onPress={handleCSVUpload}>
-            <Text style={styles.buttonText}>
-              {csvFile ? "CSV File Selected" : "Upload CSV File"}
-            </Text>
-          </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.registerButton}

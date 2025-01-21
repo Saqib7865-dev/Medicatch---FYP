@@ -1,13 +1,122 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View, TouchableOpacity, Alert } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import * as DocumentPicker from "expo-document-picker";
+import { useAppContext } from "../context/context";
+import * as FileSystem from "expo-file-system";
 
 const PharmacyDetails = () => {
+  const { user } = useAppContext();
   const params = useLocalSearchParams();
   const router = useRouter();
+  const [csvFile, setCsvFile] = useState(null); // State to store selected CSV file
+
+  console.log(user);
+
+  const [pharmacyID, setPharmacyID] = useState("");
+
+  const getPharmacy = async () => {
+    try {
+      const resp = await fetch(`http://192.168.0.115:3001/pharmacy/${user.id}`);
+      const data = await resp.json();
+      console.log(data);
+      if (resp.ok) {
+        setPharmacyID(data?.pharmacy?._id);
+      }
+      console.log(data._id);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  console.log(pharmacyID);
+
+  const addPharmStock = async (csvFile) => {
+    console.log("pharmstock");
+    if (!csvFile || !csvFile.assets || csvFile.assets.length === 0) {
+      console.error("No CSV file selected.");
+      return;
+    }
+
+    try {
+      // Create a new FormData instance
+      const formData = new FormData();
+      const fileUri = csvFile.assets[0].uri;
+      const fileName = csvFile.assets[0].name;
+      const fileType = csvFile.assets[0].mimeType;
+
+      // Read the file as binary
+
+      const fileContent = await FileSystem.readAsStringAsync(fileUri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+
+      // Append the file to the FormData
+      formData.append("file", {
+        uri: fileUri,
+        name: fileName,
+        type: "text/csv",
+      });
+
+      // Make the fetch call
+      const resp = await fetch(
+        `http://192.168.0.115:3001/pharmacy/${pharmacyID}/stock`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          body: formData,
+        }
+      );
+
+      const data = await resp.json();
+
+      console.log("Response from server:");
+
+      if (resp.ok) {
+        Alert.alert("Success", "Stock uploaded successfully!");
+      } else {
+        Alert.alert("Error", data.message || "Failed to upload stock.");
+      }
+    } catch (error) {
+      console.error("Error uploading stock:", error);
+      Alert.alert("Error", "An error occurred while uploading stock.");
+    }
+  };
+
+  const handleCSVUpload = async () => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: "text/comma-separated-values", // Only allow CSV files
+        copyToCacheDirectory: true,
+      });
+      console.log(result);
+
+      if (!result.canceled) {
+        setCsvFile(result);
+        console.log("uploaded.................................");
+
+        return result;
+        // Alert.alert("Success", `CSV file selected: ${result.name}`);
+      } else {
+        Alert.alert("Cancelled", "No file selected.");
+      }
+    } catch (error) {
+      console.error("Error selecting file:", error);
+      Alert.alert("Error", "Failed to select file.");
+    }
+  };
 
   const handleUploadStock = () => {
-    Alert.alert("Upload Stock", "Upload stock feature will be implemented.");
+    if (!csvFile) {
+      Alert.alert("Error", "Please select a CSV file before uploading.");
+      return;
+    }
+    Alert.alert(
+      "Upload Stock",
+      `Uploading ${csvFile.name}...\nFeature implementation pending.`
+    );
   };
 
   const handleUpdatePharmacy = () => {
@@ -27,6 +136,30 @@ const PharmacyDetails = () => {
       ]
     );
   };
+
+  //   const addPharmStock = async () => {
+  //     try {
+  //       const resp = await fetch(
+  //         `http://192.168.0.115:3001/api/${user.id}/stock`,
+  //         {
+  //           method: "POST",
+  //           headers: {
+  //             "content-type": "application/json",
+  //           },
+  //           body: JSON.stringify({}),
+  //         }
+  //       );
+
+  //       const data = await resp.json();
+  //       console.log(data);
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   };
+
+  useEffect(() => {
+    getPharmacy();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -48,10 +181,32 @@ const PharmacyDetails = () => {
         {params.location?.latitude}, Longitude {params.location?.longitude}
       </Text>
 
-      <TouchableOpacity style={styles.actionButton} onPress={handleUploadStock}>
+      {/* Select CSV File */}
+      <TouchableOpacity
+        style={styles.actionButton}
+        onPress={() => {
+          handleCSVUpload().then((resp) => {
+            console.log(resp, "resp-----------------");
+            // addPharmStock(resp);
+          });
+        }}
+      >
+        <Text style={styles.buttonText}>
+          {csvFile ? `File Selected: ${csvFile.name}` : "Select CSV File"}
+        </Text>
+      </TouchableOpacity>
+
+      {/* Upload Stock Button */}
+      <TouchableOpacity
+        style={styles.actionButton}
+        onPress={() => {
+          addPharmStock(csvFile);
+        }}
+      >
         <Text style={styles.buttonText}>Upload Stock File</Text>
       </TouchableOpacity>
 
+      {/* Update Pharmacy Button */}
       <TouchableOpacity
         style={styles.actionButton}
         onPress={handleUpdatePharmacy}
@@ -59,6 +214,7 @@ const PharmacyDetails = () => {
         <Text style={styles.buttonText}>Update Pharmacy</Text>
       </TouchableOpacity>
 
+      {/* Delete Pharmacy Button */}
       <TouchableOpacity
         style={[styles.actionButton, styles.deleteButton]}
         onPress={handleDeletePharmacy}
