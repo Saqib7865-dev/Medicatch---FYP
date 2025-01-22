@@ -11,6 +11,12 @@ exports.createArticle = async (req, res) => {
       content,
       image: req.file ? req.file.path : null,
     });
+
+    console.log(req.image);
+    console.log(req.body);
+    console.log("--------------------");
+    // console.log(req);
+
     await article.save();
     res.status(201).json({ message: "Article created successfully", article });
   } catch (error) {

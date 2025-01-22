@@ -28,11 +28,12 @@ const quotes = [
 ];
 
 const Home = () => {
-  const { user } = useAppContext();
+  const { user, articles, setArticles } = useAppContext();
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [quote, setQuote] = useState(""); // Ensure quote is initialized as an empty string
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const checkAuthentication = async () => {
@@ -82,13 +83,14 @@ const Home = () => {
   }
 
   const fetchArticles = async (pageNumber = 1) => {
-    if (loading || allLoaded) return;
     setLoading(true);
+
     try {
-      const response = await fetch(`${API_URL}`);
+      const response = await fetch(`http://192.168.0.115:3001/articles`);
       if (!response.ok) {
         throw new Error("Failed to fetch articles");
       }
+
       const data = await response.json();
       if (data.length === 0) {
         setAllLoaded(true);
@@ -103,10 +105,7 @@ const Home = () => {
     }
   };
 
-  useEffect(() => {
-    fetchArticles();
-  }, []);
-
+  console.log(user);
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {/* <SideDrawer isOpen={true} /> */}
@@ -115,7 +114,7 @@ const Home = () => {
         {/* <TouchableOpacity>
           <Feather name="menu" size={24} color="#000" />
         </TouchableOpacity> */}
-        <Text style={styles.welcomeText}>Welcome, {user.username}</Text>
+        <Text style={styles.welcomeText}>Welcome, {user?.username}</Text>
       </View>
       {/* Search Bar */}
       <View style={styles.searchContainer}>
@@ -135,6 +134,7 @@ const Home = () => {
       </View>
 
       {/* Articles Grid */}
+
       <View style={styles.articlesGrid}>
         {/* Health Articles Section */}
         <View style={styles.articlesHeader}>
@@ -148,44 +148,46 @@ const Home = () => {
             </Text>
           </TouchableOpacity>
         </View>
+        <Text style={styles.articlesDescription}>
+          Explore our curated health articles to inspire your journey toward a
+          healthier, happier lifestyle.
+        </Text>
+        {/* Single Large Article Card */}
+        <TouchableOpacity onPress={() => {}}>
+          <View style={styles.articleCard}>
+            <Image
+              source={require("./../../assets/home1.png")}
+              style={styles.articleImage}
+            />
+            <View style={styles.overlay}>
+              <Text style={styles.overlayText}>Title Here</Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => {}}>
+          <View style={styles.articleCard}>
+            <Image
+              source={require("./../../assets/home1.png")}
+              style={styles.articleImage}
+            />
+            <View style={styles.overlay}>
+              <Text style={styles.overlayText}>Title Here</Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => {}}>
+          <View style={styles.articleCard}>
+            <Image
+              source={require("./../../assets/home1.png")}
+              style={styles.articleImage}
+            />
+            <View style={styles.overlay}>
+              <Text style={styles.overlayText}>Title Here</Text>
+            </View>
+          </View>
+        </TouchableOpacity>
 
-        <View style={{ width: "100%" }}>
-          <Image
-            source={require("./../../assets/home1.png")}
-            style={styles.articleImage}
-          />
-        </View>
-
-        <View
-          style={{
-            flexDirection: "row",
-            gap: 20,
-            width: Dimensions.get("window").width,
-          }}
-        >
-          <Image
-            source={require("./../../assets/home1.png")}
-            style={{
-              width: Dimensions.get("window").width / 2 - 30,
-              height: 120,
-              borderRadius: 10,
-              marginBottom: 10,
-            }}
-          />
-          <Image
-            source={require("./../../assets/home1.png")}
-            style={{
-              width: Dimensions.get("window").width / 2 - 30,
-              height: 120,
-              borderRadius: 10,
-              marginBottom: 10,
-            }}
-          />
-        </View>
-        <Image
-          source={require("./../../assets/home1.png")}
-          style={styles.articleImage}
-        />
+        {/* Smaller Article Cards */}
       </View>
     </ScrollView>
   );
@@ -259,16 +261,53 @@ const styles = StyleSheet.create({
     color: "#4173A1",
     fontWeight: "bold",
   },
-  articlesGrid: {
-    flexDirection: "column",
-    justifyContent: "center",
-    flex: 1,
+  articlesDescription: {
+    fontSize: 14,
+    color: "#555",
+    marginBottom: 20,
+    lineHeight: 20,
+  },
+  // articlesGrid: {
+  //   flexDirection: "column",
+  //   justifyContent: "center",
+  //   flex: 1,
+  // },
+  // articleImage: {
+  //   width: "100%",
+  //   height: 120,
+  //   borderRadius: 10,
+  //   marginBottom: 10,
+  // },
+  articleCard: {
+    position: "relative",
+    marginBottom: 10,
+    borderRadius: 10,
+    overflow: "hidden",
   },
   articleImage: {
     width: "100%",
     height: 120,
-    borderRadius: 10,
-    marginBottom: 10,
+  },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  overlay: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background
+    padding: 10,
+    alignItems: "center",
+    height: "100%",
+    flex: "column",
+    justifyContent: "center",
+  },
+  overlayText: {
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "bold",
   },
   loadingContainer: {
     flex: 1,

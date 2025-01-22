@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 
 // Create the Context
 const AppContext = createContext();
@@ -9,10 +9,14 @@ export const useAppContext = () => useContext(AppContext);
 // Provider component
 export const AppProvider = ({ children }) => {
   const [user, setUser] = useState(null); // User state
+  const [articles, setArticles] = useState([]);
 
   const value = {
     user,
+    articles,
+
     setUser,
+    setArticles,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

@@ -24,7 +24,7 @@ const loginScreen = () => {
         Alert.alert("Error", "Please fill in both fields");
         return;
       } else {
-        let userLogin = await fetch(`http://192.168.0.104:3001/users/login`, {
+        let userLogin = await fetch(`http://192.168.0.115:3001/users/login`, {
           method: "POST",
           headers: {
             "content-type": "application/json",
@@ -36,6 +36,10 @@ const loginScreen = () => {
           if (userLoginJson.message === "Login successful") {
             await storeToken(userLoginJson.token);
             Alert.alert("Success", userLoginJson.message);
+            console.log(userLoginJson, "resp........");
+
+            setUser({ ...decodedToken, username: userLoginJson.username });
+
             setTimeout(() => {
               router.replace("/(tabs)");
             }, 2000);
@@ -49,7 +53,7 @@ const loginScreen = () => {
 
   const myLogin = async () => {
     try {
-      let userLogin = await fetch(`http://192.168.1.4:3001/users/login`, {
+      let userLogin = await fetch(`http://192.168.0.115:3001/users/login`, {
         method: "POST",
         headers: {
           "content-type": "application/json",
@@ -65,6 +69,8 @@ const loginScreen = () => {
 
           // Decode the token
           const decodedToken = jwtDecode(token);
+          console.log(userLoginJson, "resp........");
+
           setUser({ ...decodedToken, username: userLoginJson.username });
 
           await storeToken(token);
