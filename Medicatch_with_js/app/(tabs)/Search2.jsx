@@ -152,7 +152,7 @@ const MedicineSearch = () => {
             <View style={styles.storeCard}>
               <Text style={styles.storeName}>{item.name}</Text>
               <Text style={styles.storeDetails}>{item.address}</Text>
-              <Text style={styles.storeDetails}>City: {item.city}</Text>
+              {/* <Text style={styles.storeDetails}>City: {item.city}</Text> */}
               <Text style={styles.storeDetails}>{item.contact}</Text>
               <Text
                 style={[
@@ -164,9 +164,10 @@ const MedicineSearch = () => {
               >
                 {item.availability}
               </Text>
-              <Text style={styles.distanceText}>
+
+              {/* <Text style={styles.distanceText}>
                 Distance: {item.distance.toFixed(2)} km
-              </Text>
+              </Text> */}
 
               {/* Locate Pharmacy Button */}
               <TouchableOpacity

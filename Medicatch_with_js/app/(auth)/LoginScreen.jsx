@@ -66,7 +66,7 @@ const loginScreen = () => {
 
           // Decode the token
           const decodedToken = jwtDecode(token);
-          setUser(decodedToken);
+          setUser({ ...decodedToken, username: userLoginJson.username });
 
           await storeToken(token);
           console.log("welcome", decodedToken);

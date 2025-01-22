@@ -15,6 +15,7 @@ import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { getToken, removeToken } from "../../utils/tokenStorage";
 import SideDrawer from "../components/side-drawer";
+import { useAppContext } from "../context/context";
 
 const quotes = [
   "An apple a day keeps the doctor away.",
@@ -27,6 +28,7 @@ const quotes = [
 ];
 
 const Home = () => {
+  const { user } = useAppContext();
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -79,15 +81,41 @@ const Home = () => {
     return null; // Avoid rendering anything if unauthenticated
   }
 
+  const fetchArticles = async (pageNumber = 1) => {
+    if (loading || allLoaded) return;
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_URL}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch articles");
+      }
+      const data = await response.json();
+      if (data.length === 0) {
+        setAllLoaded(true);
+      } else {
+        setArticles((prevArticles) => [...prevArticles, ...data]);
+        setPage(pageNumber);
+      }
+    } catch (error) {
+      Alert.alert("Error", error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchArticles();
+  }, []);
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {/* <SideDrawer isOpen={true} /> */}
       {/* Header Section */}
       <View style={styles.header}>
-        <TouchableOpacity>
+        {/* <TouchableOpacity>
           <Feather name="menu" size={24} color="#000" />
-        </TouchableOpacity>
-        <Text style={styles.welcomeText}>Welcome</Text>
+        </TouchableOpacity> */}
+        <Text style={styles.welcomeText}>Welcome, {user.username}</Text>
       </View>
       {/* Search Bar */}
       <View style={styles.searchContainer}>
