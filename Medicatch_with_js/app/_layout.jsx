@@ -1,15 +1,10 @@
-import React, { useEffect } from "react";
-import { Stack, useRouter } from "expo-router";
+import React from "react";
+import { Stack } from "expo-router";
 import { StatusBar } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AppProvider } from "./context/context";
 
 const RootLayout = () => {
-  const router = useRouter();
-  // useEffect(() => {
-  //   router.push("(auth)");
-  // }, []);
-
   return (
     <>
       <AppProvider>

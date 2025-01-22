@@ -24,7 +24,7 @@ const loginScreen = () => {
         Alert.alert("Error", "Please fill in both fields");
         return;
       } else {
-        let userLogin = await fetch(`http://192.168.0.115:3001/users/login`, {
+        let userLogin = await fetch(`http://192.168.0.104:3001/users/login`, {
           method: "POST",
           headers: {
             "content-type": "application/json",
@@ -35,7 +35,6 @@ const loginScreen = () => {
         if (userLoginJson.message) {
           if (userLoginJson.message === "Login successful") {
             await storeToken(userLoginJson.token);
-            console.log("welcome");
             Alert.alert("Success", userLoginJson.message);
             setTimeout(() => {
               router.replace("/(tabs)");
@@ -50,7 +49,7 @@ const loginScreen = () => {
 
   const myLogin = async () => {
     try {
-      let userLogin = await fetch(`http://192.168.0.115:3001/users/login`, {
+      let userLogin = await fetch(`http://192.168.1.4:3001/users/login`, {
         method: "POST",
         headers: {
           "content-type": "application/json",

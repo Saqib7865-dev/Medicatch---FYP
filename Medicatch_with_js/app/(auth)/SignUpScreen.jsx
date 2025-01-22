@@ -33,7 +33,11 @@ const SignUp = () => {
       return;
     }
 
+<<<<<<< HEAD
+    let userRegister = await fetch("http://192.168.0.104:3001/users/register", {
+=======
     let userRegister = await fetch("http://192.168.0.115:3001/users/register", {
+>>>>>>> 90e0131109cab6b4e482c359b7c66fb6429a914b
       method: "POST",
       headers: {
         "content-type": "application/json",

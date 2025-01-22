@@ -1,11 +1,11 @@
 const pharmacyModel = require("../models/Pharmacy");
+const userModel = require("../models/Users");
 const csv = require("csvtojson");
 exports.createPharmacy = async (req, res) => {
-  const { name, password, location, createdBy, address, contact } = req.body;
+  const { name, location, createdBy, address, contact } = req.body;
   if (!name || !location || !createdBy || !address || !contact) {
     return res.status(400).json({
-      message:
-        "Name, password, location, address and contact details are required.",
+      message: "Please provide all the credentials.",
     });
   }
 
@@ -27,7 +27,10 @@ exports.createPharmacy = async (req, res) => {
       address,
       contact,
     });
-
+    let user = await userModel.findOne({ _id: createdBy });
+    console.log(user);
+    user.role = "pharmacy";
+    await user.save();
     res
       .status(201)
       .json({ message: "Pharmacy created successfully", pharmacy });
@@ -119,7 +122,6 @@ exports.deletePharmacy = async (req, res) => {
 
 exports.addStock = async (req, res) => {
   const { id } = req.params;
-  // const { medicineName, quantity } = req.body;
   const userId = req.body.userId;
 
   // if (!medicineName || !quantity) {
