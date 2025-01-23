@@ -80,7 +80,7 @@ const CreateArticle = () => {
       }
 
       Alert.alert("Success", "Article created successfully!");
-      // router.push("/(tabs)"); // Navigate back to the articles list
+      router.push("/(tabs)/Health Articles"); // Navigate back to the articles list
     } catch (error) {
       Alert.alert("Error", error.message);
     } finally {

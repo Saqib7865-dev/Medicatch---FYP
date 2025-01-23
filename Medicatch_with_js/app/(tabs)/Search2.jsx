@@ -77,6 +77,12 @@ const MedicineSearch = () => {
   // Assume user's current location is in Islamabad
   const userLocation = { latitude: 33.6844, longitude: 73.0479 };
 
+  const searchMed = async () => {
+    try {
+      const resp = await fetch("http://192.168.0.115:3001");
+    } catch (error) {}
+  };
+
   const handleSearch = () => {
     if (!medicineName) {
       Alert.alert("Error", "Please enter a medicine name.");

@@ -5,8 +5,11 @@ import {
   View,
   TextInput,
   TouchableOpacity,
+  FlatList,
   Alert,
 } from "react-native";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import * as Notifications from "expo-notifications";
 
 const daysOfWeek = ["SU", "M", "T", "W", "TR", "F", "S"];
 
@@ -15,6 +18,9 @@ const MedicationReminder = () => {
   const [medicineType, setMedicineType] = useState("");
   const [medicineAmount, setMedicineAmount] = useState("");
   const [selectedDays, setSelectedDays] = useState([]);
+  const [time, setTime] = useState(new Date());
+  const [showTimePicker, setShowTimePicker] = useState(false);
+  const [reminders, setReminders] = useState([]);
 
   const toggleDaySelection = (day) => {
     if (selectedDays.includes(day)) {
@@ -24,24 +30,75 @@ const MedicationReminder = () => {
     }
   };
 
-  const handleSave = () => {
+  const handleTimeChange = (event, selectedTime) => {
+    setShowTimePicker(false);
+    if (selectedTime) {
+      setTime(selectedTime);
+    }
+  };
+
+  const scheduleNotifications = async (day) => {
+    const dayIndex = daysOfWeek.indexOf(day);
+    const now = new Date();
+    const nextNotificationDate = new Date(now);
+    nextNotificationDate.setHours(time.getHours(), time.getMinutes(), 0);
+    nextNotificationDate.setDate(
+      now.getDate() + ((dayIndex - now.getDay() + 7) % 7 || 7)
+    );
+
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: `Time for your medicine: ${medicineName}`,
+        body: `Take ${medicineAmount} of ${medicineType}.`,
+      },
+      trigger: {
+        weekday: dayIndex + 1, // Expo uses 1 = Sunday, 7 = Saturday
+        hour: time.getHours(),
+        minute: time.getMinutes(),
+        repeats: true,
+      },
+    });
+  };
+
+  const handleSave = async () => {
     if (!medicineName || !medicineType || !medicineAmount) {
       Alert.alert("Error", "Please fill in all fields.");
       return;
     }
 
-    Alert.alert("Success", "Medication reminder saved successfully!", [
-      { text: "OK" },
-    ]);
-    // Add logic to save reminder (e.g., API call or local storage)
-  };
+    if (!selectedDays.length) {
+      Alert.alert("Error", "Please select at least one day.");
+      return;
+    }
 
-  const handleDiscard = () => {
+    const newReminder = {
+      id: Date.now().toString(),
+      medicineName,
+      medicineType,
+      medicineAmount,
+      selectedDays,
+      time,
+    };
+
+    // Save notification schedules
+    for (const day of selectedDays) {
+      await scheduleNotifications(day);
+    }
+
+    setReminders((prevReminders) => [...prevReminders, newReminder]);
+    Alert.alert("Success", "Medication reminder saved successfully!");
+
+    // Clear input fields
     setMedicineName("");
     setMedicineType("");
     setMedicineAmount("");
     setSelectedDays([]);
-    Alert.alert("Discarded", "Your changes have been discarded.");
+    setTime(new Date());
+  };
+
+  const handleDeleteReminder = (id) => {
+    setReminders(reminders.filter((reminder) => reminder.id !== id));
+    Alert.alert("Deleted", "The reminder has been deleted.");
   };
 
   return (
@@ -61,7 +118,7 @@ const MedicationReminder = () => {
       <Text style={styles.label}>Select Medicine Type:</Text>
       <TextInput
         style={styles.input}
-        placeholder="Other"
+        placeholder="Tablet, Syrup, etc."
         value={medicineType}
         onChangeText={setMedicineType}
       />
@@ -100,17 +157,70 @@ const MedicationReminder = () => {
         ))}
       </View>
 
-      {/* Save and Discard Buttons */}
+      {/* Time Picker */}
+      <Text style={styles.label}>Select Time for Reminder:</Text>
+      <TouchableOpacity
+        style={styles.timePickerButton}
+        onPress={() => setShowTimePicker(true)}
+      >
+        <Text style={styles.timePickerText}>
+          {time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+        </Text>
+      </TouchableOpacity>
+      {showTimePicker && (
+        <DateTimePicker
+          value={time}
+          mode="time"
+          is24Hour={false}
+          display="default"
+          onChange={handleTimeChange}
+        />
+      )}
+
+      {/* Save Button */}
       <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
         <Text style={styles.buttonText}>Save</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.discardButton} onPress={handleDiscard}>
-        <Text style={styles.buttonText}>Discard</Text>
-      </TouchableOpacity>
+      {/* Reminder List */}
+      <Text style={styles.header}>Set Reminders</Text>
+      <FlatList
+        data={reminders}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View style={styles.reminderCard}>
+            <Text style={styles.reminderText}>
+              {item.medicineName} - {item.medicineType}
+            </Text>
+            <Text style={styles.reminderText}>
+              {item.medicineAmount} | Time:{" "}
+              {item.time.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </Text>
+            <Text style={styles.reminderDays}>
+              Days: {item.selectedDays.join(", ")}
+            </Text>
+            <TouchableOpacity
+              style={styles.deleteButton}
+              onPress={() => handleDeleteReminder(item.id)}
+            >
+              <Text style={styles.buttonText}>Delete</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+        ListEmptyComponent={
+          <Text style={styles.noRemindersText}>
+            No reminders set. Add a new one!
+          </Text>
+        }
+      />
     </View>
   );
 };
+
+export default MedicationReminder;
 
 const styles = StyleSheet.create({
   container: {
@@ -165,6 +275,17 @@ const styles = StyleSheet.create({
   dayTextSelected: {
     color: "#fff",
   },
+  timePickerButton: {
+    padding: 15,
+    borderRadius: 10,
+    backgroundColor: "#4173A1",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  timePickerText: {
+    color: "#fff",
+    fontSize: 16,
+  },
   saveButton: {
     backgroundColor: "#4173A1",
     padding: 15,
@@ -184,5 +305,3 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
-
-export default MedicationReminder;

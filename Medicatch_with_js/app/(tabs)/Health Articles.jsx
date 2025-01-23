@@ -112,7 +112,7 @@ const HealthArticles = () => {
       </View>
 
       {/* Admin "Create Article" Button */}
-      {user.role === "admin" && (
+      {"user.role" === "admin" && (
         <TouchableOpacity
           style={styles.createButton}
           onPress={() => router.push("/Screens/CreateArticle")}
@@ -142,24 +142,34 @@ const HealthArticles = () => {
         <Text style={styles.errorMessage}>{errorMessage}</Text>
       ) : displayedArticles.length > 0 ? (
         displayedArticles.map((article) => (
-          <View key={article._id} style={styles.articleCard}>
-            <Image
-              // source={require("./../../assets/home1.png")}
-              source={{ uri: article.image }}
-              style={styles.articleImage}
-            />
-            <View style={styles.articleContent}>
-              <Text style={styles.articleTitle}>{article.title}</Text>
-              <Text style={styles.articleContentText}>
-                {article.content.length > 20
-                  ? `${article.content.slice(0, 8)}...`
-                  : article.content}
-              </Text>
-              <Text style={styles.articleDate}>
-                {formatDate(article.createdAt)}
-              </Text>
+          <TouchableOpacity
+            key={article._id}
+            onPress={() =>
+              router.push({
+                pathname: "/Screens/ArticleDetails",
+                params: { ...article },
+              })
+            }
+          >
+            <View style={styles.articleCard}>
+              <Image
+                // source={require("./../../assets/home1.png")}
+                source={{ uri: article.image }}
+                style={styles.articleImage}
+              />
+              <View style={styles.articleContent}>
+                <Text style={styles.articleTitle}>{article.title}</Text>
+                <Text style={styles.articleContentText}>
+                  {article.content.length > 20
+                    ? `${article.content.slice(0, 8)}...`
+                    : article.content}
+                </Text>
+                <Text style={styles.articleDate}>
+                  {formatDate(article.createdAt)}
+                </Text>
+              </View>
             </View>
-          </View>
+          </TouchableOpacity>
         ))
       ) : (
         <Text style={styles.noArticlesText}>No articles available.</Text>
