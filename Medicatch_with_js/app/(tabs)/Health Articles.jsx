@@ -13,7 +13,7 @@ import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useAppContext } from "../context/context";
 
-const API_URL = "http://15.0.4.130:3001/articles";
+const API_URL = "http://172.16.100.30:3001/articles";
 
 const formatDate = (dateString) => {
   if (!dateString) return "Unknown Date";
@@ -65,7 +65,7 @@ const HealthArticles = () => {
     setErrorMessage(""); // Reset error message
     try {
       const response = await fetch(
-        `http://15.0.4.130:3001/articles/search/?query=${query}`
+        `http://172.16.100.30:3001/articles/search/?query=${query}`
       );
       if (!response.ok) {
         throw new Error("Failed to fetch search results");

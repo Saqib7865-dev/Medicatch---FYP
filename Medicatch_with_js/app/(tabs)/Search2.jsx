@@ -80,7 +80,7 @@ const MedicineSearch = () => {
 
   const searchMed = async () => {
     try {
-      const resp = await fetch(`http://15.0.4.130:3001/p`);
+      const resp = await fetch(`http://172.16.100.30:3001/p`);
     } catch (error) {}
   };
 

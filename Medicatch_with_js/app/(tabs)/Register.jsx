@@ -62,7 +62,7 @@ const Search = () => {
     console.log("Pharmacy Details:", formData);
 
     try {
-      const resp = await fetch("http://15.0.4.130:3001/pharmacy", {
+      const resp = await fetch("http://172.16.100.30:3001/pharmacy", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
