@@ -10,6 +10,8 @@ import {
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import * as Notifications from "expo-notifications";
+import SendNotification from "../components/send-notification";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const daysOfWeek = ["SU", "M", "T", "W", "TR", "F", "S"];
 
@@ -21,6 +23,9 @@ const MedicationReminder = () => {
   const [time, setTime] = useState(new Date());
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [reminders, setReminders] = useState([]);
+  const [storage, setStorage] = useState("s");
+
+  console.log(storage);
 
   const toggleDaySelection = (day) => {
     if (selectedDays.includes(day)) {
@@ -99,6 +104,29 @@ const MedicationReminder = () => {
   const handleDeleteReminder = (id) => {
     setReminders(reminders.filter((reminder) => reminder.id !== id));
     Alert.alert("Deleted", "The reminder has been deleted.");
+  };
+
+  const storeData = async (value) => {
+    try {
+      await AsyncStorage.setItem("my-key", value);
+    } catch (e) {
+      Alert(e);
+      // saving error
+    }
+  };
+
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem("my-key");
+      console.log(value);
+      if (value !== null) {
+        console.log(value);
+        // value previously stored
+      }
+    } catch (e) {
+      Alert(e);
+      // error reading value
+    }
   };
 
   return (
@@ -216,6 +244,27 @@ const MedicationReminder = () => {
           </Text>
         }
       />
+
+      {/* <SendNotification /> */}
+
+      <TouchableOpacity
+        style={styles.deleteButton}
+        onPress={() => {
+          console.log("setting storage");
+          storeData("Ahmad1");
+        }}
+      >
+        <Text style={styles.buttonText}>Set Storage</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.deleteButton}
+        onPress={() => {
+          console.log("getting storage");
+          getData();
+        }}
+      >
+        <Text style={styles.buttonText}>Get Storage</Text>
+      </TouchableOpacity>
     </View>
   );
 };
