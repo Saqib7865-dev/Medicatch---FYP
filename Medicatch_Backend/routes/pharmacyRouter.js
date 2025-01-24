@@ -5,12 +5,14 @@ const {
   updatePharmacy,
   deletePharmacy,
   addStock,
+  getMedicine,
 } = require("../controllers/pharmacyControllers");
 const csvUpload = require("../config/csvUploadConfig");
 const { verifyToken, allowRole } = require("../middleware/auth");
 const pharmacyRouter = express.Router();
 pharmacyRouter.post("/", createPharmacy);
 pharmacyRouter.get("/:id", getUsersPharmacy);
+pharmacyRouter.post("/searchMedicine", getMedicine);
 // pharmacyRouter.get("/", verifyToken, allowRole(["pharmacy"]), getUsersPharmacy);
 pharmacyRouter.put(
   "/:id",
