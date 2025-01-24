@@ -6,13 +6,14 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
-  ActivityIndicator,
   Alert,
+  TextInput,
 } from "react-native";
-import { Feather } from "@expo/vector-icons"; // Install using: npm install @expo/vector-icons
-import { useRouter } from "expo-router"; // Use router for navigation
+import { Feather } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import { useAppContext } from "../context/context";
 
-const API_URL = "http://192.168.0.104:3001/articles"; // Replace with your backend API URL
+const API_URL = "http://192.168.0.115:3001/articles";
 
 const formatDate = (dateString) => {
   if (!dateString) return "Unknown Date";
@@ -25,16 +26,17 @@ const formatDate = (dateString) => {
 };
 
 const HealthArticles = () => {
+  const { user } = useAppContext();
   const [articles, setArticles] = useState([]);
+  const [searchedArticles, setSearchedArticles] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(1);
-  const [allLoaded, setAllLoaded] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(true); // Mock admin status
+  const [errorMessage, setErrorMessage] = useState(""); // To handle errors
   const router = useRouter();
 
-  const fetchArticles = async (pageNumber = 1) => {
-    if (loading || allLoaded) return;
+  const fetchArticles = async () => {
     setLoading(true);
+    setErrorMessage(""); // Reset error message
     try {
       const response = await fetch(`${API_URL}`);
       if (!response.ok) {
@@ -42,15 +44,51 @@ const HealthArticles = () => {
       }
       const data = await response.json();
       if (data.length === 0) {
-        setAllLoaded(true);
-      } else {
-        setArticles((prevArticles) => [...prevArticles, ...data]);
-        setPage(pageNumber);
+        setErrorMessage("No articles available."); // Set message if no articles
       }
+      setArticles(data);
     } catch (error) {
-      Alert.alert("Error", error.message);
+      setErrorMessage(error.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const searchArticles = async (query) => {
+    if (!query.trim()) {
+      setSearchedArticles([]); // Reset search results if query is empty
+      setErrorMessage("");
+      return;
+    }
+
+    setLoading(true);
+    setErrorMessage(""); // Reset error message
+    try {
+      const response = await fetch(
+        `http://192.168.0.115:3001/articles/search/?query=${query}`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch search results");
+      }
+      const data = await response.json();
+      if (data.length === 0) {
+        setErrorMessage("No articles found for your search."); // Set message if no results
+      }
+      setSearchedArticles(data);
+    } catch (error) {
+      setErrorMessage(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    if (query.trim() === "") {
+      setSearchedArticles([]); // Reset to show all articles if query is empty
+      setErrorMessage(""); // Reset error message
+    } else {
+      searchArticles(query);
     }
   };
 
@@ -58,18 +96,23 @@ const HealthArticles = () => {
     fetchArticles();
   }, []);
 
+  const displayedArticles =
+    searchedArticles.length > 0 || searchQuery.trim() !== ""
+      ? searchedArticles
+      : articles;
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {/* Header Section */}
       <View style={styles.header}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => router.back()}>
           <Feather name="arrow-left" size={24} color="#000" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Health Articles</Text>
       </View>
 
       {/* Admin "Create Article" Button */}
-      {isAdmin && (
+      {"user.role" === "admin" && (
         <TouchableOpacity
           style={styles.createButton}
           onPress={() => router.push("/Screens/CreateArticle")}
@@ -78,36 +121,58 @@ const HealthArticles = () => {
         </TouchableOpacity>
       )}
 
-      {/* Articles List */}
-      {articles.map((article) => (
-        <View key={article._id} style={styles.articleCard}>
-          <Image source={{ uri: article.image }} style={styles.articleImage} />
-          <View style={styles.articleContent}>
-            <Text style={styles.articleTitle}>{article.title}</Text>
-            <Text style={styles.articleDate}>
-              {formatDate(article.createdAt)}
-            </Text>
-          </View>
-        </View>
-      ))}
+      {/* Search Section */}
+      <View style={styles.searchContainer}>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search for Articles"
+          placeholderTextColor="#999"
+          value={searchQuery}
+          onChangeText={handleSearch}
+        />
+        {/* <TouchableOpacity style={styles.searchButton}>
+          <Feather name="search" size={20} color="#fff" />
+        </TouchableOpacity> */}
+      </View>
 
-      {/* Load More Button */}
-      {!allLoaded && (
-        <TouchableOpacity
-          style={styles.loadMoreButton}
-          onPress={() => fetchArticles(page + 1)}
-          disabled={loading}
-        >
-          {loading ? (
-            <ActivityIndicator size="small" color="#fff" />
-          ) : (
-            <Text style={styles.loadMoreText}>Load More</Text>
-          )}
-        </TouchableOpacity>
-      )}
-
-      {allLoaded && (
-        <Text style={styles.endMessage}>No more articles to load</Text>
+      {/* Error or Loading Message */}
+      {loading ? (
+        <Text style={styles.loadingText}>Loading...</Text>
+      ) : errorMessage ? (
+        <Text style={styles.errorMessage}>{errorMessage}</Text>
+      ) : displayedArticles.length > 0 ? (
+        displayedArticles.map((article) => (
+          <TouchableOpacity
+            key={article._id}
+            onPress={() =>
+              router.push({
+                pathname: "/Screens/ArticleDetails",
+                params: { ...article },
+              })
+            }
+          >
+            <View style={styles.articleCard}>
+              <Image
+                // source={require("./../../assets/home1.png")}
+                source={{ uri: article.image }}
+                style={styles.articleImage}
+              />
+              <View style={styles.articleContent}>
+                <Text style={styles.articleTitle}>{article.title}</Text>
+                <Text style={styles.articleContentText}>
+                  {article.content.length > 20
+                    ? `${article.content.slice(0, 8)}...`
+                    : article.content}
+                </Text>
+                <Text style={styles.articleDate}>
+                  {formatDate(article.createdAt)}
+                </Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+        ))
+      ) : (
+        <Text style={styles.noArticlesText}>No articles available.</Text>
       )}
     </ScrollView>
   );
@@ -141,6 +206,26 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
+  searchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  searchInput: {
+    flex: 1,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: "#D1D9E6",
+    borderRadius: 10,
+    backgroundColor: "#fff",
+    fontSize: 16,
+  },
+  searchButton: {
+    backgroundColor: "#4173A1",
+    padding: 10,
+    borderRadius: 10,
+    marginLeft: 10,
+  },
   articleCard: {
     flexDirection: "row",
     backgroundColor: "#fff",
@@ -168,27 +253,28 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 5,
   },
+  articleContentText: {
+    fontSize: 12,
+    marginBottom: 5,
+  },
   articleDate: {
     fontSize: 14,
     color: "#555",
   },
-  loadMoreButton: {
-    backgroundColor: "#4173A1",
-    padding: 10,
-    borderRadius: 10,
-    alignItems: "center",
-    marginTop: 10,
-  },
-  loadMoreText: {
-    color: "#fff",
+  loadingText: {
     fontSize: 16,
-    fontWeight: "bold",
-  },
-  endMessage: {
-    marginTop: 10,
-    fontSize: 14,
     color: "#555",
     textAlign: "center",
+  },
+  errorMessage: {
+    textAlign: "center",
+    fontSize: 16,
+    color: "red",
+  },
+  noArticlesText: {
+    textAlign: "center",
+    fontSize: 16,
+    color: "#555",
   },
 });
 

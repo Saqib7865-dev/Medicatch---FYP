@@ -77,6 +77,12 @@ const MedicineSearch = () => {
   // Assume user's current location is in Islamabad
   const userLocation = { latitude: 33.6844, longitude: 73.0479 };
 
+  const searchMed = async () => {
+    try {
+      const resp = await fetch("http://192.168.0.115:3001");
+    } catch (error) {}
+  };
+
   const handleSearch = () => {
     if (!medicineName) {
       Alert.alert("Error", "Please enter a medicine name.");
@@ -152,7 +158,7 @@ const MedicineSearch = () => {
             <View style={styles.storeCard}>
               <Text style={styles.storeName}>{item.name}</Text>
               <Text style={styles.storeDetails}>{item.address}</Text>
-              <Text style={styles.storeDetails}>City: {item.city}</Text>
+              {/* <Text style={styles.storeDetails}>City: {item.city}</Text> */}
               <Text style={styles.storeDetails}>{item.contact}</Text>
               <Text
                 style={[
@@ -164,9 +170,10 @@ const MedicineSearch = () => {
               >
                 {item.availability}
               </Text>
-              <Text style={styles.distanceText}>
+
+              {/* <Text style={styles.distanceText}>
                 Distance: {item.distance.toFixed(2)} km
-              </Text>
+              </Text> */}
 
               {/* Locate Pharmacy Button */}
               <TouchableOpacity
