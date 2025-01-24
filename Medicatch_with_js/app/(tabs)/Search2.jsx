@@ -9,6 +9,7 @@ import {
   Alert,
   Linking,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage"; // For token storage
 
 // Haversine formula to calculate distance
 const calculateDistance = (lat1, lon1, lat2, lon2) => {
@@ -79,7 +80,7 @@ const MedicineSearch = () => {
 
   const searchMed = async () => {
     try {
-      const resp = await fetch("http://192.168.0.115:3001");
+      const resp = await fetch(`http://15.0.4.130:3001/p`);
     } catch (error) {}
   };
 
@@ -130,8 +131,30 @@ const MedicineSearch = () => {
     );
   };
 
+  const handleSpecificAction = async () => {
+    // Perform your specific action logic here
+    Alert.alert("Action Triggered", "You will now be logged out.");
+
+    // Clear user authentication data
+    try {
+      await AsyncStorage.removeItem("authToken"); // Clear the token from storage
+      // Add any other cleanup logic here (e.g., clearing user data from state)
+    } catch (error) {
+      console.error("Error clearing auth token:", error);
+    }
+
+    // Redirect to the login screen
+    router.replace("/(auth)/LoginScreen");
+  };
+
   return (
     <View style={styles.container}>
+      <TouchableOpacity
+        style={styles.logoutButton}
+        onPress={handleSpecificAction}
+      >
+        <Text style={styles.buttonText}>Log out</Text>
+      </TouchableOpacity>
       <Text style={styles.header}>Search Medicine Availability</Text>
 
       {/* Medicine Name Input */}

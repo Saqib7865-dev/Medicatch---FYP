@@ -12,6 +12,8 @@ import * as DocumentPicker from "expo-document-picker";
 import PharmacyLocation from "../Screens/PharmacyLocation";
 import { useAppContext } from "../context/context";
 import { useRouter } from "expo-router";
+import PharmacyDetails from "../components/PharmacyDetails";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Search = () => {
   const { user } = useAppContext();
@@ -60,7 +62,7 @@ const Search = () => {
     console.log("Pharmacy Details:", formData);
 
     try {
-      const resp = await fetch("http://192.168.0.115:3001/pharmacy", {
+      const resp = await fetch("http://15.0.4.130:3001/pharmacy", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -69,14 +71,23 @@ const Search = () => {
           name: pharmacyName,
           location,
           createdBy: user.id,
-          contact: "1",
-          address: "11",
+          contact: contactNumber,
+          address: address,
         }),
       });
 
       const data = await resp.json();
       if (resp.ok) {
         console.log(data);
+        setPharmacyName("");
+        setOwnerName("");
+        setContactNumber("");
+        setAddress("");
+        setLocation(null);
+        Alert.alert("Success", "Pharmacy registered successfully!");
+        await AsyncStorage.removeItem("authToken"); // Clear the token from storage
+
+        router.push("(auth)/Login");
       } else {
         console.log(data);
       }
@@ -85,93 +96,88 @@ const Search = () => {
     }
 
     // Clear form after submission
-    setPharmacyName("");
-    setOwnerName("");
-    setContactNumber("");
-    setAddress("");
-    setLocation(null);
-
-    Alert.alert("Success", "Pharmacy registered successfully!");
-    router.push({
-      pathname: "Screens/PharmacyDetails",
-      params: { ...formData },
-    });
   };
 
-  useEffect(() => {
-    router.push("/Screens/PharmacyDetails");
-  }, []);
+  // useEffect(() => {
+  //   router.push("/Screens/PharmacyDetails");
+  // }, []);
 
   return (
     <>
-      {showMap ? (
-        <PharmacyLocation
-          onConfirm={(latitude, longitude) =>
-            handleLocationSelect(latitude, longitude)
-          }
-        />
+      {user.role === "pharmacy" ? (
+        <PharmacyDetails />
       ) : (
-        <ScrollView contentContainerStyle={styles.container}>
-          <Text style={styles.header}>Register Pharmacy</Text>
+        <>
+          {showMap ? (
+            <PharmacyLocation
+              onConfirm={(latitude, longitude) =>
+                handleLocationSelect(latitude, longitude)
+              }
+            />
+          ) : (
+            <ScrollView contentContainerStyle={styles.container}>
+              <Text style={styles.header}>Register Pharmacy</Text>
 
-          <Text style={styles.label}>Pharmacy Name</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter Pharmacy Name"
-            value={pharmacyName}
-            onChangeText={setPharmacyName}
-          />
+              <Text style={styles.label}>Pharmacy Name</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Enter Pharmacy Name"
+                value={pharmacyName}
+                onChangeText={setPharmacyName}
+              />
 
-          <Text style={styles.label}>Owner's Name</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter Owner's Name"
-            value={ownerName}
-            onChangeText={setOwnerName}
-          />
+              <Text style={styles.label}>Owner's Name</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Enter Owner's Name"
+                value={ownerName}
+                onChangeText={setOwnerName}
+              />
 
-          <Text style={styles.label}>Contact Number</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter Contact Number"
-            value={contactNumber}
-            keyboardType="phone-pad"
-            onChangeText={setContactNumber}
-          />
+              <Text style={styles.label}>Contact Number</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Enter Contact Number"
+                value={contactNumber}
+                keyboardType="phone-pad"
+                onChangeText={setContactNumber}
+              />
 
-          <Text style={styles.label}>Address</Text>
-          <TextInput
-            style={[styles.input, styles.textArea]}
-            placeholder="Enter Pharmacy Address"
-            value={address}
-            multiline
-            numberOfLines={4}
-            onChangeText={setAddress}
-          />
+              <Text style={styles.label}>Address</Text>
+              <TextInput
+                style={[styles.input, styles.textArea]}
+                placeholder="Enter Pharmacy Address"
+                value={address}
+                multiline
+                numberOfLines={4}
+                onChangeText={setAddress}
+              />
 
-          {location && (
-            <Text style={styles.locationText}>
-              Selected Location: Latitude {location.latitude}, Longitude{" "}
-              {location.longitude}
-            </Text>
+              {location && (
+                <Text style={styles.locationText}>
+                  Selected Location: Latitude {location.latitude}, Longitude{" "}
+                  {location.longitude}
+                </Text>
+              )}
+
+              <TouchableOpacity
+                style={styles.setLocationButton}
+                onPress={handleSetLocation}
+              >
+                <Text style={styles.buttonText}>Set Location</Text>
+              </TouchableOpacity>
+
+              {/* CSV Upload Button */}
+
+              <TouchableOpacity
+                style={styles.registerButton}
+                onPress={handleRegister}
+              >
+                <Text style={styles.buttonText}>Register</Text>
+              </TouchableOpacity>
+            </ScrollView>
           )}
-
-          <TouchableOpacity
-            style={styles.setLocationButton}
-            onPress={handleSetLocation}
-          >
-            <Text style={styles.buttonText}>Set Location</Text>
-          </TouchableOpacity>
-
-          {/* CSV Upload Button */}
-
-          <TouchableOpacity
-            style={styles.registerButton}
-            onPress={handleRegister}
-          >
-            <Text style={styles.buttonText}>Register</Text>
-          </TouchableOpacity>
-        </ScrollView>
+        </>
       )}
     </>
   );

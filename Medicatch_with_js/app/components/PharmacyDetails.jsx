@@ -10,18 +10,20 @@ const PharmacyDetails = () => {
   const params = useLocalSearchParams();
   const router = useRouter();
   const [csvFile, setCsvFile] = useState(null); // State to store selected CSV file
+  const [pharmacy, setPharmacy] = useState({});
+  const [loading, setLoading] = useState(false);
 
   console.log(user);
 
-  const [pharmacyID, setPharmacyID] = useState("");
-
   const getPharmacy = async () => {
     try {
-      const resp = await fetch(`http://192.168.0.115:3001/pharmacy/${user.id}`);
+      setLoading(true);
+      const resp = await fetch(`http://15.0.4.130:3001/pharmacy/${user.id}`);
       const data = await resp.json();
-      console.log(data);
+      console.log(data, "pharm.............");
       if (resp.ok) {
-        setPharmacyID(data?.pharmacy?._id);
+        setPharmacy(data.pharmacy);
+        setLoading(false);
       }
       console.log(data._id);
     } catch (error) {
@@ -29,7 +31,7 @@ const PharmacyDetails = () => {
     }
   };
 
-  console.log(pharmacyID);
+  console.log(pharmacy._id);
 
   const addPharmStock = async (csvFile) => {
     console.log("pharmstock");
@@ -60,7 +62,7 @@ const PharmacyDetails = () => {
 
       // Make the fetch call
       const resp = await fetch(
-        `http://192.168.0.115:3001/pharmacy/${pharmacyID}/stock`,
+        `http://15.0.4.130:3001/pharmacy/${pharmacy._id}/stock`,
         {
           method: "PUT",
           headers: {
@@ -137,26 +139,6 @@ const PharmacyDetails = () => {
     );
   };
 
-  //   const addPharmStock = async () => {
-  //     try {
-  //       const resp = await fetch(
-  //         `http://192.168.0.115:3001/api/${user.id}/stock`,
-  //         {
-  //           method: "POST",
-  //           headers: {
-  //             "content-type": "application/json",
-  //           },
-  //           body: JSON.stringify({}),
-  //         }
-  //       );
-
-  //       const data = await resp.json();
-  //       console.log(data);
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   };
-
   useEffect(() => {
     getPharmacy();
   }, []);
@@ -164,63 +146,75 @@ const PharmacyDetails = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Pharmacy Details</Text>
-      <Text style={styles.detailText}>
-        <Text style={styles.label}>Name:</Text> {params.pharmacyName}
-      </Text>
-      <Text style={styles.detailText}>
-        <Text style={styles.label}>Owner:</Text> {params.ownerName}
-      </Text>
-      <Text style={styles.detailText}>
-        <Text style={styles.label}>Contact:</Text> {params.contactNumber}
-      </Text>
-      <Text style={styles.detailText}>
-        <Text style={styles.label}>Address:</Text> {params.address}
-      </Text>
-      <Text style={styles.detailText}>
-        <Text style={styles.label}>Location:</Text> Latitude{" "}
-        {params.location?.latitude}, Longitude {params.location?.longitude}
-      </Text>
+      {loading ? (
+        <Text style={styles.loading}>Loading...</Text>
+      ) : (
+        <>
+          <Text style={styles.detailText}>
+            <Text style={styles.label}>Name:</Text> {pharmacy?.name}
+          </Text>
 
-      {/* Select CSV File */}
-      <TouchableOpacity
-        style={styles.actionButton}
-        onPress={() => {
-          handleCSVUpload().then((resp) => {
-            console.log(resp, "resp-----------------");
-            // addPharmStock(resp);
-          });
-        }}
-      >
-        <Text style={styles.buttonText}>
-          {csvFile ? `File Selected: ${csvFile.name}` : "Select CSV File"}
-        </Text>
-      </TouchableOpacity>
+          <Text style={styles.detailText}>
+            <Text style={styles.label}>Contact:</Text> {pharmacy?.contact}
+          </Text>
+          <Text style={styles.detailText}>
+            <Text style={styles.label}>Address:</Text> {pharmacy?.address}
+          </Text>
+          {/* <Text style={styles.detailText}>
+            <Text style={styles.label}>Location:</Text> Latitude{" "}
+            {params.location?.latitude}, Longitude {params.location?.longitude}
+          </Text> */}
 
-      {/* Upload Stock Button */}
-      <TouchableOpacity
-        style={styles.actionButton}
-        onPress={() => {
-          addPharmStock(csvFile);
-        }}
-      >
-        <Text style={styles.buttonText}>Upload Stock File</Text>
-      </TouchableOpacity>
+          {/* Select CSV File */}
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "column",
+              justifyContent: "flex-end",
+            }}
+          >
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={() => {
+                handleCSVUpload().then((resp) => {
+                  console.log(resp, "resp-----------------");
+                  // addPharmStock(resp);
+                });
+              }}
+            >
+              <Text style={styles.buttonText}>
+                {csvFile ? `File Selected: ${csvFile.name}` : "Select CSV File"}
+              </Text>
+            </TouchableOpacity>
 
-      {/* Update Pharmacy Button */}
-      <TouchableOpacity
-        style={styles.actionButton}
-        onPress={handleUpdatePharmacy}
-      >
-        <Text style={styles.buttonText}>Update Pharmacy</Text>
-      </TouchableOpacity>
+            {/* Upload Stock Button */}
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={() => {
+                addPharmStock(csvFile);
+              }}
+            >
+              <Text style={styles.buttonText}>Upload Stock File</Text>
+            </TouchableOpacity>
 
-      {/* Delete Pharmacy Button */}
-      <TouchableOpacity
-        style={[styles.actionButton, styles.deleteButton]}
-        onPress={handleDeletePharmacy}
-      >
-        <Text style={styles.buttonText}>Delete Pharmacy</Text>
-      </TouchableOpacity>
+            {/* Update Pharmacy Button */}
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={handleUpdatePharmacy}
+            >
+              <Text style={styles.buttonText}>Update Pharmacy</Text>
+            </TouchableOpacity>
+
+            {/* Delete Pharmacy Button */}
+            <TouchableOpacity
+              style={[styles.actionButton, styles.deleteButton]}
+              onPress={handleDeletePharmacy}
+            >
+              <Text style={styles.buttonText}>Delete Pharmacy</Text>
+            </TouchableOpacity>
+          </View>
+        </>
+      )}
     </View>
   );
 };
@@ -236,6 +230,11 @@ const styles = StyleSheet.create({
   header: {
     fontSize: 24,
     fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  loading: {
+    fontSize: 16,
     textAlign: "center",
     marginBottom: 20,
   },

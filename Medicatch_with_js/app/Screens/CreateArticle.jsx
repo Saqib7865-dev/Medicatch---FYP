@@ -12,7 +12,7 @@ import {
 import { useRouter } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
 
-const API_URL = "http://192.168.0.115:3001/articles"; // Replace with your backend API URL
+const API_URL = "http://15.0.4.130:3001/articles"; // Replace with your backend API URL
 
 const CreateArticle = () => {
   const [title, setTitle] = useState("");
