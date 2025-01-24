@@ -189,7 +189,9 @@ exports.addStock = async (req, res) => {
 exports.getMedicine = async (req, res) => {
   try {
     const { query } = req.query;
-    console.log(query, "qqqqqqqqqqqq");
+    if (!query) {
+      return res.status(400).json({ message: "Query parameter is required." });
+    }
     const pharmacies = await pharmacyModel.find({
       stock: {
         $elemMatch: {
@@ -197,13 +199,33 @@ exports.getMedicine = async (req, res) => {
         },
       },
     });
-    console.log("Pharmacies: ", pharmacies);
-    if (pharmacies.length > 0) {
-      return res.status(200).json(pharmacies);
-    } else {
-      return res.json({ message: "No matching pharmacy found." });
+
+    if (pharmacies.length === 0) {
+      return res.status(404).json({ message: "No matching medicines found." });
     }
+
+    // Transform the response into the desired format
+    const result = pharmacies.flatMap((pharmacy) =>
+      pharmacy.stock
+        .filter((item) =>
+          item.medicineName.toLowerCase().includes(query.toLowerCase())
+        )
+        .map((item) => ({
+          pharmacy: {
+            medicineName: item.medicineName,
+            quantity: item.quantity,
+            pharmacyName: pharmacy.name,
+            address: pharmacy.address,
+            contact: pharmacy.contact,
+            location: {
+              latitude: pharmacy.location.latitude,
+              longitude: pharmacy.location.longitude,
+            },
+          },
+        }))
+    );
+    res.status(200).json(result);
   } catch (error) {
-    res.status(500).json({ message: "Error hlhjhkajdhf pharmacies", error });
+    res.status(500).json({ message: "Error fetching medicines", error });
   }
 };
