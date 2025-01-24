@@ -256,6 +256,7 @@ const MedicationReminder = () => {
       >
         <Text style={styles.buttonText}>Set Storage</Text>
       </TouchableOpacity>
+
       <TouchableOpacity
         style={styles.deleteButton}
         onPress={() => {

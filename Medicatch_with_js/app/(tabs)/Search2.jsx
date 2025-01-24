@@ -9,9 +9,8 @@ import {
   Alert,
   Linking,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage"; // For token storage
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-// Haversine formula to calculate distance
 const calculateDistance = (lat1, lon1, lat2, lon2) => {
   const R = 6371; // Earth's radius in km
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
@@ -31,130 +30,66 @@ const MedicineSearch = () => {
   const [stores, setStores] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Hardcoded store data with coordinates and cities
-  const dummyStores = [
-    {
-      id: 1,
-      name: "City Pharmacy",
-      address: "123 Main St, Downtown",
-      contact: "123-456-7890",
-      city: "Lahore",
-      availability: "In Stock",
-      latitude: 31.52037,
-      longitude: 74.358749,
-    },
-    {
-      id: 2,
-      name: "HealthPlus Pharmacy",
-      address: "456 Elm St, Uptown",
-      contact: "987-654-3210",
-      city: "Lahore",
-      availability: "Out of Stock",
-      latitude: 31.5255,
-      longitude: 74.3599,
-    },
-    {
-      id: 3,
-      name: "GoodHealth Pharmacy",
-      address: "789 Oak St, Suburb",
-      contact: "555-555-5555",
-      city: "Islamabad",
-      availability: "In Stock",
-      latitude: 33.6844,
-      longitude: 73.0479,
-    },
-    {
-      id: 4,
-      name: "New City Pharmacy",
-      address: "15 New Rd, Town Center",
-      contact: "222-222-2222",
-      city: "Faisalabad",
-      availability: "In Stock",
-      latitude: 31.450365,
-      longitude: 73.134964,
-    },
-  ];
-
-  // Assume user's current location is in Islamabad
   const userLocation = { latitude: 33.6844, longitude: 73.0479 };
 
   const searchMed = async () => {
-    try {
-      const resp = await fetch(`http://172.16.100.30:3001/p`);
-    } catch (error) {}
-  };
-
-  const handleSearch = () => {
-    if (!medicineName) {
+    if (!medicineName.trim()) {
       Alert.alert("Error", "Please enter a medicine name.");
       return;
     }
 
     setIsLoading(true);
+    try {
+      const resp = await fetch(
+        `http://172.16.100.30:3001/pharmacy/searchMedicine/?query=${medicineName}`,
+        {
+          method: "POST",
+        }
+      );
+      const data = await resp.json();
 
-    // Simulate API call with a delay
-    setTimeout(() => {
-      setIsLoading(false);
-
-      // Filter stores with dummy data
-      const filteredStores = dummyStores
-        .filter((store) =>
-          store.availability.toLowerCase().includes("in stock")
+      // Transform API response to match UI requirements
+      const transformedStores = data.map((store) => ({
+        id: store._id,
+        name: store.name,
+        address: store.address,
+        contact: store.contact,
+        availability: store.stock.some(
+          (item) =>
+            item.medicineName.toLowerCase() === medicineName.toLowerCase()
         )
-        .map((store) => ({
-          ...store,
-          distance: calculateDistance(
-            userLocation.latitude,
-            userLocation.longitude,
-            store.latitude,
-            store.longitude
-          ),
-        }))
-        .sort((a, b) => a.distance - b.distance); // Sort by distance
+          ? "In Stock"
+          : "Out of Stock",
+        latitude: store.location.latitude,
+        longitude: store.location.longitude,
+        distance: calculateDistance(
+          userLocation.latitude,
+          userLocation.longitude,
+          store.location.latitude,
+          store.location.longitude
+        ),
+      }));
 
-      if (filteredStores.length > 0) {
-        setStores(filteredStores);
-      } else {
-        Alert.alert(
-          "No Results",
-          "No stores found with the requested medicine."
-        );
-        setStores([]);
-      }
-    }, 1500);
+      setStores(
+        transformedStores.sort((a, b) => a.distance - b.distance) // Sort by distance
+      );
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Error", "Failed to fetch data from the server.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleOpenGoogleMaps = (latitude, longitude) => {
     const url = `https://www.google.com/maps/?q=${latitude},${longitude}`;
-    Linking.openURL(url).catch((err) =>
+    Linking.openURL(url).catch(() =>
       Alert.alert("Error", "Failed to open Google Maps.")
     );
   };
 
-  const handleSpecificAction = async () => {
-    // Perform your specific action logic here
-    Alert.alert("Action Triggered", "You will now be logged out.");
-
-    // Clear user authentication data
-    try {
-      await AsyncStorage.removeItem("authToken"); // Clear the token from storage
-      // Add any other cleanup logic here (e.g., clearing user data from state)
-    } catch (error) {
-      console.error("Error clearing auth token:", error);
-    }
-
-    // Redirect to the login screen
-    router.replace("/(auth)/LoginScreen");
-  };
-
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        style={styles.logoutButton}
-        onPress={handleSpecificAction}
-      >
-        <Text style={styles.buttonText}>Log out</Text>
-      </TouchableOpacity>
       <Text style={styles.header}>Search Medicine Availability</Text>
 
       {/* Medicine Name Input */}
@@ -166,7 +101,7 @@ const MedicineSearch = () => {
       />
 
       {/* Search Button */}
-      <TouchableOpacity style={styles.searchButton} onPress={handleSearch}>
+      <TouchableOpacity style={styles.searchButton} onPress={searchMed}>
         <Text style={styles.buttonText}>Search</Text>
       </TouchableOpacity>
 
@@ -176,12 +111,11 @@ const MedicineSearch = () => {
       ) : (
         <FlatList
           data={stores}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <View style={styles.storeCard}>
               <Text style={styles.storeName}>{item.name}</Text>
               <Text style={styles.storeDetails}>{item.address}</Text>
-              {/* <Text style={styles.storeDetails}>City: {item.city}</Text> */}
               <Text style={styles.storeDetails}>{item.contact}</Text>
               <Text
                 style={[
@@ -193,24 +127,20 @@ const MedicineSearch = () => {
               >
                 {item.availability}
               </Text>
-
-              {/* <Text style={styles.distanceText}>
-                Distance: {item.distance.toFixed(2)} km
-              </Text> */}
-
-              {/* Locate Pharmacy Button */}
               <TouchableOpacity
                 style={styles.locateButton}
                 onPress={() =>
                   handleOpenGoogleMaps(item.latitude, item.longitude)
                 }
               >
-                <Text style={styles.locateButtonText}>Locate </Text>
+                <Text style={styles.locateButtonText}>Locate</Text>
               </TouchableOpacity>
             </View>
           )}
           ListEmptyComponent={
-            <Text style={styles.noResultsText}>No stores found.</Text>
+            <Text style={styles.noResultsText}>
+              No stores found for the requested medicine.
+            </Text>
           }
         />
       )}
@@ -295,11 +225,6 @@ const styles = StyleSheet.create({
   outOfStock: {
     backgroundColor: "#F44336",
     color: "#fff",
-  },
-  distanceText: {
-    fontSize: 14,
-    color: "#007BFF",
-    marginBottom: 10,
   },
   locateButton: {
     backgroundColor: "#FF8C00",

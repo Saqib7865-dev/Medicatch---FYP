@@ -35,6 +35,12 @@ const loginScreen = () => {
         if (userLoginJson.message) {
           if (userLoginJson.message === "Login successful") {
             await storeToken(userLoginJson.token);
+
+            const token = userLoginJson.token;
+
+            // Decode the token
+            const decodedToken = jwtDecode(token);
+
             Alert.alert("Success", userLoginJson.message);
             console.log(userLoginJson, "resp........");
 
@@ -89,7 +95,7 @@ const loginScreen = () => {
   };
 
   useEffect(() => {
-    myLogin();
+    // myLogin();
   }, []);
 
   return (

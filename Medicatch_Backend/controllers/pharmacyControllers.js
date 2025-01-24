@@ -189,6 +189,7 @@ exports.addStock = async (req, res) => {
 exports.getMedicine = async (req, res) => {
   try {
     const { query } = req.query;
+    console.log(query, "qqqqqqqqqqqq");
     const pharmacies = await pharmacyModel.find({
       stock: {
         $elemMatch: {
