@@ -130,7 +130,6 @@ exports.addStock = async (req, res) => {
   //     .json({ message: "Medicine name and quantity are required." });
   // }
 
-  console.log("called....");
   if (!req.file) res.status(404).send({ message: "CSV file is required" });
   try {
     const pharmacy = await pharmacyModel.findOne({
@@ -185,3 +184,4 @@ exports.addStock = async (req, res) => {
     res.status(500).json({ message: "Error updating stock", error });
   }
 };
+

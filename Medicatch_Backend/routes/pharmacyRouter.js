@@ -5,6 +5,7 @@ const {
   updatePharmacy,
   deletePharmacy,
   addStock,
+  getMedicine,
 } = require("../controllers/pharmacyControllers");
 const csvUpload = require("../config/csvUploadConfig");
 const { verifyToken, allowRole } = require("../middleware/auth");
