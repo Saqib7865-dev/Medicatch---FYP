@@ -28,7 +28,6 @@ exports.createPharmacy = async (req, res) => {
       contact,
     });
     let user = await userModel.findOne({ _id: createdBy });
-    console.log(user);
     user.role = "pharmacy";
     await user.save();
     res
@@ -112,7 +111,9 @@ exports.deletePharmacy = async (req, res) => {
         .status(404)
         .json({ message: "Pharmacy not found or unauthorized" });
     }
-
+    let user = await userModel.findOne({ _id: userId });
+    user.role = "user";
+    await user.save();
     await pharmacyModel.findByIdAndDelete(id);
     res.status(200).json({ message: "Pharmacy deleted successfully" });
   } catch (error) {
