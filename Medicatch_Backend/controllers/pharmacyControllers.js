@@ -122,7 +122,7 @@ exports.deletePharmacy = async (req, res) => {
 
 exports.addStock = async (req, res) => {
   const { id } = req.params;
-  const userId = req.body.userId;
+  // const userId = req.body.userId;
 
   // if (!medicineName || !quantity) {
   //   return res
@@ -185,3 +185,23 @@ exports.addStock = async (req, res) => {
   }
 };
 
+exports.getMedicine = async (req, res) => {
+  try {
+    const { query } = req.query;
+    const pharmacies = await pharmacyModel.find({
+      stock: {
+        $elemMatch: {
+          medicineName: { $regex: query, $options: "i" },
+        },
+      },
+    });
+    console.log("Pharmacies: ", pharmacies);
+    if (pharmacies.length > 0) {
+      return res.status(200).json(pharmacies);
+    } else {
+      return res.json({ message: "No matching pharmacy found." });
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Error hlhjhkajdhf pharmacies", error });
+  }
+};
