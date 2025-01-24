@@ -69,6 +69,32 @@ const Home = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const fetchArticles = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(`http://192.168.0.105:3001/articles`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch articles");
+        }
+        const data = await response.json();
+        if (data.length === 0) {
+          setAllLoaded(true);
+        } else {
+          setArticles((prevArticles) => [...prevArticles, ...data]);
+          // setPage(pageNumber);
+        }
+      } catch (error) {
+        Alert.alert("Error", error.message);
+      } finally {
+        setLoading(false);
+        console.log("Articles: ", articles);
+      }
+    };
+    if (isAuthenticated) {
+      fetchArticles();
+    }
+  }, [isAuthenticated]);
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
@@ -81,30 +107,6 @@ const Home = () => {
   if (!isAuthenticated) {
     return null; // Avoid rendering anything if unauthenticated
   }
-
-  const fetchArticles = async (pageNumber = 1) => {
-    setLoading(true);
-
-    try {
-      const response = await fetch(`http://172.16.100.30:3001/articles`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch articles");
-      }
-
-      const data = await response.json();
-      if (data.length === 0) {
-        setAllLoaded(true);
-      } else {
-        setArticles((prevArticles) => [...prevArticles, ...data]);
-        setPage(pageNumber);
-      }
-    } catch (error) {
-      Alert.alert("Error", error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   console.log(user);
   return (
     <ScrollView contentContainerStyle={styles.container}>
