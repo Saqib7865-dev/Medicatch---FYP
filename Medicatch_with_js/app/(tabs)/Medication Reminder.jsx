@@ -12,6 +12,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import * as Notifications from "expo-notifications";
 import SendNotification from "../components/send-notification";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNotification } from "../context/NotificationsContext";
 
 const daysOfWeek = ["SU", "M", "T", "W", "TR", "F", "S"];
 
@@ -129,11 +130,23 @@ const MedicationReminder = () => {
       // error reading value
     }
   };
-
+  const { expoPushToken, notification, error } = useNotification();
+  if (error) {
+    return (
+      <>
+        <p style={styles.center}>Error: {error.message}</p>
+      </>
+    );
+  }
+  console.log(JSON.stringify(notification, null, 2));
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Medication Reminder</Text>
-
+      <Text>Your Push token: {expoPushToken}</Text>
+      <Text>Latest Notification: {notification?.request.content.title}</Text>
+      <Text>
+        Data: {JSON.stringify(notification?.request.content.data, null, 2)}
+      </Text>
       {/* Medicine Name */}
       <Text style={styles.label}>Enter Medicine Name:</Text>
       <TextInput
@@ -354,5 +367,10 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  center: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
