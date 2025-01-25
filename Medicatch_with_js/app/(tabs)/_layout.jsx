@@ -15,12 +15,22 @@ const Tabslayout = () => {
         barStyle="dark-content"
       />
       <Tabs
-        screenOptions={{
+        screenOptions={() => ({
           headerShown: false,
-          tabBarStyle: { backgroundColor: "#fff", borderTopWidth: 0 },
-          tabBarActiveTintColor: "#3798CE",
-          tabBarInactiveTintColor: "#3798CE",
-        }}
+          tabBarStyle: {
+            borderTopWidth: 0,
+            height: 60,
+          },
+          tabBarActiveTintColor: "#4173A1",
+          tabBarInactiveTintColor: "#B3B3B3",
+          tabBarLabelStyle: {
+            fontSize: 12,
+            fontWeight: "bold",
+          },
+          tabBarIconStyle: {
+            justifyContent: "center",
+          },
+        })}
       >
         <Tabs.Screen
           name="index"
@@ -30,7 +40,7 @@ const Tabslayout = () => {
               <Entypo name="home" size={24} color={color} />
             ),
           }}
-        ></Tabs.Screen>
+        />
         <Tabs.Screen
           name="Medication Reminder"
           options={{
@@ -39,7 +49,7 @@ const Tabslayout = () => {
               <FontAwesome name="bell" size={24} color={color} />
             ),
           }}
-        ></Tabs.Screen>
+        />
         <Tabs.Screen
           name="Health Articles"
           options={{
@@ -48,17 +58,16 @@ const Tabslayout = () => {
               <Entypo name="text-document-inverted" size={24} color={color} />
             ),
           }}
-        ></Tabs.Screen>
+        />
         <Tabs.Screen
           name="Register"
           options={{
             title: "Register",
             tabBarIcon: ({ color }) => (
               <Entypo name="location-pin" size={24} color={color} />
-              // <AntDesign name="search1" size={24} color={color} />
             ),
           }}
-        ></Tabs.Screen>
+        />
         <Tabs.Screen
           name="Search2"
           options={{
@@ -68,7 +77,7 @@ const Tabslayout = () => {
               // <AntDesign name="search1" size={24} color={color} />
             ),
           }}
-        ></Tabs.Screen>
+        />
       </Tabs>
     </>
   );
