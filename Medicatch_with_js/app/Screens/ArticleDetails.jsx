@@ -159,7 +159,7 @@ export default ArticleDetails;
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-    backgroundColor: "#c6e6f3",
+    backgroundColor: "#e8f5fa",
   },
   backButton: {
     marginBottom: 20,

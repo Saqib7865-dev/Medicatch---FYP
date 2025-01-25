@@ -47,6 +47,7 @@ const HealthArticles = () => {
         setErrorMessage("No articles available."); // Set message if no articles
       }
       setArticles(data);
+      console.log(data, "fetched articles");
     } catch (error) {
       setErrorMessage(error.message);
     } finally {
@@ -112,7 +113,7 @@ const HealthArticles = () => {
       </View>
 
       {/* Admin "Create Article" Button */}
-      {"user.role" === "admin" && (
+      {user.role === "admin" && (
         <TouchableOpacity
           style={styles.createButton}
           onPress={() => router.push("/Screens/CreateArticle")}
@@ -153,8 +154,11 @@ const HealthArticles = () => {
           >
             <View style={styles.articleCard}>
               <Image
-                // source={require("./../../assets/home1.png")}
-                source={{ uri: article.image }}
+                // source={require("http://localhost:3001/uploads/eb992833-3242-4267-95af-8ca449d4dcef.png")}
+                // source={{ uri: article.image }}
+                source={{
+                  uri: "http://localhost:3001/uploads/eb992833-3242-4267-95af-8ca449d4dcef.png ",
+                }}
                 style={styles.articleImage}
               />
               <View style={styles.articleContent}>
@@ -181,7 +185,7 @@ const HealthArticles = () => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: "#c6e6f3",
+    backgroundColor: "#e8f5fa",
     padding: 20,
   },
   header: {

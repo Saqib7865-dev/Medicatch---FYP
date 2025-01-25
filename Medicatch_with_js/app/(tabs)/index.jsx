@@ -120,15 +120,16 @@ const Home = () => {
       <View style={styles.searchContainer}>
         <TextInput
           style={styles.searchInput}
-          placeholder="Search for Pharmacy"
+          placeholder="Search for Medicine"
           placeholderTextColor="#999"
         />
-        <TouchableOpacity style={styles.searchButton}>
+        <TouchableOpacity style={styles.searchButton} onPress={() => {}}>
           <Feather name="search" size={20} color="#fff" />
         </TouchableOpacity>
       </View>
 
       {/* Quote Section */}
+
       <View style={styles.quoteContainer}>
         <Text style={styles.quoteText}>{quote}</Text>
       </View>
@@ -142,7 +143,8 @@ const Home = () => {
           <TouchableOpacity>
             <Text
               style={styles.viewAllText}
-              onPress={() => router.push("/(auth)/LoginScreen")}
+              // onPress={() => router.push("/(auth)/LoginScreen")}
+              onPress={() => router.push("/Screens/HealthArticles")}
             >
               View All
             </Text>
@@ -196,7 +198,7 @@ const Home = () => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: "#c6e6f3",
+    backgroundColor: "#e8f5fa",
     padding: 20,
   },
   header: {
