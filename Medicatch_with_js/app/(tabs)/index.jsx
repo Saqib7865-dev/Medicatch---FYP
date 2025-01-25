@@ -16,7 +16,7 @@ import { useRouter } from "expo-router";
 import { getToken, removeToken } from "../../utils/tokenStorage";
 import SideDrawer from "../components/side-drawer";
 import { useAppContext } from "../context/context";
-// import { useNotification } from "../context/NotificationsContext";
+import { useNotification } from "../context/NotificationsContext";
 
 const quotes = [
   "An apple a day keeps the doctor away.",
@@ -34,7 +34,7 @@ const Home = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [quote, setQuote] = useState(""); // Ensure quote is initialized as an empty string
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const { expoPushToken, notification, error } = useNotification();
 
   useEffect(() => {
@@ -108,8 +108,8 @@ const Home = () => {
   if (!isAuthenticated) {
     return null; // Avoid rendering anything if unauthenticated
   }
-  console.log(user);
-  if (error) return <>Met with an error</>;
+  // console.log(user);
+  // if (error) return <>Met with an error</>;
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {/* <SideDrawer isOpen={true} /> */}

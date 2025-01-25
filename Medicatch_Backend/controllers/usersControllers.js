@@ -60,7 +60,12 @@ exports.loginUser = async (req, res) => {
         );
         return res
           .status(200)
-          .json({ message: "Login successful", token, username });
+          .json({
+            message: "Login successful",
+            token,
+            username,
+            role: user.role,
+          });
       } else {
         return res.status(401).json({ message: "Invalid credentials" });
       }
