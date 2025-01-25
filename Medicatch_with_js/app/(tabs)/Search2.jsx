@@ -41,7 +41,7 @@ const MedicineSearch = () => {
     setIsLoading(true);
     try {
       const resp = await fetch(
-        `http://172.16.100.30:3001/pharmacy/searchMedicine/?query=${medicineName}`,
+        `http://192.168.18.32:3001/pharmacy/searchMedicine/?query=${medicineName}`,
         {
           method: "POST",
         }
