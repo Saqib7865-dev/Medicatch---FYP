@@ -46,7 +46,7 @@ const CreateArticle = () => {
       setImage(result.assets[0]);
     }
 
-    console.log(result);
+    // console.log(result);
   };
 
   const handleCreateArticle = async () => {

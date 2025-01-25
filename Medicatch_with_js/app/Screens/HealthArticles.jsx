@@ -153,7 +153,6 @@ const HealthArticles = () => {
               })
             }
           >
-            {console.log(`http://192.168.18.32:3001/${article.image}`)}
             <View style={styles.articleCard}>
               {/* <Image
                 // source={require("http://localhost:3001/uploads/eb992833-3242-4267-95af-8ca449d4dcef.png")}
@@ -164,14 +163,11 @@ const HealthArticles = () => {
                 style={styles.articleImage}
               /> */}
               <Image
-                // source={require("./../../assets/home1.png")}
                 source={{
                   uri: `http://192.168.18.32:3001/uploads/${
                     article?.image?.split("\\")[1]
                   }`,
                 }}
-                // width={45}
-                // height={45}
                 style={styles.articleImage}
               />
               <View style={styles.articleContent}>
