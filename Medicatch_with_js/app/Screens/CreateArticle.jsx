@@ -80,12 +80,7 @@ const CreateArticle = () => {
       if (!response.ok) {
         throw new Error("Failed to create article");
       }
-
       const data = await response.json();
-
-      // const tempArticles = [...articles];
-      // console.log(data.article, "data art");
-      // console.log(tempArticles, "tempArticles");
       setArticles((prev) => {
         console.log(prev);
         const tempArticles = [...prev];
@@ -94,7 +89,6 @@ const CreateArticle = () => {
       });
       Alert.alert("Success", "Article created successfully!");
       router.back();
-      // router.push("/(tabs)");
 
       // Navigate back to the articles list
     } catch (error) {
