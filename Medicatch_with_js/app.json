@@ -15,6 +15,7 @@
     },
     "ios": {
       "supportsTablet": true,
+      "bundleIdentifier": "com.muhammadsaqibali.Medicatch",
       "config": {
         "usesNonExemptEncryption": false
       }
@@ -23,11 +24,24 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/logo1.png",
         "backgroundColor": "#e8f5fa"
-      }
+      },
+      "package": "dev.expo.Medicatch_with_js",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./assets/logo1.png"
     },
-    "plugins": ["expo-router"]
+    "plugins": [
+      "expo-router"
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "3931274c-dc64-4624-a0ae-9708dcd25139"
+      }
+    },
+    "owner": "muhammadsaqibali"
   }
 }

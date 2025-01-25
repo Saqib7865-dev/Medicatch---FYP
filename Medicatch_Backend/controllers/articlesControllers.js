@@ -1,5 +1,5 @@
 const articleModel = require("../models/Articles");
-const upload = require("../config/multerConfig");
+// const upload = require("../config/multerConfig");
 exports.createArticle = async (req, res) => {
   // if (req.user.role !== "admin") {
   //   return res.status(403).json({ message: "Access denied. Admins only." });
@@ -27,9 +27,9 @@ exports.createArticle = async (req, res) => {
 exports.getAllArticles = async (req, res) => {
   try {
     const articles = await articleModel.find({});
-    res.status(200).json(articles);
+    return res.status(200).json(articles);
   } catch (error) {
-    res.status(500).json({ message: "Error fetching articles", error });
+    return res.status(500).json({ message: "Error fetching articles", error });
   }
 };
 

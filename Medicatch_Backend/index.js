@@ -10,7 +10,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-mongoose.connect("mongodb://localhost:27017/Medicatch");
+mongoose.connect(
+  "mongodb+srv://medicatchhealthcare:miangthegreat@medicatchcluster.hp5xd.mongodb.net/Medicatch"
+);
 // Users route
 app.use("/users", userRouter);
 // Article route

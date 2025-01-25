@@ -13,7 +13,7 @@ import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useAppContext } from "../context/context";
 
-const API_URL = "http://192.168.18.8:3001/articles";
+const API_URL = "http://192.168.18.32:3001/articles";
 
 const formatDate = (dateString) => {
   if (!dateString) return "Unknown Date";
@@ -67,7 +67,7 @@ const HealthArticles = () => {
     setErrorMessage(""); // Reset error message
     try {
       const response = await fetch(
-        `http://192.168.18.8:3001/articles/search/?query=${query}`
+        `http://192.168.18.32:3001/articles/search/?query=${query}`
       );
       if (!response.ok) {
         throw new Error("Failed to fetch search results");
@@ -153,6 +153,7 @@ const HealthArticles = () => {
               })
             }
           >
+            {console.log(`http://192.168.18.32:3001/${article.image}`)}
             <View style={styles.articleCard}>
               {/* <Image
                 // source={require("http://localhost:3001/uploads/eb992833-3242-4267-95af-8ca449d4dcef.png")}
@@ -166,7 +167,7 @@ const HealthArticles = () => {
               <Image
                 // source={require("./../../assets/home1.png")}
                 source={{
-                  uri: `http://192.168.18.8:3001/uploads/${
+                  uri: `http://192.168.18.32:3001/uploads/${
                     article?.image?.split("\\")[1]
                   }`,
                 }}
