@@ -168,7 +168,7 @@ const CreateArticle = () => {
   useEffect(() => {
     if (params?.title) {
       setTitle(params?.title);
-      setContent(params.content ?? "");
+      setContent(params?.content ?? "");
       setImage({
         url: params.image,
       });

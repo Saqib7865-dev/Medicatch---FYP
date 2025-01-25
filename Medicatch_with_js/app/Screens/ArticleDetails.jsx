@@ -145,7 +145,7 @@ const ArticleDetails = () => {
       <Text style={styles.content}>{params.content}</Text>
 
       {/* Admin Actions */}
-      {user.role === "admin" && (
+      {user?.role === "admin" && (
         <View style={styles.adminActions}>
           <TouchableOpacity
             style={[styles.actionButton, styles.editButton]}
