@@ -16,7 +16,7 @@ import { useAppContext } from "../context/context";
 const API_URL = "http://192.168.18.8:3001/articles"; // Replace with your backend API URL
 
 const CreateArticle = () => {
-  const { setArticles } = useAppContext();
+  const { setArticles, articles } = useAppContext();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [image, setImage] = useState(null); // To store selected image
@@ -81,8 +81,11 @@ const CreateArticle = () => {
         throw new Error("Failed to create article");
       }
 
-      const data = response.json();
+      const data = await response.json();
 
+      // const tempArticles = [...articles];
+      // console.log(data.article, "data art");
+      // console.log(tempArticles, "tempArticles");
       setArticles((prev) => {
         console.log(prev);
         const tempArticles = [...prev];
@@ -90,7 +93,8 @@ const CreateArticle = () => {
         return tempArticles;
       });
       Alert.alert("Success", "Article created successfully!");
-      // router.push("/Screens/HealthArticles");
+      router.back();
+      // router.push("/(tabs)");
 
       // Navigate back to the articles list
     } catch (error) {

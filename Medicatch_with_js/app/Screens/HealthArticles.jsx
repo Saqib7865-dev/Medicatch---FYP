@@ -162,6 +162,7 @@ const HealthArticles = () => {
                 }}
                 style={styles.articleImage}
               /> */}
+
               <Image
                 // source={require("./../../assets/home1.png")}
                 source={{
@@ -173,6 +174,7 @@ const HealthArticles = () => {
                 // height={45}
                 style={styles.articleImage}
               />
+
               <View style={styles.articleContent}>
                 <Text style={styles.articleTitle}>{article.title}</Text>
                 <Text style={styles.articleContentText}>
