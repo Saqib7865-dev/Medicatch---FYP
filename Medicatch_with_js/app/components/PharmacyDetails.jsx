@@ -5,7 +5,7 @@ import * as DocumentPicker from "expo-document-picker";
 import { useAppContext } from "../context/context";
 import * as FileSystem from "expo-file-system";
 
-const PharmacyDetails = () => {
+const PharmacyDetails = ({ onUpdate, onDelete, deleteLoading }) => {
   const { user } = useAppContext();
   const router = useRouter();
   const [csvFile, setCsvFile] = useState(null); // State to store selected CSV file
@@ -113,21 +113,15 @@ const PharmacyDetails = () => {
   };
 
   const handleUpdatePharmacy = () => {
-    Alert.alert(
-      "Update Pharmacy",
-      "Update pharmacy feature will be implemented."
-    );
+    onUpdate(pharmacy);
+    // Alert.alert(
+    //   "Update Pharmacy",
+    //   "Update pharmacy feature will be implemented."
+    // );
   };
 
   const handleDeletePharmacy = () => {
-    // Alert.alert(
-    //   "Delete Pharmacy",
-    //   "Are you sure you want to delete this pharmacy?",
-    //   [
-    //     { text: "Cancel", style: "cancel" },
-    //     { text: "Delete", onPress: () => router.push("/Search") },
-    //   ]
-    // );
+    onDelete(pharmacy);
   };
 
   useEffect(() => {
@@ -201,7 +195,9 @@ const PharmacyDetails = () => {
               style={[styles.actionButton, styles.deleteButton]}
               onPress={handleDeletePharmacy}
             >
-              <Text style={styles.buttonText}>Delete Pharmacy</Text>
+              <Text style={styles.buttonText}>
+                {deleteLoading ? "Deleting..." : "Delete Pharmacy"}
+              </Text>
             </TouchableOpacity>
           </View>
         </>

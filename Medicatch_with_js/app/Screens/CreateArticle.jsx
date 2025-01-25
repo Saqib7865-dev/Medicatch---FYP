@@ -109,24 +109,11 @@ const CreateArticle = () => {
 
     setLoading(true);
     try {
-      console.log("updating.............................");
       console.log(params._id);
       console.log(`http://192.168.0.105:3001/articles/${params._id}`);
 
       console.log(user.role);
       const response = await fetch(
-        // `http://192.168.0.105:3001/articles/${params._id}`,
-        // {
-        //   method: "PUT",
-        //   headers: {
-        //     "Content-Type": "application/json",
-        //   },
-        //   body: JSON.stringify({
-        //     title: title,
-        //     content: content, // Fixed the content field
-        //   }),
-        // }
-
         `http://192.168.0.105:3001/articles/${params._id}`,
         {
           method: "PUT",
@@ -139,7 +126,6 @@ const CreateArticle = () => {
           }),
         }
       );
-
       if (!response.ok) {
         throw new Error("Failed to create article");
       }
@@ -152,7 +138,7 @@ const CreateArticle = () => {
         return updatedArticles; // Replace the updated article
       });
 
-      Alert.alert("Success", "Article created successfully!");
+      Alert.alert("Success", "Article Updated successfully!");
       router.back();
       router.back();
 
