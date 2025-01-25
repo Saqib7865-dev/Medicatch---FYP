@@ -73,7 +73,7 @@ const Home = () => {
     const fetchArticles = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`http://192.168.0.105:3001/articles`);
+        const response = await fetch(`http://192.168.18.8:3001/articles`);
         if (!response.ok) {
           throw new Error("Failed to fetch articles");
         }

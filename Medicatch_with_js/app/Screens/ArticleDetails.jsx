@@ -34,7 +34,7 @@ const ArticleDetails = () => {
   const getFeedbacks = async () => {
     try {
       const resp = await fetch(
-        `http://172.16.100.30:3001/feedback/${params._id}`
+        `http://192.168.18.8:3001/feedback/${params._id}`
       );
       const data = await resp.json();
       setFeedbacks(data);
@@ -50,7 +50,7 @@ const ArticleDetails = () => {
     }
     try {
       const resp = await fetch(
-        `http://172.16.100.30:3001/feedback/${params._id}`,
+        `http://192.168.18.8:3001/feedback/${params._id}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

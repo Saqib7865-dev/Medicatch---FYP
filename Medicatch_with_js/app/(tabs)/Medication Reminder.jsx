@@ -120,6 +120,7 @@ const MedicationReminder = () => {
       const value = await AsyncStorage.getItem("my-key");
       console.log(value);
       if (value !== null) {
+        Alert(value);
         console.log(value);
         // value previously stored
       }
