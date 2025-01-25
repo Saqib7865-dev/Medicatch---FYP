@@ -71,7 +71,7 @@ const Home = () => {
 
   useEffect(() => {
     const fetchArticles = async () => {
-      setLoading(true);
+      setIsLoading(true);
       try {
         const response = await fetch(`http://192.168.18.8:3001/articles`);
         if (!response.ok) {
@@ -79,10 +79,9 @@ const Home = () => {
         }
         const data = await response.json();
         if (data.length === 0) {
-          setAllLoaded(true);
         } else {
-          setArticles((prevArticles) => [...prevArticles, ...data]);
-          // setPage(pageNumber);
+          setArticles(data);
+          setIsLoading(false);
         }
       } catch (error) {
         Alert.alert("Error", error.message);
@@ -157,39 +156,30 @@ const Home = () => {
           healthier, happier lifestyle.
         </Text>
         {/* Single Large Article Card */}
-        <TouchableOpacity onPress={() => {}}>
-          <View style={styles.articleCard}>
-            <Image
-              source={require("./../../assets/home1.png")}
-              style={styles.articleImage}
-            />
-            <View style={styles.overlay}>
-              <Text style={styles.overlayText}>Title Here</Text>
-            </View>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => {}}>
-          <View style={styles.articleCard}>
-            <Image
-              source={require("./../../assets/home1.png")}
-              style={styles.articleImage}
-            />
-            <View style={styles.overlay}>
-              <Text style={styles.overlayText}>Title Here</Text>
-            </View>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => {}}>
-          <View style={styles.articleCard}>
-            <Image
-              source={require("./../../assets/home1.png")}
-              style={styles.articleImage}
-            />
-            <View style={styles.overlay}>
-              <Text style={styles.overlayText}>Title Here</Text>
-            </View>
-          </View>
-        </TouchableOpacity>
+        {articles?.map((article, index) => {
+          if (index <= 3) {
+            return (
+              <TouchableOpacity
+                onPress={() => {
+                  router.push({
+                    pathname: "/Screens/ArticleDetails",
+                    params: { ...article },
+                  });
+                }}
+              >
+                <View style={styles.articleCard}>
+                  <Image
+                    source={require("./../../assets/home1.png")}
+                    style={styles.articleImage}
+                  />
+                  <View style={styles.overlay}>
+                    <Text style={styles.overlayText}>{article.title}</Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            );
+          }
+        })}
 
         {/* Smaller Article Cards */}
       </View>

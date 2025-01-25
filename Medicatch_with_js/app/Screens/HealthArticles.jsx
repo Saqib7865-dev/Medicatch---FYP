@@ -26,34 +26,35 @@ const formatDate = (dateString) => {
 };
 
 const HealthArticles = () => {
-  const { user } = useAppContext();
-  const [articles, setArticles] = useState([]);
+  const { user, articles } = useAppContext();
+
+  // const [articles, setArticles] = useState([]);
   const [searchedArticles, setSearchedArticles] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState(""); // To handle errors
   const router = useRouter();
 
-  const fetchArticles = async () => {
-    setLoading(true);
-    setErrorMessage(""); // Reset error message
-    try {
-      const response = await fetch(`${API_URL}`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch articles");
-      }
-      const data = await response.json();
-      if (data.length === 0) {
-        setErrorMessage("No articles available."); // Set message if no articles
-      }
-      setArticles(data);
-      console.log(data, "fetched articles");
-    } catch (error) {
-      setErrorMessage(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const fetchArticles = async () => {
+  //   setLoading(true);
+  //   setErrorMessage(""); // Reset error message
+  //   try {
+  //     const response = await fetch(`${API_URL}`);
+  //     if (!response.ok) {
+  //       throw new Error("Failed to fetch articles");
+  //     }
+  //     const data = await response.json();
+  //     if (data.length === 0) {
+  //       setErrorMessage("No articles available."); // Set message if no articles
+  //     }
+  //     setArticles(data);
+  //     console.log(data, "fetched articles");
+  //   } catch (error) {
+  //     setErrorMessage(error.message);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const searchArticles = async (query) => {
     if (!query.trim()) {
@@ -94,7 +95,7 @@ const HealthArticles = () => {
   };
 
   useEffect(() => {
-    fetchArticles();
+    // fetchArticles();
   }, []);
 
   const displayedArticles =
