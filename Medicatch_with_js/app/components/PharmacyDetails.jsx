@@ -97,6 +97,8 @@ const PharmacyDetails = () => {
 
       if (!result.canceled) {
         setCsvFile(result);
+
+        Alert("CSV file Selected");
         console.log("uploaded.................................");
 
         return result;

@@ -160,6 +160,7 @@ const Home = () => {
           if (index <= 3) {
             return (
               <TouchableOpacity
+                key={index}
                 onPress={() => {
                   router.push({
                     pathname: "/Screens/ArticleDetails",
