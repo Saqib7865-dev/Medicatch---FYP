@@ -58,14 +58,12 @@ exports.loginUser = async (req, res) => {
           "PakistanZindabad", //secret key
           { expiresIn: "1h" }
         );
-        return res
-          .status(200)
-          .json({
-            message: "Login successful",
-            token,
-            username,
-            role: user.role,
-          });
+        return res.status(200).json({
+          message: "Login successful",
+          token,
+          username,
+          role: user.role,
+        });
       } else {
         return res.status(401).json({ message: "Invalid credentials" });
       }

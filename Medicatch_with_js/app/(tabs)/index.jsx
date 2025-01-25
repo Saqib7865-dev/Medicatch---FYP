@@ -31,6 +31,7 @@ const quotes = [
 const Home = () => {
   const { user, articles, setArticles } = useAppContext();
   const router = useRouter();
+
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [quote, setQuote] = useState(""); // Ensure quote is initialized as an empty string
@@ -75,7 +76,7 @@ const Home = () => {
     const fetchArticles = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(`http://192.168.18.32:3001/articles`);
+        const response = await fetch(`http://192.168.0.105:3001/articles`);
         if (!response.ok) {
           throw new Error("Failed to fetch articles");
         }

@@ -9,6 +9,7 @@ import {
   Alert,
   TextInput,
   FlatList,
+  ActivityIndicator,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useRouter, useLocalSearchParams } from "expo-router";
@@ -25,21 +26,26 @@ const formatDate = (dateString) => {
 };
 
 const ArticleDetails = () => {
-  const { user } = useAppContext();
+  const { user, setArticles } = useAppContext();
   const params = useLocalSearchParams();
   const router = useRouter();
   const [feedbacks, setFeedbacks] = useState([]);
   const [newFeedback, setNewFeedback] = useState("");
+  const [isLoadingFeedbacks, setIsLoadingFeedbacks] = useState(false);
+  const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
 
   const getFeedbacks = async () => {
+    setIsLoadingFeedbacks(true);
     try {
       const resp = await fetch(
-        `http://192.168.18.32:3001/feedback/${params._id}`
+        `http://192.168.0.105:3001/feedback/${params._id}`
       );
       const data = await resp.json();
       setFeedbacks(data);
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsLoadingFeedbacks(false);
     }
   };
 
@@ -48,9 +54,10 @@ const ArticleDetails = () => {
       Alert.alert("Error", "Feedback cannot be empty.");
       return;
     }
+    setIsSubmittingFeedback(true);
     try {
       const resp = await fetch(
-        `http://192.168.18.32:3001/feedback/${params._id}`,
+        `http://192.168.0.105:3001/feedback/${params._id}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -62,17 +69,22 @@ const ArticleDetails = () => {
       );
       if (resp.ok) {
         setNewFeedback("");
-        getFeedbacks(); // Refresh feedbacks after posting
+        getFeedbacks();
       }
     } catch (error) {
       Alert.alert("Error", "Failed to post feedback.");
       console.error(error);
+    } finally {
+      setIsSubmittingFeedback(false);
     }
   };
 
-  useEffect(() => {
-    getFeedbacks();
-  }, []);
+  const handleEditArticle = () => {
+    router.push({
+      pathname: "/Screens/CreateArticle",
+      params: params,
+    });
+  };
 
   const handleDeleteArticle = () => {
     Alert.alert(
@@ -80,17 +92,38 @@ const ArticleDetails = () => {
       "Are you sure you want to delete this article?",
       [
         { text: "Cancel", style: "cancel" },
-        { text: "Delete", onPress: () => console.log("Delete article logic") },
+        {
+          text: "Delete",
+          onPress: async () => {
+            try {
+              const resp = await fetch(
+                `http://192.168.0.105:3001/articles/${params._id}`,
+                {
+                  method: "DELETE",
+                }
+              );
+              if (resp.ok) {
+                Alert.alert("Success", "Article deleted successfully.");
+
+                setArticles((prevArticles) =>
+                  prevArticles.filter((article) => article._id !== params._id)
+                );
+
+                router.replace("/Screens/HealthArticles"); // Navigate back after deletion
+              }
+            } catch (error) {
+              Alert.alert("Error", "Failed to delete article.");
+              console.error(error);
+            }
+          },
+        },
       ]
     );
   };
 
-  const handleEditArticle = () => {
-    router.push({
-      pathname: "/Screens/EditArticle",
-      params: { articleId: params.articleId },
-    });
-  };
+  useEffect(() => {
+    getFeedbacks();
+  }, []);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -100,17 +133,19 @@ const ArticleDetails = () => {
 
       <Image
         source={{
-          uri: `http://192.168.18.8:3001/uploads/${
+          uri: `http://192.168.0.105:3001/uploads/${
             params?.image?.split("\\")[1]
           }`,
         }}
         style={styles.articleImage}
       />
+
       <Text style={styles.title}>{params.title}</Text>
       <Text style={styles.date}>{formatDate(params.createdAt)}</Text>
       <Text style={styles.content}>{params.content}</Text>
 
-      {/* {"admin" === "admin" && (
+      {/* Admin Actions */}
+      {user.role === "admin" && (
         <View style={styles.adminActions}>
           <TouchableOpacity
             style={[styles.actionButton, styles.editButton]}
@@ -125,36 +160,48 @@ const ArticleDetails = () => {
             <Text style={styles.actionButtonText}>Delete Article</Text>
           </TouchableOpacity>
         </View>
-      )} */}
+      )}
 
       {/* Feedback Section */}
       <View style={styles.feedbackSection}>
         <Text style={styles.feedbackHeader}>Feedbacks</Text>
-        <FlatList
-          data={feedbacks}
-          keyExtractor={(item) => item._id.toString()} // Corrected keyExtractor to match _id
-          renderItem={({ item }) => (
-            <View style={styles.feedbackCard}>
-              <Text style={styles.feedbackUser}>
-                {item.userId.username} says:
-              </Text>{" "}
-              <Text style={styles.feedbackText}>{item.feedback}</Text>
-            </View>
-          )}
-          ListEmptyComponent={
-            <Text style={styles.noFeedbackText}>
-              No feedbacks available. Be the first to leave one!
-            </Text>
-          }
-        />
+        {isLoadingFeedbacks ? (
+          <ActivityIndicator size="large" color="#4173A1" />
+        ) : (
+          <FlatList
+            data={feedbacks}
+            keyExtractor={(item) => item._id.toString()}
+            renderItem={({ item }) => (
+              <View style={styles.feedbackCard}>
+                <Text style={styles.feedbackUser}>
+                  {item.userId?.username} says:
+                </Text>
+                <Text style={styles.feedbackText}>{item.feedback}</Text>
+              </View>
+            )}
+            ListEmptyComponent={
+              <Text style={styles.noFeedbackText}>
+                No feedbacks available. Be the first to leave one!
+              </Text>
+            }
+          />
+        )}
         <TextInput
           style={styles.feedbackInput}
           placeholder="Write your feedback..."
           value={newFeedback}
           onChangeText={setNewFeedback}
         />
-        <TouchableOpacity style={styles.submitButton} onPress={postFeedback}>
-          <Text style={styles.submitButtonText}>Submit Feedback</Text>
+        <TouchableOpacity
+          style={styles.submitButton}
+          onPress={postFeedback}
+          disabled={isSubmittingFeedback}
+        >
+          {isSubmittingFeedback ? (
+            <ActivityIndicator size="small" color="#fff" />
+          ) : (
+            <Text style={styles.submitButtonText}>Submit Feedback</Text>
+          )}
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -195,10 +242,11 @@ const styles = StyleSheet.create({
   adminActions: {
     flexDirection: "row",
     justifyContent: "space-between",
+    marginBottom: 20,
   },
   actionButton: {
     flex: 1,
-    padding: 15,
+    padding: 10,
     borderRadius: 10,
     alignItems: "center",
     marginHorizontal: 5,

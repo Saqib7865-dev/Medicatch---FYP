@@ -62,7 +62,7 @@ const Search = () => {
     console.log("Pharmacy Details:", formData);
 
     try {
-      const resp = await fetch("http://192.168.18.32:3001/pharmacy", {
+      const resp = await fetch("http://192.168.0.105:3001/pharmacy", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -110,7 +110,7 @@ const Search = () => {
 
   return (
     <>
-      {user.role === "pharmacy" ? (
+      {user?.role === "pharmacy" ? (
         <PharmacyDetails />
       ) : (
         <>

@@ -51,15 +51,6 @@ const Tabslayout = () => {
           }}
         />
         <Tabs.Screen
-          name="Health Articles"
-          options={{
-            title: "Health Articles",
-            tabBarIcon: ({ color }) => (
-              <Entypo name="text-document-inverted" size={24} color={color} />
-            ),
-          }}
-        />
-        <Tabs.Screen
           name="Register"
           options={{
             title: "Register",

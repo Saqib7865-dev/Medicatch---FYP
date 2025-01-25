@@ -24,7 +24,7 @@ const loginScreen = () => {
         Alert.alert("Error", "Please fill in both fields");
         return;
       } else {
-        let userLogin = await fetch(`http://192.168.18.32:3001/users/login`, {
+        let userLogin = await fetch(`http://192.168.0.105:3001/users/login`, {
           method: "POST",
           headers: {
             "content-type": "application/json",
@@ -55,51 +55,51 @@ const loginScreen = () => {
     }
   };
 
-  // const myLogin = async () => {
-  //   try {
-  //     let userLogin = await fetch(`http://192.168.18.32:3001/users/login`, {
-  //       method: "POST",
-  //       headers: {
-  //         "content-type": "application/json",
-  //       },
-  //       body: JSON.stringify({ username: email, password: password }),
-  //     });
+  const myLogin = async () => {
+    try {
+      let userLogin = await fetch(`http://192.168.0.105:3001/users/login`, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({ username: "Admin", password: "11223344" }),
+      });
 
-  //     let userLoginJson = await userLogin.json();
+      let userLoginJson = await userLogin.json();
 
-  //     if (userLoginJson.message) {
-  //       if (userLoginJson.message === "Login successful") {
-  //         const token = userLoginJson.token;
+      if (userLoginJson.message) {
+        if (userLoginJson.message === "Login successful") {
+          const token = userLoginJson.token;
 
-  //         // Decode the token
-  //         const decodedToken = jwtDecode(token);
-  //         console.log(userLoginJson, "resp........");
+          // Decode the token
+          const decodedToken = jwtDecode(token);
+          console.log(userLoginJson, "resp........");
 
-  //         setUser({ ...decodedToken, username: userLoginJson.username });
+          setUser({ ...decodedToken, username: userLoginJson.username });
 
-  //         await storeToken(token);
-  //         console.log("welcome", decodedToken);
-  //         Alert.alert("Success", userLoginJson.message);
-  //         setTimeout(() => {
-  //           router.push("/(tabs)");
-  //         }, 2000);
-  //       } else {
-  //         return Alert.alert("Message:", userLoginJson.message);
-  //       }
-  //     }
-  //   } catch (e) {
-  //     console.error(e);
-  //   }
-  // };
+          await storeToken(token);
+          console.log("welcome", decodedToken);
+          Alert.alert("Success", userLoginJson.message);
+          setTimeout(() => {
+            router.push("/(tabs)");
+          }, 2000);
+        } else {
+          return Alert.alert("Message:", userLoginJson.message);
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
-  // useEffect(() => {
-  //   // myLogin();
-  // }, []);
+  useEffect(() => {
+    myLogin();
+  }, []);
 
   return (
     <View style={styles.container}>
       <Image
-        source={require("./../../assets/logo.png")} // Update the path as needed
+        source={require("./../../assets/logo1.png")} // Update the path as needed
         style={styles.logo}
       />
       <Text style={styles.title}>Log In</Text>
