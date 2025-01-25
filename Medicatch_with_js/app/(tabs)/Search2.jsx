@@ -66,8 +66,10 @@ const MedicineSearch = () => {
             address: store.pharmacy.address,
             contact: store.pharmacy.contact,
             availability: "In Stock",
+            medName: store.pharmacy.medicineName,
             latitude: store.pharmacy.location.latitude,
             longitude: store.pharmacy.location.longitude,
+
             distance: calculateDistance(
               userLocation.latitude,
               userLocation.longitude,
@@ -126,7 +128,8 @@ const MedicineSearch = () => {
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
             <View style={styles.storeCard}>
-              <Text style={styles.storeName}>{item.name}</Text>
+              <Text style={styles.storeName}>{item.name} </Text>
+              <Text style={styles.storeDetails}>Medicine: {item.medName}</Text>
               <Text style={styles.storeDetails}>Address: {item.address}</Text>
               <Text style={styles.storeDetails}>Contact: {item.contact}</Text>
               <Text style={[styles.availability, styles.inStock]}>

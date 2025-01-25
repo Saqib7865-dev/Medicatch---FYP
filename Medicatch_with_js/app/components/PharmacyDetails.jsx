@@ -78,6 +78,7 @@ const PharmacyDetails = () => {
 
       if (resp.ok) {
         Alert.alert("Success", "Stock uploaded successfully!");
+        router.push("(tabs)");
       } else {
         Alert.alert("Error", data.message || "Failed to upload stock.");
       }
@@ -98,7 +99,7 @@ const PharmacyDetails = () => {
       if (!result.canceled) {
         setCsvFile(result);
 
-        Alert("CSV file Selected");
+        Alert.alert("Selected", "CSV file Selected");
         console.log("uploaded.................................");
 
         return result;
@@ -112,17 +113,6 @@ const PharmacyDetails = () => {
     }
   };
 
-  const handleUploadStock = () => {
-    if (!csvFile) {
-      Alert.alert("Error", "Please select a CSV file before uploading.");
-      return;
-    }
-    Alert.alert(
-      "Upload Stock",
-      `Uploading ${csvFile.name}...\nFeature implementation pending.`
-    );
-  };
-
   const handleUpdatePharmacy = () => {
     Alert.alert(
       "Update Pharmacy",
@@ -131,14 +121,14 @@ const PharmacyDetails = () => {
   };
 
   const handleDeletePharmacy = () => {
-    Alert.alert(
-      "Delete Pharmacy",
-      "Are you sure you want to delete this pharmacy?",
-      [
-        { text: "Cancel", style: "cancel" },
-        { text: "Delete", onPress: () => router.push("/Search") },
-      ]
-    );
+    // Alert.alert(
+    //   "Delete Pharmacy",
+    //   "Are you sure you want to delete this pharmacy?",
+    //   [
+    //     { text: "Cancel", style: "cancel" },
+    //     { text: "Delete", onPress: () => router.push("/Search") },
+    //   ]
+    // );
   };
 
   useEffect(() => {

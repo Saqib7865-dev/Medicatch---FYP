@@ -98,7 +98,14 @@ const ArticleDetails = () => {
         <Feather name="arrow-left" size={24} color="#000" />
       </TouchableOpacity>
 
-      <Image source={{ uri: params.image }} style={styles.articleImage} />
+      <Image
+        source={{
+          uri: `http://192.168.18.8:3001/uploads/${
+            params?.image?.split("\\")[1]
+          }`,
+        }}
+        style={styles.articleImage}
+      />
       <Text style={styles.title}>{params.title}</Text>
       <Text style={styles.date}>{formatDate(params.createdAt)}</Text>
       <Text style={styles.content}>{params.content}</Text>

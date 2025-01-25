@@ -154,12 +154,23 @@ const HealthArticles = () => {
             }
           >
             <View style={styles.articleCard}>
-              <Image
+              {/* <Image
                 // source={require("http://localhost:3001/uploads/eb992833-3242-4267-95af-8ca449d4dcef.png")}
                 // source={{ uri: article.image }}
                 source={{
                   uri: "http://localhost:3001/uploads/eb992833-3242-4267-95af-8ca449d4dcef.png ",
                 }}
+                style={styles.articleImage}
+              /> */}
+              <Image
+                // source={require("./../../assets/home1.png")}
+                source={{
+                  uri: `http://192.168.18.8:3001/uploads/${
+                    article?.image?.split("\\")[1]
+                  }`,
+                }}
+                // width={45}
+                // height={45}
                 style={styles.articleImage}
               />
               <View style={styles.articleContent}>

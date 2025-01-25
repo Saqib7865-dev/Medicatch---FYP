@@ -16,7 +16,7 @@ import PharmacyDetails from "../components/PharmacyDetails";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Search = () => {
-  const { user } = useAppContext();
+  const { user, setUser } = useAppContext();
   const router = useRouter();
 
   const [pharmacyName, setPharmacyName] = useState("");
@@ -85,9 +85,15 @@ const Search = () => {
         setAddress("");
         setLocation(null);
         Alert.alert("Success", "Pharmacy registered successfully!");
-        await AsyncStorage.removeItem("authToken"); // Clear the token from storage
+        setUser((prev) => {
+          return {
+            ...prev,
+            role: "pharmacy",
+          };
+        });
 
-        router.push("(auth)/Login");
+        // await AsyncStorage.removeItem("authToken"); // Clear the token from storage
+        // router.push("(auth)/Login");
       } else {
         console.log(data);
       }
