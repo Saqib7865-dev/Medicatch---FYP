@@ -4,6 +4,7 @@ import Entypo from "@expo/vector-icons/Entypo";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { StatusBar } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import { FontAwesome5 } from "@expo/vector-icons";
 
 const Tabslayout = () => {
   return (
@@ -72,7 +73,8 @@ const Tabslayout = () => {
           options={{
             title: "Search",
             tabBarIcon: ({ color }) => (
-              <AntDesign name="search1" size={24} color={color} />
+              <FontAwesome5 name="search" size={24} color={color} />
+              // <AntDesign name="search1" size={24} color={color} />
             ),
           }}
         />

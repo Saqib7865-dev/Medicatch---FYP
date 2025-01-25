@@ -11,10 +11,12 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
+import { useAppContext } from "../context/context";
 
 const API_URL = "http://192.168.18.32:3001/articles"; // Replace with your backend API URL
 
 const CreateArticle = () => {
+  const { setArticles } = useAppContext();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [image, setImage] = useState(null); // To store selected image
@@ -79,8 +81,18 @@ const CreateArticle = () => {
         throw new Error("Failed to create article");
       }
 
+      const data = response.json();
+
+      setArticles((prev) => {
+        console.log(prev);
+        const tempArticles = [...prev];
+        tempArticles.push(data.article);
+        return tempArticles;
+      });
       Alert.alert("Success", "Article created successfully!");
-      router.push("/(tabs)/Health Articles"); // Navigate back to the articles list
+      // router.push("/Screens/HealthArticles");
+
+      // Navigate back to the articles list
     } catch (error) {
       Alert.alert("Error", error.message);
     } finally {
@@ -139,7 +151,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     justifyContent: "center",
-    backgroundColor: "#c6e6f3",
+    backgroundColor: "#e8f5fa",
   },
   header: {
     fontSize: 24,

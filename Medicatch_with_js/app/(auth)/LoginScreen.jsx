@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#c6e6f3",
+    backgroundColor: "#e8f5fa",
     padding: 20,
   },
   logo: {
@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
     marginTop: 20,
-    shadowColor: "#c6e6f3",
+    shadowColor: "#e8f5fa",
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.4,
     shadowRadius: 5,

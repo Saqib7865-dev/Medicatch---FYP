@@ -26,33 +26,35 @@ const formatDate = (dateString) => {
 };
 
 const HealthArticles = () => {
-  const { user } = useAppContext();
-  const [articles, setArticles] = useState([]);
+  const { user, articles } = useAppContext();
+
+  // const [articles, setArticles] = useState([]);
   const [searchedArticles, setSearchedArticles] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState(""); // To handle errors
   const router = useRouter();
 
-  const fetchArticles = async () => {
-    setLoading(true);
-    setErrorMessage(""); // Reset error message
-    try {
-      const response = await fetch(`${API_URL}`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch articles");
-      }
-      const data = await response.json();
-      if (data.length === 0) {
-        setErrorMessage("No articles available."); // Set message if no articles
-      }
-      setArticles(data);
-    } catch (error) {
-      setErrorMessage(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const fetchArticles = async () => {
+  //   setLoading(true);
+  //   setErrorMessage(""); // Reset error message
+  //   try {
+  //     const response = await fetch(`${API_URL}`);
+  //     if (!response.ok) {
+  //       throw new Error("Failed to fetch articles");
+  //     }
+  //     const data = await response.json();
+  //     if (data.length === 0) {
+  //       setErrorMessage("No articles available."); // Set message if no articles
+  //     }
+  //     setArticles(data);
+  //     console.log(data, "fetched articles");
+  //   } catch (error) {
+  //     setErrorMessage(error.message);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const searchArticles = async (query) => {
     if (!query.trim()) {
@@ -93,7 +95,7 @@ const HealthArticles = () => {
   };
 
   useEffect(() => {
-    fetchArticles();
+    // fetchArticles();
   }, []);
 
   const displayedArticles =
@@ -112,7 +114,7 @@ const HealthArticles = () => {
       </View>
 
       {/* Admin "Create Article" Button */}
-      {"user.role" === "admin" && (
+      {user.role === "admin" && (
         <TouchableOpacity
           style={styles.createButton}
           onPress={() => router.push("/Screens/CreateArticle")}
@@ -153,6 +155,14 @@ const HealthArticles = () => {
           >
             {console.log(`http://192.168.18.32:3001/${article.image}`)}
             <View style={styles.articleCard}>
+              {/* <Image
+                // source={require("http://localhost:3001/uploads/eb992833-3242-4267-95af-8ca449d4dcef.png")}
+                // source={{ uri: article.image }}
+                source={{
+                  uri: "http://localhost:3001/uploads/eb992833-3242-4267-95af-8ca449d4dcef.png ",
+                }}
+                style={styles.articleImage}
+              /> */}
               <Image
                 // source={require("./../../assets/home1.png")}
                 source={{
@@ -188,7 +198,7 @@ const HealthArticles = () => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: "#c6e6f3",
+    backgroundColor: "#e8f5fa",
     padding: 20,
   },
   header: {

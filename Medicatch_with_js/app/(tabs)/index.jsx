@@ -71,7 +71,7 @@ const Home = () => {
 
   useEffect(() => {
     const fetchArticles = async () => {
-      setLoading(true);
+      setIsLoading(true);
       try {
         const response = await fetch(`http://192.168.18.32:3001/articles`);
         if (!response.ok) {
@@ -79,10 +79,9 @@ const Home = () => {
         }
         const data = await response.json();
         if (data.length === 0) {
-          setAllLoaded(true);
         } else {
-          setArticles((prevArticles) => [...prevArticles, ...data]);
-          // setPage(pageNumber);
+          setArticles(data);
+          setIsLoading(false);
         }
       } catch (error) {
         Alert.alert("Error", error.message);
@@ -122,15 +121,16 @@ const Home = () => {
       <View style={styles.searchContainer}>
         <TextInput
           style={styles.searchInput}
-          placeholder="Search for Pharmacy"
+          placeholder="Search for Medicine"
           placeholderTextColor="#999"
         />
-        <TouchableOpacity style={styles.searchButton}>
+        <TouchableOpacity style={styles.searchButton} onPress={() => {}}>
           <Feather name="search" size={20} color="#fff" />
         </TouchableOpacity>
       </View>
 
       {/* Quote Section */}
+
       <View style={styles.quoteContainer}>
         <Text style={styles.quoteText}>{quote}</Text>
       </View>
@@ -144,7 +144,8 @@ const Home = () => {
           <TouchableOpacity>
             <Text
               style={styles.viewAllText}
-              onPress={() => router.push("/(auth)/LoginScreen")}
+              // onPress={() => router.push("/(auth)/LoginScreen")}
+              onPress={() => router.push("/Screens/HealthArticles")}
             >
               View All
             </Text>
@@ -155,39 +156,31 @@ const Home = () => {
           healthier, happier lifestyle.
         </Text>
         {/* Single Large Article Card */}
-        <TouchableOpacity onPress={() => {}}>
-          <View style={styles.articleCard}>
-            <Image
-              source={require("./../../assets/home1.png")}
-              style={styles.articleImage}
-            />
-            <View style={styles.overlay}>
-              <Text style={styles.overlayText}>Title Here</Text>
-            </View>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => {}}>
-          <View style={styles.articleCard}>
-            <Image
-              source={require("./../../assets/home1.png")}
-              style={styles.articleImage}
-            />
-            <View style={styles.overlay}>
-              <Text style={styles.overlayText}>Title Here</Text>
-            </View>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => {}}>
-          <View style={styles.articleCard}>
-            <Image
-              source={require("./../../assets/home1.png")}
-              style={styles.articleImage}
-            />
-            <View style={styles.overlay}>
-              <Text style={styles.overlayText}>Title Here</Text>
-            </View>
-          </View>
-        </TouchableOpacity>
+        {articles?.map((article, index) => {
+          if (index <= 3) {
+            return (
+              <TouchableOpacity
+                key={index}
+                onPress={() => {
+                  router.push({
+                    pathname: "/Screens/ArticleDetails",
+                    params: { ...article },
+                  });
+                }}
+              >
+                <View style={styles.articleCard}>
+                  <Image
+                    source={require("./../../assets/home1.png")}
+                    style={styles.articleImage}
+                  />
+                  <View style={styles.overlay}>
+                    <Text style={styles.overlayText}>{article.title}</Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            );
+          }
+        })}
 
         {/* Smaller Article Cards */}
       </View>
@@ -198,7 +191,7 @@ const Home = () => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: "#c6e6f3",
+    backgroundColor: "#e8f5fa",
     padding: 20,
   },
   header: {

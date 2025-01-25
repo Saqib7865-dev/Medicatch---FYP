@@ -9,7 +9,6 @@ import {
   Alert,
   Linking,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const calculateDistance = (lat1, lon1, lat2, lon2) => {
   const R = 6371; // Earth's radius in km
@@ -32,7 +31,7 @@ const MedicineSearch = () => {
 
   const userLocation = { latitude: 33.6844, longitude: 73.0479 };
 
-  const searchMed = async () => {
+  const searchMed = async (query) => {
     if (!medicineName.trim()) {
       Alert.alert("Error", "Please enter a medicine name.");
       return;
@@ -46,33 +45,43 @@ const MedicineSearch = () => {
           method: "POST",
         }
       );
+
       const data = await resp.json();
 
-      // Transform API response to match UI requirements
-      const transformedStores = data.map((store) => ({
-        id: store._id,
-        name: store.name,
-        address: store.address,
-        contact: store.contact,
-        availability: store.stock.some(
-          (item) =>
-            item.medicineName.toLowerCase() === medicineName.toLowerCase()
-        )
-          ? "In Stock"
-          : "Out of Stock",
-        latitude: store.location.latitude,
-        longitude: store.location.longitude,
-        distance: calculateDistance(
-          userLocation.latitude,
-          userLocation.longitude,
-          store.location.latitude,
-          store.location.longitude
-        ),
-      }));
+      if (resp.ok) {
+        if (data?.message === "not found") {
+          setStores([]); // Reset stores when no data is found
+          Alert.alert(
+            "No Results",
+            "No stores found for the requested medicine."
+          );
+          return;
+        }
 
-      setStores(
-        transformedStores.sort((a, b) => a.distance - b.distance) // Sort by distance
-      );
+        const transformedStores = data
+          .filter((store) => store.pharmacy.quantity > 0) // Ensure stock exists
+          .map((store, index) => ({
+            id: index,
+            name: store.pharmacy.pharmacyName,
+            address: store.pharmacy.address,
+            contact: store.pharmacy.contact,
+            availability: "In Stock",
+            medName: store.pharmacy.medicineName,
+            latitude: store.pharmacy.location.latitude,
+            longitude: store.pharmacy.location.longitude,
+
+            distance: calculateDistance(
+              userLocation.latitude,
+              userLocation.longitude,
+              store.pharmacy.location.latitude,
+              store.pharmacy.location.longitude
+            ),
+          }));
+
+        setStores(
+          transformedStores.sort((a, b) => a.distance - b.distance) // Sort by distance
+        );
+      }
     } catch (error) {
       console.error(error);
       Alert.alert("Error", "Failed to fetch data from the server.");
@@ -101,7 +110,12 @@ const MedicineSearch = () => {
       />
 
       {/* Search Button */}
-      <TouchableOpacity style={styles.searchButton} onPress={searchMed}>
+      <TouchableOpacity
+        style={styles.searchButton}
+        onPress={() => {
+          searchMed(medicineName);
+        }}
+      >
         <Text style={styles.buttonText}>Search</Text>
       </TouchableOpacity>
 
@@ -111,20 +125,14 @@ const MedicineSearch = () => {
       ) : (
         <FlatList
           data={stores}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
             <View style={styles.storeCard}>
-              <Text style={styles.storeName}>{item.name}</Text>
-              <Text style={styles.storeDetails}>{item.address}</Text>
-              <Text style={styles.storeDetails}>{item.contact}</Text>
-              <Text
-                style={[
-                  styles.availability,
-                  item.availability === "In Stock"
-                    ? styles.inStock
-                    : styles.outOfStock,
-                ]}
-              >
+              <Text style={styles.storeName}>{item.name} </Text>
+              <Text style={styles.storeDetails}>Medicine: {item.medName}</Text>
+              <Text style={styles.storeDetails}>Address: {item.address}</Text>
+              <Text style={styles.storeDetails}>Contact: {item.contact}</Text>
+              <Text style={[styles.availability, styles.inStock]}>
                 {item.availability}
               </Text>
               <TouchableOpacity
@@ -154,7 +162,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#c6e6f3",
+    backgroundColor: "#e8f5fa",
   },
   header: {
     fontSize: 24,
@@ -217,13 +225,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 10,
     borderRadius: 5,
-  },
-  inStock: {
     backgroundColor: "#4CAF50",
-    color: "#fff",
-  },
-  outOfStock: {
-    backgroundColor: "#F44336",
     color: "#fff",
   },
   locateButton: {
