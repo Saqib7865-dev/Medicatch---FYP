@@ -130,23 +130,21 @@ const MedicationReminder = () => {
       // error reading value
     }
   };
-  const { expoPushToken, notification, error } = useNotification();
-  if (error) {
-    return (
-      <>
-        <p style={styles.center}>Error: {error.message}</p>
-      </>
-    );
-  }
-  console.log(JSON.stringify(notification, null, 2));
+  // const { expoPushToken, notification, error } = useNotification();
+  // if (error) {
+  //   return (
+  //     <>
+  //       <p style={styles.center}>Error: {error.message}</p>
+  //     </>
+  //   );
+  // }
+  // console.log(JSON.stringify(notification, null, 2));
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Medication Reminder</Text>
-      <Text>Your Push token: {expoPushToken}</Text>
-      <Text>Latest Notification: {notification?.request.content.title}</Text>
-      <Text>
+      {/* <Text>
         Data: {JSON.stringify(notification?.request.content.data, null, 2)}
-      </Text>
+      </Text> */}
       {/* Medicine Name */}
       <Text style={styles.label}>Enter Medicine Name:</Text>
       <TextInput
