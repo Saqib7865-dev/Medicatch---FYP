@@ -55,13 +55,20 @@ exports.updateAnArticle = async (req, res) => {
   try {
     const { id } = req.params;
     const { title, content } = req.body;
-
+    let image = req.file ? req.file.path : null;
+    if (!req.file) {
+      // Retrieve the existing article to get the current image path
+      const existingArticle = await articleModel.findById(id);
+      if (existingArticle) {
+        image = existingArticle.image; // Use the existing image path
+      }
+    }
     const article = await articleModel.findByIdAndUpdate(
       id,
       {
         title,
         content,
-        image: req.file ? req.file.path : null,
+        image,
         updatedAt: Date.now(),
       },
       { new: true }

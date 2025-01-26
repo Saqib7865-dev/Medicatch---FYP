@@ -23,7 +23,7 @@ const CreateArticle = () => {
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [image, setImage] = useState(null); // To store selected image
+  const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
 
   // Function to pick an image from the gallery
@@ -134,14 +134,13 @@ const CreateArticle = () => {
         const updatedArticles = prev.map((article) =>
           article._id === data.article._id ? data.article : article
         );
-        return updatedArticles; // Replace the updated article
+        return updatedArticles; 
       });
 
       Alert.alert("Success", "Article Updated successfully!");
       router.back();
       router.back();
 
-      // Navigate back to the articles list
     } catch (error) {
       Alert.alert("Error", error.message);
     } finally {
