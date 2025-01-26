@@ -66,7 +66,7 @@ const Search = () => {
     console.log("Pharmacy Details:", formData);
 
     try {
-      const resp = await fetch("http://192.168.0.105:3001/pharmacy", {
+      const resp = await fetch("http://192.168.18.8:3001/pharmacy", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -134,7 +134,7 @@ const Search = () => {
 
     try {
       const resp = await fetch(
-        `http://192.168.0.105:3001/pharmacy/${editPharmacy._id}`,
+        `http://192.168.18.8:3001/pharmacy/${editPharmacy._id}`,
         {
           method: "PUT",
           headers: {
@@ -204,7 +204,7 @@ const Search = () => {
               setDeletePharmLoading(true);
               console.log(user);
               const resp = await fetch(
-                `http://192.168.0.105:3001/pharmacy/${pharmacy._id}`,
+                `http://192.168.18.8:3001/pharmacy/${pharmacy._id}`,
                 {
                   method: "DELETE",
                   headers: {

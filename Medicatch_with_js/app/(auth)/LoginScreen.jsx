@@ -24,7 +24,7 @@ const loginScreen = () => {
         Alert.alert("Error", "Please fill in both fields");
         return;
       } else {
-        let userLogin = await fetch(`http://192.168.0.105:3001/users/login`, {
+        let userLogin = await fetch(`http://192.168.18.8:3001/users/login`, {
           method: "POST",
           headers: {
             "content-type": "application/json",
@@ -57,7 +57,7 @@ const loginScreen = () => {
 
   const myLogin = async () => {
     try {
-      let userLogin = await fetch(`http://192.168.0.105:3001/users/login`, {
+      let userLogin = await fetch(`http://192.168.18.8:3001/users/login`, {
         method: "POST",
         headers: {
           "content-type": "application/json",
@@ -106,7 +106,7 @@ const loginScreen = () => {
 
       <TextInput
         style={styles.input}
-        placeholder="username"
+        placeholder="Username"
         keyboardType="email-address"
         value={email}
         onChangeText={(text) => setEmail(text)}

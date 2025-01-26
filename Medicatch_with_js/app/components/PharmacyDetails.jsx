@@ -17,7 +17,7 @@ const PharmacyDetails = ({ onUpdate, onDelete, deleteLoading }) => {
   const getPharmacy = async () => {
     try {
       setLoading(true);
-      const resp = await fetch(`http://192.168.0.105:3001/pharmacy/${user.id}`);
+      const resp = await fetch(`http://192.168.18.8:3001/pharmacy/${user.id}`);
       const data = await resp.json();
       console.log(data, "pharm.............");
       if (resp.ok) {
@@ -35,7 +35,7 @@ const PharmacyDetails = ({ onUpdate, onDelete, deleteLoading }) => {
   const addPharmStock = async (csvFile) => {
     console.log("pharmstock");
     if (!csvFile || !csvFile.assets || csvFile.assets.length === 0) {
-      console.error("No CSV file selected.");
+      Alert.alert("Not Selected", "No CSV file selected.");
       return;
     }
 
@@ -61,7 +61,7 @@ const PharmacyDetails = ({ onUpdate, onDelete, deleteLoading }) => {
 
       // Make the fetch call
       const resp = await fetch(
-        `http://192.168.0.105:3001/pharmacy/${pharmacy._id}/stock`,
+        `http://192.168.18.8:3001/pharmacy/${pharmacy._id}/stock`,
         {
           method: "PUT",
           headers: {
