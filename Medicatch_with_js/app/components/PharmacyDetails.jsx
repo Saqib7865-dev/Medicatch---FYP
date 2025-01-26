@@ -168,7 +168,7 @@ const PharmacyDetails = ({ onUpdate, onDelete, deleteLoading }) => {
               }}
             >
               <Text style={styles.buttonText}>
-                {csvFile ? `File Selected: ${csvFile.name}` : "Select CSV File"}
+                {csvFile ? `File Selected` : "Select CSV File"}
               </Text>
             </TouchableOpacity>
 

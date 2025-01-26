@@ -79,7 +79,7 @@ const SignUp = () => {
         placeholderTextColor="#999"
         keyboardType="default"
         value={username}
-        onChangeText={(text) => setUsername(text)}
+        onChangeText={(text) => setUsername(text.trim())}
       />
 
       <TextInput
