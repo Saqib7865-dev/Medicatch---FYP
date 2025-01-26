@@ -281,44 +281,52 @@ const Search = () => {
                 onChangeText={setAddress}
               />
 
-              {location && (
+              {/* {location && (
                 <Text style={styles.locationText}>
                   Selected Location: Latitude {location.latitude}, Longitude{" "}
                   {location.longitude}
                 </Text>
-              )}
-
-              <TouchableOpacity
-                style={styles.setLocationButton}
-                onPress={handleSetLocation}
-              >
-                <Text style={styles.buttonText}>Set Location</Text>
-              </TouchableOpacity>
-
-              {/* CSV Upload Button */}
-
-              <TouchableOpacity
-                style={styles.registerButton}
-                onPress={() => {
-                  tempRole === "editingRole"
-                    ? handleUpdatePharmacy()
-                    : handleRegister();
+              )} */}
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: "flex-end",
                 }}
               >
-                <Text style={styles.buttonText}>
-                  {tempRole === "editingRole" ? "Update" : "Register"}
-                </Text>
-              </TouchableOpacity>
-              {tempRole === "editingRole" && (
                 <TouchableOpacity
-                  style={styles.cancelButton}
+                  style={styles.setLocationButton}
+                  onPress={handleSetLocation}
+                >
+                  <Text style={styles.buttonText}>
+                    {location ? "Change Location" : "Set Location"}
+                  </Text>
+                </TouchableOpacity>
+
+                {/* CSV Upload Button */}
+
+                <TouchableOpacity
+                  style={styles.registerButton}
                   onPress={() => {
-                    setTempRole(user.role);
+                    tempRole === "editingRole"
+                      ? handleUpdatePharmacy()
+                      : handleRegister();
                   }}
                 >
-                  <Text style={styles.cancelButtonText}>Cancel</Text>
+                  <Text style={styles.buttonText}>
+                    {tempRole === "editingRole" ? "Update" : "Register"}
+                  </Text>
                 </TouchableOpacity>
-              )}
+                {tempRole === "editingRole" && (
+                  <TouchableOpacity
+                    style={styles.cancelButton}
+                    onPress={() => {
+                      setTempRole(user.role);
+                    }}
+                  >
+                    <Text style={styles.cancelButtonText}>Cancel</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
             </ScrollView>
           )}
         </>
