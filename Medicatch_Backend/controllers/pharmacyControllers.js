@@ -20,6 +20,12 @@ exports.createPharmacy = async (req, res) => {
     //       "You already have a pharmacy. Only one pharmacy is allowed per user.",
     //   });
     // }
+    let user = await userModel.findOne({ _id: createdBy });
+    if (user.role === "admin") {
+      return res.json({
+        message: "Pharmacy cannot be created from admin account",
+      });
+    }
     const pharmacy = await pharmacyModel.create({
       name,
       location,
@@ -27,10 +33,9 @@ exports.createPharmacy = async (req, res) => {
       address,
       contact,
     });
-    let user = await userModel.findOne({ _id: createdBy });
     user.role = "pharmacy";
     await user.save();
-    res
+    return res
       .status(201)
       .json({ message: "Pharmacy created successfully", pharmacy });
   } catch (error) {

@@ -132,7 +132,6 @@ const HealthArticles = () => {
               })
             }
           >
-            {console.log(`http://192.168.0.105:3001/${article.image}`)}
             <View style={styles.articleCard}>
               {/* <Image
                 // source={require("http://localhost:3001/uploads/eb992833-3242-4267-95af-8ca449d4dcef.png")}
