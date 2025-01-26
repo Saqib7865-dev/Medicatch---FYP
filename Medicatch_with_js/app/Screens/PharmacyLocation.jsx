@@ -73,7 +73,7 @@ const PharmacyLocation = ({ onConfirm }) => {
             handleLocationSelect(lat, lng);
           }}
           query={{
-            key: "AIzaSyBENAB06JOT3-qUoLm-fNqLZDMCsca6BKk", // Replace with your API key
+            key: "AIzaSyCUVQfI-8gQf0KrD9-tPVxNcTGwqlN-pNU", // Replace with your API key
             language: "en",
           }}
           fetchDetails={true}
