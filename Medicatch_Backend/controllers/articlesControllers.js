@@ -9,7 +9,7 @@ exports.createArticle = async (req, res) => {
     const article = new articleModel({
       title,
       content,
-      image: req.file ? req.file.path : null,
+      image: req.file ? req.file.path : "uploads\\noimg.jpeg",
     });
     await article.save();
     res.status(201).json({ message: "Article created successfully", article });
@@ -58,15 +58,21 @@ exports.updateAnArticle = async (req, res) => {
 
     const article = await articleModel.findByIdAndUpdate(
       id,
-      { title, content, updatedAt: Date.now() },
+      {
+        title,
+        content,
+        image: req.file ? req.file.path : null,
+        updatedAt: Date.now(),
+      },
       { new: true }
     );
 
     if (!article) {
       return res.status(404).json({ message: "Article not found" });
     }
-
-    res.status(200).json({ message: "Article updated successfully", article });
+    return res
+      .status(200)
+      .json({ message: "Article updated successfully", article });
   } catch (error) {
     res.status(500).json({ message: "Error updating article", error });
   }

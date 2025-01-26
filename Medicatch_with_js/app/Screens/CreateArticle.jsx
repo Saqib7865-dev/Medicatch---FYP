@@ -48,8 +48,6 @@ const CreateArticle = () => {
     if (!result.canceled) {
       setImage(result.assets[0]);
     }
-
-    // console.log(result);
   };
 
   const handleCreateArticle = async () => {
@@ -70,8 +68,6 @@ const CreateArticle = () => {
           type: image.mimeType,
         });
       }
-
-      console.log(formData);
       const response = await fetch(API_URL, {
         method: "POST",
         headers: {
@@ -109,25 +105,28 @@ const CreateArticle = () => {
 
     setLoading(true);
     try {
-      console.log(params._id);
-      console.log(`http://192.168.0.105:3001/articles/${params._id}`);
-
-      console.log(user.role);
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("content", content);
+      if (image) {
+        formData.append("image", {
+          uri: image.uri,
+          name: image?.fileName,
+          type: image.mimeType,
+        });
+      }
       const response = await fetch(
         `http://192.168.0.105:3001/articles/${params._id}`,
         {
           method: "PUT",
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "multipart/form-data",
           },
-          body: JSON.stringify({
-            title: title,
-            content: content, // Fixed the content field
-          }),
+          body: formData,
         }
       );
       if (!response.ok) {
-        throw new Error("Failed to create article");
+        throw new Error("Failed to update article");
       }
       const data = await response.json();
 
@@ -144,7 +143,6 @@ const CreateArticle = () => {
 
       // Navigate back to the articles list
     } catch (error) {
-      console.error("error", error);
       Alert.alert("Error", error.message);
     } finally {
       setLoading(false);
