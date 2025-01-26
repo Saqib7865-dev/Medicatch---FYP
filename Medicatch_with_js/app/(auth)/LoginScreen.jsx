@@ -57,7 +57,7 @@ const loginScreen = () => {
   return (
     <View style={styles.container}>
       <Image
-        source={require("./../../assets/logo.png")} // Update the path as needed
+        source={require("./../../assets/logo1.png")} // Update the path as needed
         style={styles.logo}
       />
       <Text style={styles.title}>Log In</Text>

@@ -35,27 +35,6 @@ const HealthArticles = () => {
   const [errorMessage, setErrorMessage] = useState(""); // To handle errors
   const router = useRouter();
 
-  // const fetchArticles = async () => {
-  //   setLoading(true);
-  //   setErrorMessage(""); // Reset error message
-  //   try {
-  //     const response = await fetch(`${API_URL}`);
-  //     if (!response.ok) {
-  //       throw new Error("Failed to fetch articles");
-  //     }
-  //     const data = await response.json();
-  //     if (data.length === 0) {
-  //       setErrorMessage("No articles available."); // Set message if no articles
-  //     }
-  //     setArticles(data);
-  //     console.log(data, "fetched articles");
-  //   } catch (error) {
-  //     setErrorMessage(error.message);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   const searchArticles = async (query) => {
     if (!query.trim()) {
       setSearchedArticles([]); // Reset search results if query is empty
@@ -114,7 +93,7 @@ const HealthArticles = () => {
       </View>
 
       {/* Admin "Create Article" Button */}
-      {user.role === "admin" && (
+      {user?.role === "admin" && (
         <TouchableOpacity
           style={styles.createButton}
           onPress={() => router.push("/Screens/CreateArticle")}
@@ -153,6 +132,7 @@ const HealthArticles = () => {
               })
             }
           >
+            {console.log(`http://192.168.0.105:3001/${article.image}`)}
             <View style={styles.articleCard}>
               {/* <Image
                 // source={require("http://localhost:3001/uploads/eb992833-3242-4267-95af-8ca449d4dcef.png")}
@@ -162,6 +142,7 @@ const HealthArticles = () => {
                 }}
                 style={styles.articleImage}
               /> */}
+
               <Image
                 source={{
                   uri: `http://192.168.0.105:3001/uploads/${
@@ -170,6 +151,7 @@ const HealthArticles = () => {
                 }}
                 style={styles.articleImage}
               />
+
               <View style={styles.articleContent}>
                 <Text style={styles.articleTitle}>{article.title}</Text>
                 <Text style={styles.articleContentText}>

@@ -55,9 +55,9 @@ exports.getIndividualArticle = async (req, res) => {
 };
 
 exports.updateAnArticle = async (req, res) => {
-  if (req.user.role !== "admin") {
-    return res.status(403).json({ message: "Access denied. Admins only." });
-  }
+  // if (req.user.role !== "admin") {
+  //   return res.status(403).json({ message: "Access denied. Admins only." });
+  // }
   try {
     const { id } = req.params;
     const { title, content } = req.body;

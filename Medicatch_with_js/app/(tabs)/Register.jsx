@@ -19,6 +19,10 @@ const Search = () => {
   const { user, setUser } = useAppContext();
   const router = useRouter();
 
+  const [tempRole, setTempRole] = useState(user.role);
+  const [editPharmacy, setEditPharmacy] = useState({});
+  const [deletePharmLoading, setDeletePharmLoading] = useState(false);
+
   const [pharmacyName, setPharmacyName] = useState("");
   const [ownerName, setOwnerName] = useState("");
   const [contactNumber, setContactNumber] = useState("");
@@ -27,7 +31,7 @@ const Search = () => {
   const [showMap, setShowMap] = useState(false);
 
   const handleSetLocation = () => {
-    if (!pharmacyName || !ownerName || !contactNumber || !address) {
+    if (!pharmacyName || !contactNumber || !address) {
       Alert.alert("Error", "Please fill all fields before setting a location.");
       return;
     }
@@ -40,7 +44,7 @@ const Search = () => {
   };
 
   const handleRegister = async () => {
-    if (!pharmacyName || !ownerName || !contactNumber || !address) {
+    if (!pharmacyName || !contactNumber || !address) {
       Alert.alert("Error", "All fields are required!");
       return;
     }
@@ -104,14 +108,130 @@ const Search = () => {
     // Clear form after submission
   };
 
+  const handleUpdatePharmacy = async () => {
+    if (!pharmacyName || !contactNumber || !address) {
+      Alert.alert("Error", "All fields are required!");
+      return;
+    }
+
+    if (!location) {
+      Alert.alert("Error", "Please set the pharmacy location!");
+      return;
+    }
+
+    const formData = {
+      pharmacyName,
+      ownerName,
+      contactNumber,
+      address,
+      location,
+      // Include the file metadata
+    };
+
+    console.log("Pharmacy Details:", formData);
+
+    try {
+      const resp = await fetch(
+        `http://192.168.0.105:3001/pharmacy/${editPharmacy._id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: pharmacyName,
+            location,
+            createdBy: user.id,
+            contact: contactNumber,
+            address: address,
+          }),
+        }
+      );
+
+      const data = await resp.json();
+      if (resp.ok) {
+        console.log(data);
+        setPharmacyName("");
+        setOwnerName("");
+        setContactNumber("");
+        setAddress("");
+        setLocation(null);
+        Alert.alert("Success", "Pharmacy Updated successfully!");
+        setUser((prev) => {
+          return {
+            ...prev,
+            role: "pharmacy",
+          };
+        });
+
+        setTempRole(user.role);
+
+        // await AsyncStorage.removeItem("authToken"); // Clear the token from storage
+        // router.push("(auth)/Login");
+      } else {
+        console.log(data);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+
+    // Clear form after submission
+  };
+
   // useEffect(() => {
   //   router.push("/Screens/PharmacyDetails");
   // }, []);
 
   return (
     <>
-      {user.role === "pharmacy" ? (
-        <PharmacyDetails />
+      {tempRole === "pharmacy" ? (
+        <PharmacyDetails
+          onUpdate={(pharmacy) => {
+            console.log(pharmacy, "pharmacy details");
+            setEditPharmacy(pharmacy);
+            setTempRole("editingRole");
+            setPharmacyName(pharmacy.name);
+            setContactNumber(pharmacy.contact);
+            setAddress(pharmacy.address);
+            setLocation(pharmacy.location);
+          }}
+          deleteLoading={deletePharmLoading}
+          onDelete={async (pharmacy) => {
+            // setEditPharmacy(pharmacy);
+            try {
+              setDeletePharmLoading(true);
+              console.log(user);
+              const resp = await fetch(
+                `http://192.168.0.105:3001/pharmacy/${pharmacy._id}`,
+                {
+                  method: "DELETE",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    userId: user.id,
+                  }),
+                }
+              );
+
+              const data = resp.json();
+              if (resp.ok) {
+                setUser((prev) => {
+                  return {
+                    ...prev,
+                    role: "user",
+                  };
+                });
+                router.replace("(tabs)");
+                setTempRole("user");
+                setDeletePharmLoading(false);
+                console.log(data);
+              }
+            } catch (error) {
+              console.error(error);
+            }
+          }}
+        />
       ) : (
         <>
           {showMap ? (
@@ -132,13 +252,13 @@ const Search = () => {
                 onChangeText={setPharmacyName}
               />
 
-              <Text style={styles.label}>Owner's Name</Text>
+              {/* <Text style={styles.label}>Owner's Name</Text>
               <TextInput
                 style={styles.input}
                 placeholder="Enter Owner's Name"
                 value={ownerName}
                 onChangeText={setOwnerName}
-              />
+              /> */}
 
               <Text style={styles.label}>Contact Number</Text>
               <TextInput
@@ -177,10 +297,26 @@ const Search = () => {
 
               <TouchableOpacity
                 style={styles.registerButton}
-                onPress={handleRegister}
+                onPress={() => {
+                  tempRole === "editingRole"
+                    ? handleUpdatePharmacy()
+                    : handleRegister();
+                }}
               >
-                <Text style={styles.buttonText}>Register</Text>
+                <Text style={styles.buttonText}>
+                  {tempRole === "editingRole" ? "Update" : "Register"}
+                </Text>
               </TouchableOpacity>
+              {tempRole === "editingRole" && (
+                <TouchableOpacity
+                  style={styles.cancelButton}
+                  onPress={() => {
+                    setTempRole(user.role);
+                  }}
+                >
+                  <Text style={styles.cancelButtonText}>Cancel</Text>
+                </TouchableOpacity>
+              )}
             </ScrollView>
           )}
         </>
@@ -246,8 +382,19 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
   },
+
+  cancelButton: {
+    padding: 15,
+    borderRadius: 10,
+    alignItems: "center",
+  },
   buttonText: {
     color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  cancelButtonText: {
+    color: "#616363",
     fontSize: 16,
     fontWeight: "bold",
   },

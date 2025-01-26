@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   View,
@@ -8,7 +8,9 @@ import {
   FlatList,
   Alert,
   Linking,
+  ActivityIndicator,
 } from "react-native";
+import * as Location from "expo-location";
 
 const calculateDistance = (lat1, lon1, lat2, lon2) => {
   const R = 6371; // Earth's radius in km
@@ -27,13 +29,52 @@ const calculateDistance = (lat1, lon1, lat2, lon2) => {
 const MedicineSearch = () => {
   const [medicineName, setMedicineName] = useState("");
   const [stores, setStores] = useState([]);
+  const [userLocation, setUserLocation] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLocating, setIsLocating] = useState(true);
 
-  const userLocation = { latitude: 33.6844, longitude: 73.0479 };
+  const getLocation = async () => {
+    try {
+      setIsLocating(true);
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert(
+          "Location Permission Denied",
+          "Please enable location services to use this feature."
+        );
+        return;
+      }
+      const location = await Location.getCurrentPositionAsync({});
+      setUserLocation({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      });
+    } catch (error) {
+      console.error(error);
+      Alert.alert(
+        "Location Error",
+        "Failed to retrieve your location. Please try again."
+      );
+    } finally {
+      setIsLocating(false);
+    }
+  };
+
+  useEffect(() => {
+    getLocation(); // Fetch user location on component mount
+  }, []);
 
   const searchMed = async (query) => {
     if (!medicineName.trim()) {
       Alert.alert("Error", "Please enter a medicine name.");
+      return;
+    }
+
+    if (!userLocation) {
+      Alert.alert(
+        "Location Unavailable",
+        "Your location is required to perform this search."
+      );
       return;
     }
 
@@ -97,6 +138,15 @@ const MedicineSearch = () => {
     );
   };
 
+  if (isLocating) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color="#4173A1" />
+        <Text style={styles.loadingText}>Getting your location...</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Search Medicine Availability</Text>
@@ -121,7 +171,7 @@ const MedicineSearch = () => {
 
       {/* Search Results */}
       {isLoading ? (
-        <Text style={styles.loadingText}>Searching...</Text>
+        <ActivityIndicator size="large" color="#4173A1" />
       ) : (
         <FlatList
           data={stores}

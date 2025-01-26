@@ -30,6 +30,7 @@ const quotes = [
 const Home = () => {
   const { user, articles, setArticles } = useAppContext();
   const router = useRouter();
+
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [quote, setQuote] = useState(""); // Ensure quote is initialized as an empty string

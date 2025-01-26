@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -9,19 +9,22 @@ import {
   ActivityIndicator,
   Image,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
 import { useAppContext } from "../context/context";
 
 const API_URL = "http://192.168.0.105:3001/articles"; // Replace with your backend API URL
 
 const CreateArticle = () => {
-  const { setArticles } = useAppContext();
+  const { setArticles, user } = useAppContext();
+  const router = useRouter();
+
+  const params = useLocalSearchParams();
+
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [image, setImage] = useState(null); // To store selected image
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
 
   // Function to pick an image from the gallery
   const pickImage = async () => {
@@ -63,7 +66,7 @@ const CreateArticle = () => {
       if (image) {
         formData.append("image", {
           uri: image.uri,
-          name: image.fileName,
+          name: image?.fileName,
           type: image.mimeType,
         });
       }
@@ -80,9 +83,7 @@ const CreateArticle = () => {
       if (!response.ok) {
         throw new Error("Failed to create article");
       }
-
-      const data = response.json();
-
+      const data = await response.json();
       setArticles((prev) => {
         console.log(prev);
         const tempArticles = [...prev];
@@ -90,7 +91,7 @@ const CreateArticle = () => {
         return tempArticles;
       });
       Alert.alert("Success", "Article created successfully!");
-      // router.push("/Screens/HealthArticles");
+      router.back();
 
       // Navigate back to the articles list
     } catch (error) {
@@ -99,6 +100,66 @@ const CreateArticle = () => {
       setLoading(false);
     }
   };
+
+  const handleUpdateArticle = async () => {
+    if (!title || !content) {
+      Alert.alert("Error", "Title and content are required.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      console.log(params._id);
+      console.log(`http://192.168.0.105:3001/articles/${params._id}`);
+
+      console.log(user.role);
+      const response = await fetch(
+        `http://192.168.0.105:3001/articles/${params._id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            title: title,
+            content: content, // Fixed the content field
+          }),
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to create article");
+      }
+      const data = await response.json();
+
+      setArticles((prev) => {
+        const updatedArticles = prev.map((article) =>
+          article._id === data.article._id ? data.article : article
+        );
+        return updatedArticles; // Replace the updated article
+      });
+
+      Alert.alert("Success", "Article Updated successfully!");
+      router.back();
+      router.back();
+
+      // Navigate back to the articles list
+    } catch (error) {
+      console.error("error", error);
+      Alert.alert("Error", error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (params?.title) {
+      setTitle(params?.title);
+      setContent(params?.content ?? "");
+      setImage({
+        url: params.image,
+      });
+    }
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -128,18 +189,33 @@ const CreateArticle = () => {
       </TouchableOpacity>
 
       {image && (
-        <Image source={{ uri: image.uri }} style={styles.imagePreview} />
+        <Image
+          source={
+            image.url
+              ? {
+                  uri: `http://192.168.0.105:3001/uploads/${
+                    params?.image?.split("\\")[1]
+                  }`,
+                }
+              : { uri: image.uri }
+          }
+          style={styles.imagePreview}
+        />
       )}
 
       <TouchableOpacity
         style={styles.button}
-        onPress={handleCreateArticle}
+        onPress={() => {
+          params?.title ? handleUpdateArticle() : handleCreateArticle();
+        }}
         disabled={loading}
       >
         {loading ? (
           <ActivityIndicator size="small" color="#fff" />
         ) : (
-          <Text style={styles.buttonText}>Create Article</Text>
+          <Text style={styles.buttonText}>
+            {params?.title ? "Update Article" : " Create Article"}
+          </Text>
         )}
       </TouchableOpacity>
     </View>

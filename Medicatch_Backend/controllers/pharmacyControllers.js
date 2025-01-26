@@ -68,7 +68,7 @@ exports.updatePharmacy = async (req, res) => {
   try {
     const pharmacy = await pharmacyModel.findOne({
       _id: id,
-      createdBy: userId,
+      // createdBy: userId,
     });
 
     if (!pharmacy) {
@@ -103,7 +103,7 @@ exports.deletePharmacy = async (req, res) => {
   try {
     const pharmacy = await pharmacyModel.findOne({
       _id: id,
-      createdBy: userId,
+      // createdBy: userId,
     });
 
     if (!pharmacy) {
@@ -115,6 +115,7 @@ exports.deletePharmacy = async (req, res) => {
     user.role = "user";
     await user.save();
     await pharmacyModel.findByIdAndDelete(id);
+
     res.status(200).json({ message: "Pharmacy deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: "Error deleting pharmacy", error });
