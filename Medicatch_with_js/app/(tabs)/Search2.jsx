@@ -71,7 +71,7 @@ const MedicineSearch = () => {
   useEffect(() => {
     if (userLocation && contextualMed !== "") {
       setMedicineName(contextualMed);
-      searchMed(contextualMed);
+      // searchMed(contextualMed);
     }
   }, [contextualMed]);
 
