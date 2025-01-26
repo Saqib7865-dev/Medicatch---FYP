@@ -13,12 +13,12 @@ import {
 
 const SignUp = () => {
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   let router = useRouter();
   const handleSignup = async () => {
-    if (!name || !email || !password || !confirmPassword) {
+    if (!name || !username || !password || !confirmPassword) {
       Alert.alert("Error", "Please fill in all fields");
       return;
     }
@@ -33,12 +33,12 @@ const SignUp = () => {
       return;
     }
 
-    let userRegister = await fetch("http://192.168.18.32:3001/users/register", {
+    let userRegister = await fetch("http://192.168.0.105:3001/users/register", {
       method: "POST",
       headers: {
         "content-type": "application/json",
       },
-      body: JSON.stringify({ username: email, password }),
+      body: JSON.stringify({ username, password }),
     });
     if (!userRegister.ok) return Alert.alert("User registration failed");
     let userRegisterJson = await userRegister.json();
@@ -46,7 +46,7 @@ const SignUp = () => {
       if (userRegisterJson.message === "User registered successfully") {
         Alert.alert("Success", userRegisterJson.message);
         setTimeout(() => {
-          setEmail("");
+          setUsername("");
           setName("");
           setPassword("");
           setConfirmPassword("");
@@ -77,9 +77,9 @@ const SignUp = () => {
         style={styles.input}
         placeholder="Username"
         placeholderTextColor="#999"
-        keyboardType="email-address"
-        value={email}
-        onChangeText={(text) => setEmail(text)}
+        keyboardType="default"
+        value={username}
+        onChangeText={(text) => setUsername(text)}
       />
 
       <TextInput

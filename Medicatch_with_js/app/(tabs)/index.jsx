@@ -16,7 +16,6 @@ import { useRouter } from "expo-router";
 import { getToken, removeToken } from "../../utils/tokenStorage";
 import SideDrawer from "../components/side-drawer";
 import { useAppContext } from "../context/context";
-import { useNotification } from "../context/NotificationsContext";
 
 const quotes = [
   "An apple a day keeps the doctor away.",
@@ -35,17 +34,16 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [quote, setQuote] = useState(""); // Ensure quote is initialized as an empty string
   const [loading, setLoading] = useState(true);
-  const { expoPushToken, notification, error } = useNotification();
 
   useEffect(() => {
     const checkAuthentication = async () => {
       const token = await getToken();
       if (!token) {
-        router.replace("/(auth)/LoginScreen"); // Redirect before rendering
+        router.replace("/(auth)/LoginScreen");
       } else {
         setIsAuthenticated(true);
       }
-      setIsLoading(false); // Stop the loading indicator
+      setIsLoading(false);
     };
 
     const handleAppStateChange = async (nextAppState) => {
@@ -75,13 +73,12 @@ const Home = () => {
     const fetchArticles = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(`http://192.168.18.32:3001/articles`);
+        const response = await fetch(`http://192.168.0.105:3001/articles`);
         if (!response.ok) {
           throw new Error("Failed to fetch articles");
         }
         const data = await response.json();
-        if (data.length === 0) {
-        } else {
+        if (data && data.length > 0) {
           setArticles(data);
           setIsLoading(false);
         }
@@ -89,7 +86,6 @@ const Home = () => {
         Alert.alert("Error", error.message);
       } finally {
         setLoading(false);
-        console.log("Articles: ", articles);
       }
     };
     if (isAuthenticated) {
@@ -106,10 +102,8 @@ const Home = () => {
   }
 
   if (!isAuthenticated) {
-    return null; // Avoid rendering anything if unauthenticated
+    return null;
   }
-  // console.log(user);
-  // if (error) return <>Met with an error</>;
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {/* <SideDrawer isOpen={true} /> */}

@@ -34,7 +34,7 @@ const ArticleDetails = () => {
   const getFeedbacks = async () => {
     try {
       const resp = await fetch(
-        `http://192.168.18.32:3001/feedback/${params._id}`
+        `http://192.168.0.105:3001/feedback/${params._id}`
       );
       const data = await resp.json();
       setFeedbacks(data);
@@ -50,7 +50,7 @@ const ArticleDetails = () => {
     }
     try {
       const resp = await fetch(
-        `http://192.168.18.32:3001/feedback/${params._id}`,
+        `http://192.168.0.105:3001/feedback/${params._id}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -135,9 +135,7 @@ const ArticleDetails = () => {
           keyExtractor={(item) => item._id.toString()} // Corrected keyExtractor to match _id
           renderItem={({ item }) => (
             <View style={styles.feedbackCard}>
-              <Text style={styles.feedbackUser}>
-                {item.userId.username} says:
-              </Text>{" "}
+              <Text style={styles.feedbackUser}>{item.userId.username}:</Text>{" "}
               <Text style={styles.feedbackText}>{item.feedback}</Text>
             </View>
           )}

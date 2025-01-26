@@ -1,30 +1,52 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Tabs } from "expo-router";
 import Entypo from "@expo/vector-icons/Entypo";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Platform, StatusBar } from "react-native";
-import AntDesign from "@expo/vector-icons/AntDesign";
+import { Platform, StatusBar, View, Text } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
+import { AntDesign } from "@expo/vector-icons";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
     shouldPlaySound: false,
-    shouldSetBadge: fasle,
+    shouldSetBadge: false,
   }),
 });
-
 const Tabslayout = () => {
   const [expoPushToken, setExpoPushToken] = useState();
+  const [notification, setNotification] = useState();
+  const notificationListener = useRef();
+  const responseListener = useRef();
   useEffect(() => {
     // fetch expo push token
-    registerForPushNotificationsAsync().then((token) =>
-      setExpoPushToken(token)
-    );
+    registerForPushNotificationsAsync().then((token) => {
+      setExpoPushToken(token);
+    });
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener(async (notification) => {
+        setNotification(notification);
+        await Notifications.cancelScheduledNotificationAsync(
+          notification.request.identifier
+        );
+      });
+    responseListener.current =
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        console.log("Notification response received listener: ", response);
+      });
+    return () => {
+      if (notificationListener.current) {
+        Notifications.removeNotificationSubscription(
+          notificationListener.current
+        );
+      }
+      if (responseListener.current) {
+        Notifications.removeNotificationSubscription(responseListener.current);
+      }
+    };
   }, []);
-  console.log("Token: ", expoPushToken);
   return (
     <>
       <StatusBar
@@ -68,7 +90,7 @@ const Tabslayout = () => {
             ),
           }}
         />
-        <Tabs.Screen
+        {/* <Tabs.Screen
           name="Health Articles"
           options={{
             title: "Health Articles",
@@ -76,7 +98,7 @@ const Tabslayout = () => {
               <Entypo name="text-document-inverted" size={24} color={color} />
             ),
           }}
-        />
+        /> */}
         <Tabs.Screen
           name="Register"
           options={{
@@ -97,6 +119,49 @@ const Tabslayout = () => {
           }}
         />
       </Tabs>
+      {notification && (
+        <View
+          style={{
+            backgroundColor: "white",
+            borderWidth: 2,
+            borderStyle: "solid",
+            borderColor: "black",
+            position: "absolute",
+            // bottom: 70,
+            top: "50%",
+            transform: "translate(0,-50%)",
+            paddingVertical: 20,
+            left: 10,
+            right: 10,
+            alignItems: "center",
+            justifyContent: "center",
+            borderRadius: 10,
+          }}
+        >
+          <Text style={{ fontWeight: "bold", fontSize: 20, marginBottom: 10 }}>
+            {notification && notification.request.content.title}
+          </Text>
+          <Text
+            style={{
+              fontWeight: "normal",
+              fontSize: 18,
+              marginBottom: 10,
+              textAlign: "justify",
+            }}
+          >
+            {notification && notification.request.content.body}
+          </Text>
+          <AntDesign
+            style={{ position: "absolute", top: 10, right: 10 }}
+            name="close"
+            size={24}
+            color="black"
+            onPress={() => {
+              setNotification(undefined);
+            }}
+          ></AntDesign>
+        </View>
+      )}
     </>
   );
 };
@@ -105,7 +170,7 @@ async function registerForPushNotificationsAsync() {
   let token;
   if (Platform.OS === "android") {
     await Notifications.setNotificationChannelAsync("default", {
-      name: "default",
+      name: "Manage your health",
       importance: Notifications.AndroidImportance.MAX,
       vibrationPattern: [0, 250, 250, 250],
       lightColor: "#ff231f7c",
@@ -123,12 +188,11 @@ async function registerForPushNotificationsAsync() {
       Alert.alert("Failed to get push token for push notification!");
       return;
     }
-    token = (
-      await Notifications.getExpoPushTokenAsync({
-        projectId: "project-id",
-      })
-    ).data;
-    console.log(token);
+    tokenData = await Notifications.getExpoPushTokenAsync({
+      projectId: "3931274c-dc64-4624-a0ae-9708dcd25139",
+    });
+    token = tokenData.data;
+    return token;
   } else {
     alert("Must use physical device for push notifications");
   }

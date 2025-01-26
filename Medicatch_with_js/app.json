@@ -15,7 +15,6 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.muhammadsaqibali.Medicatch",
       "config": {
         "usesNonExemptEncryption": false
       }
@@ -24,9 +23,7 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/logo1.png",
         "backgroundColor": "#e8f5fa"
-      },
-      "package": "dev.expo.Medicatch_with_js",
-      "googleServicesFile": "./google-services.json"
+      }
     },
     "web": {
       "favicon": "./assets/logo1.png"
