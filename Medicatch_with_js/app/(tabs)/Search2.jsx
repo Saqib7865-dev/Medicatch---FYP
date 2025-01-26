@@ -133,6 +133,7 @@ const MedicineSearch = () => {
 
   const handleOpenGoogleMaps = (latitude, longitude) => {
     const url = `https://www.google.com/maps/?q=${latitude},${longitude}`;
+    console.log(url);
     Linking.openURL(url).catch(() =>
       Alert.alert("Error", "Failed to open Google Maps.")
     );
