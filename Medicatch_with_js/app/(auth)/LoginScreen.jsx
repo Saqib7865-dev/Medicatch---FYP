@@ -93,7 +93,7 @@ const loginScreen = () => {
   };
 
   useEffect(() => {
-    myLogin();
+    // myLogin();
   }, []);
 
   return (

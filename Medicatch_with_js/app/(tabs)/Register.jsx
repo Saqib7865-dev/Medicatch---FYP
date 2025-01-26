@@ -96,6 +96,8 @@ const Search = () => {
           };
         });
 
+        setTempRole("pharmacy");
+
         // await AsyncStorage.removeItem("authToken"); // Clear the token from storage
         // router.push("(auth)/Login");
       } else {
