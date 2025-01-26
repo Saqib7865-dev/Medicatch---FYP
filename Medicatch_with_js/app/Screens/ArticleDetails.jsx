@@ -214,6 +214,7 @@ const styles = StyleSheet.create({
   container: {
     padding: 20,
     backgroundColor: "#e8f5fa",
+    flex:1
   },
   backButton: {
     marginBottom: 20,
