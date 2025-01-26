@@ -187,7 +187,7 @@ const PharmacyDetails = ({ onUpdate, onDelete, deleteLoading }) => {
               style={styles.actionButton}
               onPress={handleUpdatePharmacy}
             >
-              <Text style={styles.buttonText}>Update Pharmacy</Text>
+              <Text style={styles.buttonText}>Edit Pharmacy Details</Text>
             </TouchableOpacity>
 
             {/* Delete Pharmacy Button */}

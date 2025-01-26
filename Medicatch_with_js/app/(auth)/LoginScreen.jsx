@@ -17,6 +17,7 @@ const loginScreen = () => {
   const { setUser } = useAppContext();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   let router = useRouter();
   const handleLogin = async () => {
     try {
@@ -24,6 +25,7 @@ const loginScreen = () => {
         Alert.alert("Error", "Please fill in both fields");
         return;
       } else {
+        setLoading(true);
         let userLogin = await fetch(`http://192.168.18.8:3001/users/login`, {
           method: "POST",
           headers: {
@@ -52,17 +54,20 @@ const loginScreen = () => {
       }
     } catch (e) {
       console.error(e);
+    } finally {
+      setLoading(false);
     }
   };
 
   const myLogin = async () => {
     try {
+      setLoading(true);
       let userLogin = await fetch(`http://192.168.18.8:3001/users/login`, {
         method: "POST",
         headers: {
           "content-type": "application/json",
         },
-        body: JSON.stringify({ username: "Pharmacy2", password: "11223344" }),
+        body: JSON.stringify({ username: "New", password: "11223344" }),
       });
 
       let userLoginJson = await userLogin.json();
@@ -89,11 +94,13 @@ const loginScreen = () => {
       }
     } catch (e) {
       console.error(e);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    // myLogin();
+    myLogin();
   }, []);
 
   return (
@@ -121,7 +128,9 @@ const loginScreen = () => {
       />
 
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Login</Text>
+        <Text style={styles.buttonText}>
+          {loading ? "Logging In... " : "Log In"}
+        </Text>
       </TouchableOpacity>
       <Link href="/SignUpScreen" style={styles.Link}>
         Don't have any account?

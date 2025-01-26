@@ -11,6 +11,8 @@ import {
   ActivityIndicator,
 } from "react-native";
 import * as Location from "expo-location";
+import { router, useLocalSearchParams } from "expo-router";
+import { useAppContext } from "../context/context";
 
 const calculateDistance = (lat1, lon1, lat2, lon2) => {
   const R = 6371; // Earth's radius in km
@@ -27,6 +29,8 @@ const calculateDistance = (lat1, lon1, lat2, lon2) => {
 };
 
 const MedicineSearch = () => {
+  const { contextualMed } = useAppContext();
+
   const [medicineName, setMedicineName] = useState("");
   const [stores, setStores] = useState([]);
   const [userLocation, setUserLocation] = useState(null);
@@ -61,10 +65,17 @@ const MedicineSearch = () => {
   };
 
   useEffect(() => {
-    getLocation(); // Fetch user location on component mount
+    getLocation();
   }, []);
 
-  const searchMed = async (query) => {
+  useEffect(() => {
+    if (userLocation && contextualMed !== "") {
+      setMedicineName(contextualMed);
+      searchMed(contextualMed);
+    }
+  }, [contextualMed]);
+
+  async function searchMed(query) {
     if (!medicineName.trim()) {
       Alert.alert("Error", "Please enter a medicine name.");
       return;
@@ -81,7 +92,7 @@ const MedicineSearch = () => {
     setIsLoading(true);
     try {
       const resp = await fetch(
-        `http://192.168.18.8:3001/pharmacy/searchMedicine/?query=${medicineName}`,
+        `http://192.168.18.8:3001/pharmacy/searchMedicine/?query=${query}`,
         {
           method: "POST",
         }
@@ -108,6 +119,7 @@ const MedicineSearch = () => {
             contact: store.pharmacy.contact,
             availability: "In Stock",
             medName: store.pharmacy.medicineName,
+            quantity: store.pharmacy.quantity,
             latitude: store.pharmacy.location.latitude,
             longitude: store.pharmacy.location.longitude,
 
@@ -129,7 +141,7 @@ const MedicineSearch = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }
 
   const handleOpenGoogleMaps = (latitude, longitude) => {
     const url = `https://www.google.com/maps/?q=${latitude},${longitude}`;
@@ -180,11 +192,11 @@ const MedicineSearch = () => {
           renderItem={({ item }) => (
             <View style={styles.storeCard}>
               <Text style={styles.storeName}>{item.name} </Text>
-              <Text style={styles.storeDetails}>Medicine: {item.medName}</Text>
+              <Text style={styles.storeDetails}>Medicine: {item.medName} </Text>
               <Text style={styles.storeDetails}>Address: {item.address}</Text>
               <Text style={styles.storeDetails}>Contact: {item.contact}</Text>
               <Text style={[styles.availability, styles.inStock]}>
-                {item.availability}
+                {item.quantity} {item.availability}
               </Text>
               <TouchableOpacity
                 style={styles.locateButton}

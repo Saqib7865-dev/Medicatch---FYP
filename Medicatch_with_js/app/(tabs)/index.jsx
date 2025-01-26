@@ -10,6 +10,7 @@ import {
   Dimensions,
   ActivityIndicator,
   AppState,
+  Alert,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -29,13 +30,15 @@ const quotes = [
 ];
 
 const Home = () => {
-  const { user, articles, setArticles } = useAppContext();
+  const { user, articles, setArticles, setContextualMed } = useAppContext();
   const router = useRouter();
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [quote, setQuote] = useState(""); // Ensure quote is initialized as an empty string
   const [loading, setLoading] = useState(true);
+  const [medicineName, setMedicineName] = useState("");
+
   const { expoPushToken, notification, error } = useNotification();
 
   useEffect(() => {
@@ -127,8 +130,22 @@ const Home = () => {
           style={styles.searchInput}
           placeholder="Search for Medicine"
           placeholderTextColor="#999"
+          value={medicineName}
+          onChangeText={setMedicineName}
         />
-        <TouchableOpacity style={styles.searchButton} onPress={() => {}}>
+        <TouchableOpacity
+          style={styles.searchButton}
+          onPress={() => {
+            if (medicineName) {
+              setContextualMed(medicineName);
+              router.push({
+                pathname: "(tabs)/Search2",
+              });
+            } else {
+              Alert.alert("No Medicine", "Please enter medicine name.");
+            }
+          }}
+        >
           <Feather name="search" size={20} color="#fff" />
         </TouchableOpacity>
       </View>
