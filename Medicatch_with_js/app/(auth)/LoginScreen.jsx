@@ -26,7 +26,7 @@ const loginScreen = () => {
         return;
       } else {
         setLoading(true);
-        let userLogin = await fetch(`http://192.168.18.8:3001/users/login`, {
+        let userLogin = await fetch(`http://192.168.0.105:3001/users/login`, {
           method: "POST",
           headers: {
             "content-type": "application/json",
@@ -62,7 +62,7 @@ const loginScreen = () => {
   const myLogin = async () => {
     try {
       setLoading(true);
-      let userLogin = await fetch(`http://192.168.18.8:3001/users/login`, {
+      let userLogin = await fetch(`http://192.168.0.105:3001/users/login`, {
         method: "POST",
         headers: {
           "content-type": "application/json",

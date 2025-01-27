@@ -38,7 +38,7 @@ const ArticleDetails = () => {
     setIsLoadingFeedbacks(true);
     try {
       const resp = await fetch(
-        `http://192.168.18.8:3001/feedback/${params._id}`
+        `http://192.168.0.105:3001/feedback/${params._id}`
       );
       const data = await resp.json();
       setFeedbacks(data);
@@ -57,7 +57,7 @@ const ArticleDetails = () => {
     setIsSubmittingFeedback(true);
     try {
       const resp = await fetch(
-        `http://192.168.18.8:3001/feedback/${params._id}`,
+        `http://192.168.0.105:3001/feedback/${params._id}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -97,7 +97,7 @@ const ArticleDetails = () => {
           onPress: async () => {
             try {
               const resp = await fetch(
-                `http://192.168.18.8:3001/articles/${params._id}`,
+                `http://192.168.0.105:3001/articles/${params._id}`,
                 {
                   method: "DELETE",
                 }
@@ -133,7 +133,7 @@ const ArticleDetails = () => {
 
       <Image
         source={{
-          uri: `http://192.168.18.8:3001/uploads/${
+          uri: `http://192.168.0.105:3001/uploads/${
             params?.image?.split("\\")[1]
           }`,
         }}
