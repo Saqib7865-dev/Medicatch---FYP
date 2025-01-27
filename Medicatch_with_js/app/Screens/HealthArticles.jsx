@@ -133,15 +133,6 @@ const HealthArticles = () => {
             }
           >
             <View style={styles.articleCard}>
-              {/* <Image
-                // source={require("http://localhost:3001/uploads/eb992833-3242-4267-95af-8ca449d4dcef.png")}
-                // source={{ uri: article.image }}
-                source={{
-                  uri: "http://localhost:3001/uploads/eb992833-3242-4267-95af-8ca449d4dcef.png ",
-                }}
-                style={styles.articleImage}
-              /> */}
-
               <Image
                 source={{
                   uri: `http://192.168.0.105:3001/uploads/${
@@ -175,28 +166,33 @@ const HealthArticles = () => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
+    fontFamily: "serif",
     backgroundColor: "#e8f5fa",
     padding: 20,
   },
   header: {
     flexDirection: "row",
+    fontFamily: "serif",
     alignItems: "center",
     marginBottom: 20,
   },
   headerTitle: {
     fontSize: 20,
+    fontFamily: "serif",
     fontWeight: "bold",
     marginLeft: 10,
   },
   createButton: {
     backgroundColor: "#4173A1",
     padding: 10,
+    fontFamily: "serif",
     borderRadius: 10,
     alignItems: "center",
     marginBottom: 20,
   },
   createButtonText: {
     color: "#fff",
+    fontFamily: "serif",
     fontSize: 16,
     fontWeight: "bold",
   },
@@ -204,10 +200,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 20,
+    fontFamily: "serif",
   },
   searchInput: {
     flex: 1,
     padding: 10,
+    fontFamily: "serif",
     borderWidth: 1,
     borderColor: "#D1D9E6",
     borderRadius: 10,
@@ -217,6 +215,7 @@ const styles = StyleSheet.create({
   searchButton: {
     backgroundColor: "#4173A1",
     padding: 10,
+    fontFamily: "serif",
     borderRadius: 10,
     marginLeft: 10,
   },
@@ -224,6 +223,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     backgroundColor: "#fff",
     borderRadius: 10,
+    fontFamily: "serif",
     padding: 10,
     marginBottom: 15,
     alignItems: "center",
@@ -235,39 +235,47 @@ const styles = StyleSheet.create({
   },
   articleImage: {
     width: 100,
+    fontFamily: "serif",
     height: 70,
     borderRadius: 10,
     marginRight: 10,
   },
   articleContent: {
     flex: 1,
+    fontFamily: "serif",
   },
   articleTitle: {
     fontSize: 16,
     fontWeight: "bold",
     marginBottom: 5,
+    fontFamily: "serif",
   },
   articleContentText: {
     fontSize: 12,
     marginBottom: 5,
+    fontFamily: "serif",
   },
   articleDate: {
     fontSize: 14,
     color: "#555",
+    fontFamily: "serif",
   },
   loadingText: {
     fontSize: 16,
     color: "#555",
+    fontFamily: "serif",
     textAlign: "center",
   },
   errorMessage: {
     textAlign: "center",
     fontSize: 16,
+    fontFamily: "serif",
     color: "red",
   },
   noArticlesText: {
     textAlign: "center",
     fontSize: 16,
+    fontFamily: "serif",
     color: "#555",
   },
 });

@@ -67,7 +67,7 @@ exports.getUsersPharmacy = async (req, res) => {
 
 exports.updatePharmacy = async (req, res) => {
   const { id } = req.params; // Pharmacy id
-  const { stock, location, address, contact } = req.body;
+  const { name, stock, location, address, contact } = req.body;
   const userId = req.body.userId;
 
   try {
@@ -80,6 +80,9 @@ exports.updatePharmacy = async (req, res) => {
       return res
         .status(404)
         .json({ message: "Pharmacy not found or unauthorized" });
+    }
+    if (name) {
+      pharmacy.name = name;
     }
     if (stock) {
       pharmacy.stock = stock;

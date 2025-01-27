@@ -35,7 +35,7 @@ const PharmacyDetails = ({ onUpdate, onDelete, deleteLoading }) => {
   const addPharmStock = async (csvFile) => {
     console.log("pharmstock");
     if (!csvFile || !csvFile.assets || csvFile.assets.length === 0) {
-      console.error("No CSV file selected.");
+      Alert.alert("Not Selected", "No CSV file selected.");
       return;
     }
 
@@ -168,7 +168,7 @@ const PharmacyDetails = ({ onUpdate, onDelete, deleteLoading }) => {
               }}
             >
               <Text style={styles.buttonText}>
-                {csvFile ? `File Selected` : "Select CSV File"}
+                {csvFile ? `Change File` : "Select CSV File"}
               </Text>
             </TouchableOpacity>
 
@@ -187,7 +187,7 @@ const PharmacyDetails = ({ onUpdate, onDelete, deleteLoading }) => {
               style={styles.actionButton}
               onPress={handleUpdatePharmacy}
             >
-              <Text style={styles.buttonText}>Update Pharmacy</Text>
+              <Text style={styles.buttonText}>Edit Pharmacy Details</Text>
             </TouchableOpacity>
 
             {/* Delete Pharmacy Button */}

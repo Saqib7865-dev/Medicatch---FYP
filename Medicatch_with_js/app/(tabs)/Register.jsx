@@ -341,17 +341,20 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: 20,
+    fontFamily: "serif",
     backgroundColor: "#e8f5fa",
   },
   header: {
     fontSize: 24,
     fontWeight: "bold",
     textAlign: "center",
+    fontFamily: "serif",
     marginBottom: 20,
   },
   label: {
     fontSize: 16,
     fontWeight: "600",
+    fontFamily: "serif",
     marginBottom: 5,
   },
   input: {
@@ -359,6 +362,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderWidth: 1,
     borderColor: "#D1D9E6",
+    fontFamily: "serif",
     borderRadius: 10,
     backgroundColor: "#fff",
     fontSize: 16,
@@ -366,16 +370,19 @@ const styles = StyleSheet.create({
   },
   textArea: {
     height: 80,
+    fontFamily: "serif",
   },
   locationText: {
     fontSize: 14,
     color: "#007BFF",
+    fontFamily: "serif",
     marginBottom: 15,
   },
   setLocationButton: {
     backgroundColor: "#FF8C00",
     padding: 15,
     borderRadius: 10,
+    fontFamily: "serif",
     alignItems: "center",
     marginBottom: 15,
   },
@@ -383,12 +390,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#28A745",
     padding: 15,
     borderRadius: 10,
+    fontFamily: "serif",
     alignItems: "center",
     marginBottom: 15,
   },
   registerButton: {
     backgroundColor: "#4173A1",
     padding: 15,
+    fontFamily: "serif",
     borderRadius: 10,
     alignItems: "center",
   },
@@ -396,15 +405,18 @@ const styles = StyleSheet.create({
   cancelButton: {
     padding: 15,
     borderRadius: 10,
+    fontFamily: "serif",
     alignItems: "center",
   },
   buttonText: {
     color: "#fff",
     fontSize: 16,
+    fontFamily: "serif",
     fontWeight: "bold",
   },
   cancelButtonText: {
     color: "#616363",
+    fontFamily: "serif",
     fontSize: 16,
     fontWeight: "bold",
   },

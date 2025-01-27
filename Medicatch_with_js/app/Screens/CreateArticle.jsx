@@ -105,16 +105,10 @@ const CreateArticle = () => {
 
     setLoading(true);
     try {
-      const formData = new FormData();
-      formData.append("title", title);
-      formData.append("content", content);
-      if (image) {
-        formData.append("image", {
-          uri: image.uri,
-          name: image?.fileName,
-          type: image.mimeType,
-        });
-      }
+      console.log(params._id);
+      console.log(`http://192.168.0.105:3001/articles/${params._id}`);
+
+      console.log(user.role);
       const response = await fetch(
         `http://192.168.0.105:3001/articles/${params._id}`,
         {
@@ -134,13 +128,12 @@ const CreateArticle = () => {
         const updatedArticles = prev.map((article) =>
           article._id === data.article._id ? data.article : article
         );
-        return updatedArticles; 
+        return updatedArticles;
       });
 
       Alert.alert("Success", "Article Updated successfully!");
       router.back();
       router.back();
-
     } catch (error) {
       Alert.alert("Error", error.message);
     } finally {
@@ -223,11 +216,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    fontFamily: "serif",
     justifyContent: "center",
     backgroundColor: "#e8f5fa",
   },
   header: {
     fontSize: 24,
+    fontFamily: "serif",
     fontWeight: "bold",
     marginBottom: 20,
     textAlign: "center",
@@ -235,6 +230,7 @@ const styles = StyleSheet.create({
   input: {
     width: "100%",
     padding: 10,
+    fontFamily: "serif",
     borderWidth: 1,
     borderColor: "#D1D9E6",
     borderRadius: 10,
@@ -244,18 +240,21 @@ const styles = StyleSheet.create({
   },
   textArea: {
     height: 100,
+    fontFamily: "serif",
     textAlignVertical: "top",
   },
   imagePickerButton: {
     backgroundColor: "#FFA500",
     padding: 15,
     borderRadius: 10,
+    fontFamily: "serif",
     alignItems: "center",
     marginBottom: 10,
   },
   imagePreview: {
     width: "100%",
     height: 200,
+    fontFamily: "serif",
     borderRadius: 10,
     marginBottom: 15,
     resizeMode: "cover",
@@ -263,12 +262,14 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: "#4173A1",
     padding: 15,
+    fontFamily: "serif",
     borderRadius: 10,
     alignItems: "center",
   },
   buttonText: {
     color: "#fff",
     fontSize: 16,
+    fontFamily: "serif",
     fontWeight: "bold",
   },
 });

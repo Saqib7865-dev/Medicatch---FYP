@@ -17,6 +17,7 @@ const loginScreen = () => {
   const { setUser } = useAppContext();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   let router = useRouter();
   const handleLogin = async () => {
     try {
@@ -24,6 +25,7 @@ const loginScreen = () => {
         Alert.alert("Error", "Please fill in both fields");
         return;
       } else {
+        setLoading(true);
         let userLogin = await fetch(`http://192.168.0.105:3001/users/login`, {
           method: "POST",
           headers: {
@@ -52,8 +54,11 @@ const loginScreen = () => {
       }
     } catch (e) {
       console.error(e);
+    } finally {
+      setLoading(false);
     }
   };
+
   return (
     <View style={styles.container}>
       <Image
@@ -64,8 +69,8 @@ const loginScreen = () => {
 
       <TextInput
         style={styles.input}
-        placeholder="username"
-        keyboardType="username"
+        placeholder="Username"
+        keyboardType="email-address"
         value={email}
         onChangeText={(text) => setEmail(text.trim())}
       />
@@ -79,7 +84,9 @@ const loginScreen = () => {
       />
 
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Login</Text>
+        <Text style={styles.buttonText}>
+          {loading ? "Logging In... " : "Log In"}
+        </Text>
       </TouchableOpacity>
       <Link href="/SignUpScreen" style={styles.Link}>
         Don't have any account?
@@ -92,7 +99,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
+    fontFamily: "serif",
+
     alignItems: "center",
+    height: "100%",
     backgroundColor: "#e8f5fa",
     padding: 20,
   },
@@ -100,11 +110,15 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
     marginBottom: 20,
+    fontFamily: "serif",
+
     resizeMode: "contain",
   },
   title: {
     fontSize: 28,
     fontWeight: "600",
+    fontFamily: "serif",
+
     color: "#333",
     marginBottom: 30,
   },
@@ -113,6 +127,8 @@ const styles = StyleSheet.create({
     padding: 15,
     marginVertical: 10,
     borderWidth: 1,
+    fontFamily: "serif",
+
     borderColor: "#D1D9E6",
     borderRadius: 10,
     backgroundColor: "#FFFFFF",
@@ -130,6 +146,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
     marginTop: 20,
+    fontFamily: "serif",
     shadowColor: "#e8f5fa",
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.4,
@@ -140,11 +157,14 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 18,
     fontWeight: "bold",
+    fontFamily: "serif",
   },
   Link: {
     color: "#4173A1",
     fontWeight: "bold",
     fontSize: 16,
+    fontFamily: "serif",
+
     marginTop: 10,
   },
 });

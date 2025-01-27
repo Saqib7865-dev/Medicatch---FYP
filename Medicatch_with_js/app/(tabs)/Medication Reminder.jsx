@@ -153,12 +153,18 @@ const MedicationReminder = () => {
             }}
           />
         )}
-        <View style={styles.datePickerContainer}>
-          <Button
-            title="Pick Date"
-            style={styles.DateTimePickerContainer}
+        <View>
+          <TouchableOpacity
+            style={styles.timePickerButton}
             onPress={() => setShowPicker(true)}
-          />
+          >
+            <Text style={styles.timePickerText}>Pick Date</Text>
+          </TouchableOpacity>
+          {/* <Button
+            title="Pick Date"
+            style={styles.timePickerText}
+            onPress={() => setShowPicker(true)}
+          /> */}
           {showPicker && (
             <DateTimePicker
               value={date}
@@ -177,7 +183,7 @@ const MedicationReminder = () => {
         <TouchableOpacity style={styles.saveButton} onPress={handleSetReminder}>
           <Text style={styles.buttonText}>Save</Text>
         </TouchableOpacity>
-        <Text style={styles.header}>Set Reminders</Text>
+        <Text style={styles.header}>Your Reminders</Text>
         <FlatList
           data={reminders}
           keyExtractor={(item) => item.id}

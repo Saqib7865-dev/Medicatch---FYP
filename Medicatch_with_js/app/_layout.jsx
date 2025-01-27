@@ -1,11 +1,10 @@
 import React from "react";
 import { Stack } from "expo-router";
-import { StatusBar } from "react-native";
+import { LogBox, StatusBar } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AppProvider } from "./context/context";
-import { LogBox } from "react-native";
 const RootLayout = () => {
-  LogBox.ignoreAllLogs(true);
+  LogBox.ignoreAllLogs();
   return (
     <>
       <AppProvider>

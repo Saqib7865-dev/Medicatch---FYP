@@ -10,6 +10,7 @@ import {
   Dimensions,
   ActivityIndicator,
   AppState,
+  Alert,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -28,13 +29,14 @@ const quotes = [
 ];
 
 const Home = () => {
-  const { user, articles, setArticles } = useAppContext();
+  const { user, articles, setArticles, setContextualMed } = useAppContext();
   const router = useRouter();
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [quote, setQuote] = useState(""); // Ensure quote is initialized as an empty string
   const [loading, setLoading] = useState(true);
+  const [medicineName, setMedicineName] = useState("");
 
   useEffect(() => {
     const checkAuthentication = async () => {
@@ -121,8 +123,22 @@ const Home = () => {
           style={styles.searchInput}
           placeholder="Search for Medicine"
           placeholderTextColor="#999"
+          value={medicineName}
+          onChangeText={setMedicineName}
         />
-        <TouchableOpacity style={styles.searchButton} onPress={() => {}}>
+        <TouchableOpacity
+          style={styles.searchButton}
+          onPress={() => {
+            if (medicineName) {
+              setContextualMed(medicineName);
+              router.push({
+                pathname: "(tabs)/Search2",
+              });
+            } else {
+              Alert.alert("No Medicine", "Please enter medicine name.");
+            }
+          }}
+        >
           <Feather name="search" size={20} color="#fff" />
         </TouchableOpacity>
       </View>
@@ -142,7 +158,6 @@ const Home = () => {
           <TouchableOpacity>
             <Text
               style={styles.viewAllText}
-              // onPress={() => router.push("/(auth)/LoginScreen")}
               onPress={() => router.push("/Screens/HealthArticles")}
             >
               View All
@@ -168,7 +183,12 @@ const Home = () => {
               >
                 <View style={styles.articleCard}>
                   <Image
-                    source={require("./../../assets/home1.png")}
+                    // source={require("./../../assets/home1.png")}
+                    source={{
+                      uri: `http://192.168.0.105:3001/uploads/${
+                        article?.image?.split("\\")[1]
+                      }`,
+                    }}
                     style={styles.articleImage}
                   />
                   <View style={styles.overlay}>
@@ -190,19 +210,23 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     backgroundColor: "#e8f5fa",
+    fontFamily: "serif",
     padding: 20,
   },
   header: {
+    fontFamily: "serif",
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 20,
   },
   welcomeText: {
     fontSize: 24,
+    fontFamily: "serif",
     fontWeight: "bold",
     marginLeft: 10,
   },
   quoteContainer: {
+    fontFamily: "serif",
     backgroundColor: "#228a03",
     padding: 15,
     borderRadius: 10,
@@ -215,11 +239,13 @@ const styles = StyleSheet.create({
   },
   quoteText: {
     fontSize: 16,
+    fontFamily: "serif",
     fontStyle: "italic",
     color: "#fff",
     textAlign: "center",
   },
   searchContainer: {
+    fontFamily: "serif",
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 20,
@@ -228,6 +254,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     borderWidth: 1,
+    fontFamily: "serif",
     borderColor: "#D1D9E6",
     borderRadius: 10,
     backgroundColor: "#fff",
@@ -235,6 +262,8 @@ const styles = StyleSheet.create({
   },
   searchButton: {
     backgroundColor: "#4173A1",
+    fontFamily: "serif",
+
     padding: 10,
     borderRadius: 10,
     marginLeft: 10,
@@ -242,21 +271,28 @@ const styles = StyleSheet.create({
   articlesHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
+    fontFamily: "serif",
+
     alignItems: "center",
     marginBottom: 10,
   },
   articlesTitle: {
     fontSize: 18,
     fontWeight: "bold",
+    fontFamily: "serif",
   },
   viewAllText: {
     fontSize: 14,
     color: "#4173A1",
+    fontFamily: "serif",
+
     fontWeight: "bold",
   },
   articlesDescription: {
     fontSize: 14,
     color: "#555",
+    fontFamily: "serif",
+
     marginBottom: 20,
     lineHeight: 20,
   },
@@ -275,19 +311,27 @@ const styles = StyleSheet.create({
     position: "relative",
     marginBottom: 10,
     borderRadius: 10,
+    fontFamily: "serif",
+
     overflow: "hidden",
   },
   articleImage: {
     width: "100%",
+    fontFamily: "serif",
+
     height: 120,
   },
   row: {
     flexDirection: "row",
+    fontFamily: "serif",
+
     justifyContent: "space-between",
   },
   overlay: {
     position: "absolute",
     bottom: 0,
+    fontFamily: "serif",
+
     left: 0,
     right: 0,
     backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background
@@ -301,14 +345,19 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 14,
     fontWeight: "bold",
+    fontFamily: "serif",
   },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
+    fontFamily: "serif",
+
     alignItems: "center",
   },
   loadingText: {
     marginTop: 10,
+    fontFamily: "serif",
+
     fontSize: 16,
     color: "#3798CE",
   },

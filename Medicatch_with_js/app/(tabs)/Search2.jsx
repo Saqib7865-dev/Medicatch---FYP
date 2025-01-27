@@ -11,6 +11,8 @@ import {
   ActivityIndicator,
 } from "react-native";
 import * as Location from "expo-location";
+import { router, useLocalSearchParams } from "expo-router";
+import { useAppContext } from "../context/context";
 
 const calculateDistance = (lat1, lon1, lat2, lon2) => {
   const R = 6371; // Earth's radius in km
@@ -27,6 +29,8 @@ const calculateDistance = (lat1, lon1, lat2, lon2) => {
 };
 
 const MedicineSearch = () => {
+  const { contextualMed } = useAppContext();
+
   const [medicineName, setMedicineName] = useState("");
   const [stores, setStores] = useState([]);
   const [userLocation, setUserLocation] = useState(null);
@@ -61,10 +65,17 @@ const MedicineSearch = () => {
   };
 
   useEffect(() => {
-    getLocation(); // Fetch user location on component mount
+    getLocation();
   }, []);
 
-  const searchMed = async (query) => {
+  useEffect(() => {
+    if (userLocation && contextualMed !== "") {
+      setMedicineName(contextualMed);
+      // searchMed(contextualMed);
+    }
+  }, [contextualMed]);
+
+  async function searchMed(query) {
     if (!medicineName.trim()) {
       Alert.alert("Error", "Please enter a medicine name.");
       return;
@@ -81,7 +92,7 @@ const MedicineSearch = () => {
     setIsLoading(true);
     try {
       const resp = await fetch(
-        `http://192.168.0.105:3001/pharmacy/searchMedicine/?query=${medicineName}`,
+        `http://192.168.0.105:3001/pharmacy/searchMedicine/?query=${query}`,
         {
           method: "POST",
         }
@@ -108,6 +119,7 @@ const MedicineSearch = () => {
             contact: store.pharmacy.contact,
             availability: "In Stock",
             medName: store.pharmacy.medicineName,
+            quantity: store.pharmacy.quantity,
             latitude: store.pharmacy.location.latitude,
             longitude: store.pharmacy.location.longitude,
 
@@ -129,10 +141,11 @@ const MedicineSearch = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }
 
   const handleOpenGoogleMaps = (latitude, longitude) => {
     const url = `https://www.google.com/maps/?q=${latitude},${longitude}`;
+    console.log(url);
     Linking.openURL(url).catch(() =>
       Alert.alert("Error", "Failed to open Google Maps.")
     );
@@ -179,11 +192,11 @@ const MedicineSearch = () => {
           renderItem={({ item }) => (
             <View style={styles.storeCard}>
               <Text style={styles.storeName}>{item.name} </Text>
-              <Text style={styles.storeDetails}>Medicine: {item.medName}</Text>
+              <Text style={styles.storeDetails}>Medicine: {item.medName} </Text>
               <Text style={styles.storeDetails}>Address: {item.address}</Text>
               <Text style={styles.storeDetails}>Contact: {item.contact}</Text>
               <Text style={[styles.availability, styles.inStock]}>
-                {item.availability}
+                {item.quantity} {item.availability}
               </Text>
               <TouchableOpacity
                 style={styles.locateButton}
@@ -213,12 +226,14 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: "#e8f5fa",
+    fontFamily: "serif",
   },
   header: {
     fontSize: 24,
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 20,
+    fontFamily: "serif",
   },
   input: {
     width: "100%",
@@ -229,6 +244,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     fontSize: 16,
     marginBottom: 15,
+    fontFamily: "serif",
   },
   searchButton: {
     backgroundColor: "#4173A1",
@@ -236,16 +252,19 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
     marginBottom: 20,
+    fontFamily: "serif",
   },
   buttonText: {
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
+    fontFamily: "serif",
   },
   loadingText: {
     fontSize: 16,
     textAlign: "center",
     marginTop: 20,
+    fontFamily: "serif",
   },
   storeCard: {
     backgroundColor: "#fff",
@@ -257,16 +276,19 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+    fontFamily: "serif",
   },
   storeName: {
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 5,
+    fontFamily: "serif",
   },
   storeDetails: {
     fontSize: 14,
     color: "#555",
     marginBottom: 5,
+    fontFamily: "serif",
   },
   availability: {
     fontSize: 14,
@@ -277,6 +299,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     backgroundColor: "#4CAF50",
     color: "#fff",
+    fontFamily: "serif",
   },
   locateButton: {
     backgroundColor: "#FF8C00",
@@ -284,16 +307,19 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
     marginTop: 10,
+    fontFamily: "serif",
   },
   locateButtonText: {
     color: "#fff",
     fontSize: 14,
     fontWeight: "bold",
+    fontFamily: "serif",
   },
   noResultsText: {
     fontSize: 16,
     color: "#666",
     textAlign: "center",
     marginTop: 20,
+    fontFamily: "serif",
   },
 });
