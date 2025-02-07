@@ -30,7 +30,7 @@ const calculateDistance = (lat1, lon1, lat2, lon2) => {
 
 const MedicineSearch = () => {
   const { contextualMed } = useAppContext();
-
+  const [availabilityAlert, setAvailabilityAlert] = useState(false);
   const [medicineName, setMedicineName] = useState("");
   const [stores, setStores] = useState([]);
   const [userLocation, setUserLocation] = useState(null);
@@ -92,7 +92,7 @@ const MedicineSearch = () => {
     setIsLoading(true);
     try {
       const resp = await fetch(
-        `http://192.168.0.105:3001/pharmacy/searchMedicine/?query=${query}`,
+        `http://192.168.1.13:3001/pharmacy/searchMedicine/?query=${query}`,
         {
           method: "POST",
         }
@@ -163,7 +163,6 @@ const MedicineSearch = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Search Medicine Availability</Text>
-
       {/* Medicine Name Input */}
       <TextInput
         style={styles.input}
@@ -171,7 +170,6 @@ const MedicineSearch = () => {
         value={medicineName}
         onChangeText={setMedicineName}
       />
-
       {/* Search Button */}
       <TouchableOpacity
         style={styles.searchButton}
@@ -181,7 +179,6 @@ const MedicineSearch = () => {
       >
         <Text style={styles.buttonText}>Search</Text>
       </TouchableOpacity>
-
       {/* Search Results */}
       {isLoading ? (
         <ActivityIndicator size="large" color="#4173A1" />
@@ -211,10 +208,24 @@ const MedicineSearch = () => {
           ListEmptyComponent={
             <Text style={styles.noResultsText}>
               No stores found for the requested medicine.
+              {/* <TouchableOpacity onPress={() => setAvailabilityAlert(true)}>
+                <Text style={styles.noResultsText}>
+                  Do you want to set availability alert?
+                </Text>
+              </TouchableOpacity> */}
             </Text>
           }
         />
       )}
+      {/* (
+      {availabilityAlert ? (
+        <View>
+          <Text>Enter medicine name: </Text>
+        </View>
+      ) : (
+        ""
+      )}
+      ) */}
     </View>
   );
 };
