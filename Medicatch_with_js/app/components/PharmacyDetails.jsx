@@ -17,7 +17,7 @@ const PharmacyDetails = ({ onUpdate, onDelete, deleteLoading }) => {
   const getPharmacy = async () => {
     try {
       setLoading(true);
-      const resp = await fetch(`http://192.168.0.105:3001/pharmacy/${user.id}`);
+      const resp = await fetch(`http://192.168.1.13:3001/pharmacy/${user.id}`);
       const data = await resp.json();
       console.log(data, "pharm.............");
       if (resp.ok) {
@@ -61,7 +61,7 @@ const PharmacyDetails = ({ onUpdate, onDelete, deleteLoading }) => {
 
       // Make the fetch call
       const resp = await fetch(
-        `http://192.168.0.105:3001/pharmacy/${pharmacy._id}/stock`,
+        `http://192.168.1.13:3001/pharmacy/${pharmacy._id}/stock`,
         {
           method: "PUT",
           headers: {
