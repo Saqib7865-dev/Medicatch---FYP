@@ -5,6 +5,7 @@ const userRouter = require("./routes/userRouter");
 const articleRouter = require("./routes/articleRouter");
 const feedbackRouter = require("./routes/feedbackRouter");
 const pharmacyRouter = require("./routes/pharmacyRouter");
+const alertRoutes = require("./routes/alertRouter");
 const path = require("path");
 const app = express();
 app.use(cors());
@@ -22,7 +23,8 @@ app.use("/articles", articleRouter);
 app.use("/feedback", feedbackRouter);
 // Pharmacy
 app.use("/pharmacy", pharmacyRouter);
-
+// alert
+app.use("/alerts", alertRoutes);
 // In your main app.js or server.js file
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 

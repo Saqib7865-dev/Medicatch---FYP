@@ -1,5 +1,6 @@
 const pharmacyModel = require("../models/Pharmacy");
 const userModel = require("../models/Users");
+const Alert = require("../models/Alert");
 const csv = require("csvtojson");
 exports.createPharmacy = async (req, res) => {
   const { name, location, createdBy, address, contact } = req.body;
@@ -132,20 +133,11 @@ exports.deletePharmacy = async (req, res) => {
 
 exports.addStock = async (req, res) => {
   const { id } = req.params;
-  // const userId = req.body.userId;
+  if (!req.file)
+    return res.status(404).send({ message: "CSV file is required" });
 
-  // if (!medicineName || !quantity) {
-  //   return res
-  //     .status(400)
-  //     .json({ message: "Medicine name and quantity are required." });
-  // }
-
-  if (!req.file) res.status(404).send({ message: "CSV file is required" });
   try {
-    const pharmacy = await pharmacyModel.findOne({
-      _id: id,
-      // createdBy: userId,
-    });
+    const pharmacy = await pharmacyModel.findOne({ _id: id });
     if (!pharmacy) {
       return res
         .status(404)
@@ -161,6 +153,7 @@ exports.addStock = async (req, res) => {
             quantity: response[i].quantity,
           });
         }
+        // Process each row from CSV
         for (let i = 0; i < userData.length; i++) {
           const { medicineName, quantity } = userData[i];
 
@@ -183,6 +176,30 @@ exports.addStock = async (req, res) => {
               medicineName,
               quantity: parseInt(quantity),
             });
+          }
+
+          // Check if any alerts are set for this medicine and if stock is now available
+          if (parseInt(quantity) > 0) {
+            const currentDate = new Date();
+            const alerts = await Alert.find({
+              medicineName: medicineName,
+              isNotified: false,
+              expiresAt: { $gte: currentDate },
+            });
+
+            if (alerts.length > 0) {
+              alerts.forEach(async (alert) => {
+                // Here, send your notification to the user. For example:
+                console.log(
+                  `Notifying user ${alert.userId} that ${medicineName} is available at ${pharmacy.name}.`
+                );
+                // [Integrate with your push notification system if available]
+
+                // Mark the alert as notified
+                alert.isNotified = true;
+                await alert.save();
+              });
+            }
           }
         }
         await pharmacy.save();
