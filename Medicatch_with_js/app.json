@@ -23,9 +23,7 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/logo1.png",
         "backgroundColor": "#e8f5fa"
-      },
-      "package": "com.fyp.medicatch",
-      "googleServicesFile":"./google-services.json"
+      }
     },
     "web": {
       "favicon": "./assets/logo1.png"

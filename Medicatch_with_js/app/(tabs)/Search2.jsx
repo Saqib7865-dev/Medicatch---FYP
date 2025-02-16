@@ -29,7 +29,7 @@ const calculateDistance = (lat1, lon1, lat2, lon2) => {
 };
 
 const MedicineSearch = () => {
-  const { contextualMed } = useAppContext();
+  const { user, contextualMed } = useAppContext();
 
   const [medicineName, setMedicineName] = useState("");
   const [stores, setStores] = useState([]);
@@ -159,6 +159,33 @@ const MedicineSearch = () => {
       </View>
     );
   }
+  const handleSetAlert = async (medicineName, userId) => {
+    try {
+      const response = await fetch(
+        "http://192.168.0.103:3001/alerts/set-alert",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ userId, medicineName }),
+        }
+      );
+
+      const result = await response.json();
+      if (response.ok) {
+        Alert.alert(
+          "Success",
+          "Alert set successfully! You'll be notified when the medicine is available."
+        );
+      } else {
+        Alert.alert("Error", result.message || "Failed to set alert.");
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Error", "An error occurred while setting the alert.");
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -185,6 +212,20 @@ const MedicineSearch = () => {
       {/* Search Results */}
       {isLoading ? (
         <ActivityIndicator size="large" color="#4173A1" />
+      ) : stores.length === 0 ? (
+        <TouchableOpacity
+          style={{
+            backgroundColor: "#FF8C00",
+            padding: 15,
+            borderRadius: 10,
+            alignItems: "center",
+          }}
+          onPress={() => handleSetAlert(medicineName, user.id)}
+        >
+          <Text style={{ color: "#fff", fontWeight: "bold" }}>
+            Set Availability Alert
+          </Text>
+        </TouchableOpacity>
       ) : (
         <FlatList
           data={stores}
