@@ -7,6 +7,7 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
 import { AntDesign } from "@expo/vector-icons";
+import { useAppContext } from "../context/context";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -20,6 +21,7 @@ const Tabslayout = () => {
   const [notification, setNotification] = useState();
   const notificationListener = useRef();
   const responseListener = useRef();
+  const { user } = useAppContext();
   useEffect(() => {
     // fetch expo push token
     registerForPushNotificationsAsync().then((token) => {
@@ -47,6 +49,27 @@ const Tabslayout = () => {
       }
     };
   }, []);
+  useEffect(() => {
+    const registerExpoToken = async () => {
+      try {
+        let response = await fetch(
+          "http://192.168.0.103:3001/users/updateToken",
+          {
+            method: "POST",
+            headers: {
+              "content-type": "application/json",
+            },
+            body: JSON.stringify({ expoPushToken, userId: user.id }),
+          }
+        );
+        let data = await response.json();
+        console.log("response: ", data);
+      } catch (error) {
+        console.log("Could not register push token");
+      }
+    };
+    if (expoPushToken) registerExpoToken();
+  }, [expoPushToken]);
   return (
     <>
       <StatusBar
@@ -192,6 +215,7 @@ async function registerForPushNotificationsAsync() {
       projectId: "3931274c-dc64-4624-a0ae-9708dcd25139",
     });
     token = tokenData.data;
+    console.log("token is: ", token);
     return token;
   } else {
     alert("Must use physical device for push notifications");

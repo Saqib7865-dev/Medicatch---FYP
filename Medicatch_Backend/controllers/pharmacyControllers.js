@@ -2,6 +2,7 @@ const pharmacyModel = require("../models/Pharmacy");
 const userModel = require("../models/Users");
 const Alert = require("../models/Alert");
 const csv = require("csvtojson");
+const fetch = require("node-fetch");
 exports.createPharmacy = async (req, res) => {
   const { name, location, createdBy, address, contact } = req.body;
   if (!name || !location || !createdBy || !address || !contact) {
@@ -131,6 +132,36 @@ exports.deletePharmacy = async (req, res) => {
   }
 };
 
+// Expo
+const sendPushNotification = async (
+  expoPushToken,
+  medicineName,
+  pharmacyName
+) => {
+  const message = {
+    to: expoPushToken,
+    sound: "default",
+    title: "Medicine Available!",
+    body: `${medicineName} is now available at ${pharmacyName}.`,
+    data: { medicineName, pharmacyName },
+  };
+
+  try {
+    const response = await fetch("https://exp.host/--/api/v2/push/send", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(message),
+    });
+    const data = await response.json();
+    console.log("Push notification sent: ", data);
+  } catch (error) {
+    console.error("Error sending push notification: ", error);
+  }
+};
+
 exports.addStock = async (req, res) => {
   const { id } = req.params;
   if (!req.file)
@@ -188,17 +219,24 @@ exports.addStock = async (req, res) => {
             });
 
             if (alerts.length > 0) {
-              alerts.forEach(async (alert) => {
-                // Here, send your notification to the user. For example:
-                console.log(
-                  `Notifying user ${alert.userId} that ${medicineName} is available at ${pharmacy.name}.`
-                );
-                // [Integrate with your push notification system if available]
-
+              for (const alert of alerts) {
+                // Retrieve user record to get expoPushToken
+                const userRecord = await userModel.findById(alert.userId);
+                if (userRecord && userRecord.expoPushToken) {
+                  await sendPushNotification(
+                    userRecord.expoPushToken,
+                    medicineName,
+                    pharmacy.name
+                  );
+                } else {
+                  console.log(
+                    `User ${alert.userId} does not have a registered push token.`
+                  );
+                }
                 // Mark the alert as notified
                 alert.isNotified = true;
                 await alert.save();
-              });
+              }
             }
           }
         }
