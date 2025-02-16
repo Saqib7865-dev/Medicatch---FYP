@@ -95,3 +95,27 @@ exports.deleteAUser = async (req, res) => {
     res.status(500).json({ message: "Error deleting user", error });
   }
 };
+exports.updateExpoPushToken = async (req, res) => {
+  const { expoPushToken, userId } = req.body;
+  console.log("expoPushToken: ", expoPushToken);
+  console.log("userId: ", userId);
+  if (!expoPushToken) {
+    return res.status(400).json({ message: "Expo push token is required." });
+  }
+  try {
+    const user = await userModel.findByIdAndUpdate(
+      userId,
+      { expoPushToken },
+      { new: true }
+    );
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+    res.status(200).json({
+      message: "Push token updated successfully.",
+      user,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error updating push token", error });
+  }
+};

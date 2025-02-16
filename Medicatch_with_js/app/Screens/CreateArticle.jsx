@@ -13,7 +13,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
 import { useAppContext } from "../context/context";
 
-const API_URL = "http://192.168.1.13:3001/articles"; // Replace with your backend API URL
+const API_URL = "http://192.168.0.103:3001/articles"; // Replace with your backend API URL
 
 const CreateArticle = () => {
   const { setArticles, user } = useAppContext();
@@ -106,11 +106,11 @@ const CreateArticle = () => {
     setLoading(true);
     try {
       console.log(params._id);
-      console.log(`http://192.168.1.13:3001/articles/${params._id}`);
+      console.log(`http://192.168.0.103:3001/articles/${params._id}`);
 
       console.log(user.role);
       const response = await fetch(
-        `http://192.168.1.13:3001/articles/${params._id}`,
+        `http://192.168.0.103:3001/articles/${params._id}`,
         {
           method: "PUT",
           headers: {
@@ -183,7 +183,7 @@ const CreateArticle = () => {
           source={
             image.url
               ? {
-                  uri: `http://192.168.1.13:3001/uploads/${
+                  uri: `http://192.168.0.103:3001/uploads/${
                     params?.image?.split("\\")[1]
                   }`,
                 }

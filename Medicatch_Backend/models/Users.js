@@ -10,9 +10,13 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  expoPushToken: {
+    type: String,
+    default: null,
+  },
   role: {
     type: String,
-    enum: ["user", "admin", "pharmacy"], // Differentiates between regular users and admin
+    enum: ["user", "admin", "pharmacy"],
     default: "user",
   },
   createdAt: {
