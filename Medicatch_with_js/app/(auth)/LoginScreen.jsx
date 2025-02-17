@@ -42,7 +42,6 @@ const loginScreen = () => {
             const decodedToken = jwtDecode(token);
 
             Alert.alert("Success", userLoginJson.message);
-            console.log(userLoginJson, "resp........");
 
             setUser({ ...decodedToken, username: userLoginJson.username });
 
