@@ -124,83 +124,88 @@ const ArticleDetails = () => {
   }, []);
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-        <Feather name="arrow-left" size={24} color="#000" />
-      </TouchableOpacity>
+    <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+      <View style={styles.container}>
+        <TouchableOpacity
+          onPress={() => router.back()}
+          style={styles.backButton}
+        >
+          <Feather name="arrow-left" size={24} color="#000" />
+        </TouchableOpacity>
 
-      <Image
-        source={{
-          uri: `http://172.16.100.46:3001/uploads/${
-            params?.image?.split("\\")[1]
-          }`,
-        }}
-        style={styles.articleImage}
-      />
+        <Image
+          source={{
+            uri: `http://172.16.100.46:3001/uploads/${
+              params?.image?.split("\\")[1]
+            }`,
+          }}
+          style={styles.articleImage}
+        />
 
-      <Text style={styles.title}>{params.title}</Text>
-      <Text style={styles.date}>{formatDate(params.createdAt)}</Text>
-      <Text style={styles.content}>{params.content}</Text>
+        <Text style={styles.title}>{params.title}</Text>
+        <Text style={styles.date}>{formatDate(params.createdAt)}</Text>
+        <Text style={styles.content}>{params.content}</Text>
 
-      {/* Admin Actions */}
-      {user?.role === "admin" && (
-        <View style={styles.adminActions}>
+        {/* Admin Actions */}
+        {user?.role === "admin" && (
+          <View style={styles.adminActions}>
+            <TouchableOpacity
+              style={[styles.actionButton, styles.editButton]}
+              onPress={handleEditArticle}
+            >
+              <Text style={styles.actionButtonText}>Edit Article</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.actionButton, styles.deleteButton]}
+              onPress={handleDeleteArticle}
+            >
+              <Text style={styles.actionButtonText}>Delete Article</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {/* Feedback Section */}
+        <View style={styles.feedbackSection}>
+          <Text style={styles.feedbackHeader}>Feedbacks</Text>
+          {isLoadingFeedbacks ? (
+            <ActivityIndicator size="large" color="#4173A1" />
+          ) : (
+            <FlatList
+              data={feedbacks}
+              keyExtractor={(item) => item._id.toString()}
+              renderItem={({ item }) => (
+                <View style={styles.feedbackCard}>
+                  <Text style={styles.feedbackUser}>
+                    {item.userId?.username} says:
+                  </Text>
+                  <Text style={styles.feedbackText}>{item.feedback}</Text>
+                </View>
+              )}
+              ListEmptyComponent={
+                <Text style={styles.noFeedbackText}>
+                  No feedbacks available. Be the first to leave one!
+                </Text>
+              }
+            />
+          )}
+          <TextInput
+            style={styles.feedbackInput}
+            placeholder="Write your feedback..."
+            value={newFeedback}
+            onChangeText={setNewFeedback}
+          />
           <TouchableOpacity
-            style={[styles.actionButton, styles.editButton]}
-            onPress={handleEditArticle}
+            style={styles.submitButton}
+            onPress={postFeedback}
+            disabled={isSubmittingFeedback}
           >
-            <Text style={styles.actionButtonText}>Edit Article</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.actionButton, styles.deleteButton]}
-            onPress={handleDeleteArticle}
-          >
-            <Text style={styles.actionButtonText}>Delete Article</Text>
+            {isSubmittingFeedback ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <Text style={styles.submitButtonText}>Submit Feedback</Text>
+            )}
           </TouchableOpacity>
         </View>
-      )}
-
-      {/* Feedback Section */}
-      <View style={styles.feedbackSection}>
-        <Text style={styles.feedbackHeader}>Feedbacks</Text>
-        {isLoadingFeedbacks ? (
-          <ActivityIndicator size="large" color="#4173A1" />
-        ) : (
-          <FlatList
-            data={feedbacks}
-            keyExtractor={(item) => item._id.toString()}
-            renderItem={({ item }) => (
-              <View style={styles.feedbackCard}>
-                <Text style={styles.feedbackUser}>
-                  {item.userId?.username} says:
-                </Text>
-                <Text style={styles.feedbackText}>{item.feedback}</Text>
-              </View>
-            )}
-            ListEmptyComponent={
-              <Text style={styles.noFeedbackText}>
-                No feedbacks available. Be the first to leave one!
-              </Text>
-            }
-          />
-        )}
-        <TextInput
-          style={styles.feedbackInput}
-          placeholder="Write your feedback..."
-          value={newFeedback}
-          onChangeText={setNewFeedback}
-        />
-        <TouchableOpacity
-          style={styles.submitButton}
-          onPress={postFeedback}
-          disabled={isSubmittingFeedback}
-        >
-          {isSubmittingFeedback ? (
-            <ActivityIndicator size="small" color="#fff" />
-          ) : (
-            <Text style={styles.submitButtonText}>Submit Feedback</Text>
-          )}
-        </TouchableOpacity>
       </View>
     </ScrollView>
   );
