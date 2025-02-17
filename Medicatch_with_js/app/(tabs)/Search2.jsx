@@ -29,8 +29,8 @@ const calculateDistance = (lat1, lon1, lat2, lon2) => {
 };
 
 const MedicineSearch = () => {
-  const { contextualMed } = useAppContext();
-
+  const { user, contextualMed } = useAppContext();
+  const [availabilityAlert, setAvailabilityAlert] = useState(false);
   const [medicineName, setMedicineName] = useState("");
   const [stores, setStores] = useState([]);
   const [userLocation, setUserLocation] = useState(null);
@@ -159,11 +159,37 @@ const MedicineSearch = () => {
       </View>
     );
   }
+  const handleSetAlert = async (medicineName, userId) => {
+    try {
+      const response = await fetch(
+        "http://192.168.0.103:3001/alerts/set-alert",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ userId, medicineName }),
+        }
+      );
+
+      const result = await response.json();
+      if (response.ok) {
+        Alert.alert(
+          "Success",
+          "Alert set successfully! You'll be notified when the medicine is available."
+        );
+      } else {
+        Alert.alert("Error", result.message || "Failed to set alert.");
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Error", "An error occurred while setting the alert.");
+    }
+  };
 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Search Medicine Availability</Text>
-
       {/* Medicine Name Input */}
       <TextInput
         style={styles.input}
@@ -171,7 +197,6 @@ const MedicineSearch = () => {
         value={medicineName}
         onChangeText={setMedicineName}
       />
-
       {/* Search Button */}
       <TouchableOpacity
         style={styles.searchButton}
@@ -181,10 +206,23 @@ const MedicineSearch = () => {
       >
         <Text style={styles.buttonText}>Search</Text>
       </TouchableOpacity>
-
       {/* Search Results */}
       {isLoading ? (
         <ActivityIndicator size="large" color="#4173A1" />
+      ) : stores.length === 0 ? (
+        <TouchableOpacity
+          style={{
+            backgroundColor: "#FF8C00",
+            padding: 15,
+            borderRadius: 10,
+            alignItems: "center",
+          }}
+          onPress={() => handleSetAlert(medicineName, user.id)}
+        >
+          <Text style={{ color: "#fff", fontWeight: "bold" }}>
+            Set Availability Alert
+          </Text>
+        </TouchableOpacity>
       ) : (
         <FlatList
           data={stores}
@@ -211,10 +249,24 @@ const MedicineSearch = () => {
           ListEmptyComponent={
             <Text style={styles.noResultsText}>
               No stores found for the requested medicine.
+              {/* <TouchableOpacity onPress={() => setAvailabilityAlert(true)}>
+                <Text style={styles.noResultsText}>
+                  Do you want to set availability alert?
+                </Text>
+              </TouchableOpacity> */}
             </Text>
           }
         />
       )}
+      {/* (
+      {availabilityAlert ? (
+        <View>
+          <Text>Enter medicine name: </Text>
+        </View>
+      ) : (
+        ""
+      )}
+      ) */}
     </View>
   );
 };
@@ -226,12 +278,14 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: "#e8f5fa",
+    fontFamily: "serif",
   },
   header: {
     fontSize: 24,
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 20,
+    fontFamily: "serif",
   },
   input: {
     width: "100%",
@@ -242,6 +296,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     fontSize: 16,
     marginBottom: 15,
+    fontFamily: "serif",
   },
   searchButton: {
     backgroundColor: "#4173A1",
@@ -249,16 +304,19 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
     marginBottom: 20,
+    fontFamily: "serif",
   },
   buttonText: {
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
+    fontFamily: "serif",
   },
   loadingText: {
     fontSize: 16,
     textAlign: "center",
     marginTop: 20,
+    fontFamily: "serif",
   },
   storeCard: {
     backgroundColor: "#fff",
@@ -270,16 +328,19 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+    fontFamily: "serif",
   },
   storeName: {
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 5,
+    fontFamily: "serif",
   },
   storeDetails: {
     fontSize: 14,
     color: "#555",
     marginBottom: 5,
+    fontFamily: "serif",
   },
   availability: {
     fontSize: 14,
@@ -290,6 +351,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     backgroundColor: "#4CAF50",
     color: "#fff",
+    fontFamily: "serif",
   },
   locateButton: {
     backgroundColor: "#FF8C00",
@@ -297,16 +359,19 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
     marginTop: 10,
+    fontFamily: "serif",
   },
   locateButtonText: {
     color: "#fff",
     fontSize: 14,
     fontWeight: "bold",
+    fontFamily: "serif",
   },
   noResultsText: {
     fontSize: 16,
     color: "#666",
     textAlign: "center",
     marginTop: 20,
+    fontFamily: "serif",
   },
 });

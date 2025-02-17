@@ -9,14 +9,8 @@ exports.createArticle = async (req, res) => {
     const article = new articleModel({
       title,
       content,
-      image: req.file ? req.file.path : null,
+      image: req.file ? req.file.path : "uploads\\noimg.jpeg",
     });
-
-    console.log(req.image);
-    console.log(req.body);
-    console.log("--------------------");
-    // console.log(req);
-
     await article.save();
     res.status(201).json({ message: "Article created successfully", article });
   } catch (error) {
@@ -61,18 +55,31 @@ exports.updateAnArticle = async (req, res) => {
   try {
     const { id } = req.params;
     const { title, content } = req.body;
-
+    let image = req.file ? req.file.path : null;
+    if (!req.file) {
+      // Retrieve the existing article to get the current image path
+      const existingArticle = await articleModel.findById(id);
+      if (existingArticle) {
+        image = existingArticle.image; // Use the existing image path
+      }
+    }
     const article = await articleModel.findByIdAndUpdate(
       id,
-      { title, content, updatedAt: Date.now() },
+      {
+        title,
+        content,
+        image,
+        updatedAt: Date.now(),
+      },
       { new: true }
     );
 
     if (!article) {
       return res.status(404).json({ message: "Article not found" });
     }
-
-    res.status(200).json({ message: "Article updated successfully", article });
+    return res
+      .status(200)
+      .json({ message: "Article updated successfully", article });
   } catch (error) {
     res.status(500).json({ message: "Error updating article", error });
   }

@@ -23,7 +23,7 @@ const CreateArticle = () => {
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [image, setImage] = useState(null); // To store selected image
+  const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
 
   // Function to pick an image from the gallery
@@ -48,8 +48,6 @@ const CreateArticle = () => {
     if (!result.canceled) {
       setImage(result.assets[0]);
     }
-
-    console.log(result);
   };
 
   const handleCreateArticle = async () => {
@@ -70,8 +68,6 @@ const CreateArticle = () => {
           type: image.mimeType,
         });
       }
-
-      console.log(formData);
       const response = await fetch(API_URL, {
         method: "POST",
         headers: {
@@ -118,16 +114,13 @@ const CreateArticle = () => {
         {
           method: "PUT",
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "multipart/form-data",
           },
-          body: JSON.stringify({
-            title: title,
-            content: content, // Fixed the content field
-          }),
+          body: formData,
         }
       );
       if (!response.ok) {
-        throw new Error("Failed to create article");
+        throw new Error("Failed to update article");
       }
       const data = await response.json();
 
@@ -135,16 +128,13 @@ const CreateArticle = () => {
         const updatedArticles = prev.map((article) =>
           article._id === data.article._id ? data.article : article
         );
-        return updatedArticles; // Replace the updated article
+        return updatedArticles;
       });
 
       Alert.alert("Success", "Article Updated successfully!");
       router.back();
       router.back();
-
-      // Navigate back to the articles list
     } catch (error) {
-      console.error("error", error);
       Alert.alert("Error", error.message);
     } finally {
       setLoading(false);
@@ -226,11 +216,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    fontFamily: "serif",
     justifyContent: "center",
     backgroundColor: "#e8f5fa",
   },
   header: {
     fontSize: 24,
+    fontFamily: "serif",
     fontWeight: "bold",
     marginBottom: 20,
     textAlign: "center",
@@ -238,6 +230,7 @@ const styles = StyleSheet.create({
   input: {
     width: "100%",
     padding: 10,
+    fontFamily: "serif",
     borderWidth: 1,
     borderColor: "#D1D9E6",
     borderRadius: 10,
@@ -247,18 +240,21 @@ const styles = StyleSheet.create({
   },
   textArea: {
     height: 100,
+    fontFamily: "serif",
     textAlignVertical: "top",
   },
   imagePickerButton: {
     backgroundColor: "#FFA500",
     padding: 15,
     borderRadius: 10,
+    fontFamily: "serif",
     alignItems: "center",
     marginBottom: 10,
   },
   imagePreview: {
     width: "100%",
     height: 200,
+    fontFamily: "serif",
     borderRadius: 10,
     marginBottom: 15,
     resizeMode: "cover",
@@ -266,12 +262,14 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: "#4173A1",
     padding: 15,
+    fontFamily: "serif",
     borderRadius: 10,
     alignItems: "center",
   },
   buttonText: {
     color: "#fff",
     fontSize: 16,
+    fontFamily: "serif",
     fontWeight: "bold",
   },
 });

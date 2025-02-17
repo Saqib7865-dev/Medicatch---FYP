@@ -175,11 +175,13 @@ const MedicationReminder = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    fontFamily: "serif",
     padding: 20,
     backgroundColor: "#e8f5fa",
   },
   header: {
     fontSize: 24,
+    fontFamily: "serif",
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 20,
@@ -187,11 +189,13 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     fontWeight: "600",
+    fontFamily: "serif",
     marginBottom: 5,
   },
   input: {
     width: "100%",
     padding: 10,
+    fontFamily: "serif",
     borderWidth: 1,
     borderColor: "#D1D9E6",
     borderRadius: 10,
@@ -201,17 +205,20 @@ const styles = StyleSheet.create({
   },
   errorText: {
     color: "#D9534F",
+    fontFamily: "serif",
     fontSize: 14,
     marginBottom: 10,
   },
   daysContainer: {
     flexDirection: "row",
+    fontFamily: "serif",
     justifyContent: "space-between",
     marginBottom: 20,
   },
   dayButton: {
     width: 40,
     height: 40,
+    fontFamily: "serif",
     borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
@@ -221,17 +228,21 @@ const styles = StyleSheet.create({
   },
   dayButtonSelected: {
     backgroundColor: "#4173A1",
+    fontFamily: "serif",
   },
   dayText: {
     fontSize: 14,
     fontWeight: "600",
+    fontFamily: "serif",
     color: "#4173A1",
   },
   dayTextSelected: {
     color: "#fff",
+    fontFamily: "serif",
   },
   saveButton: {
     backgroundColor: "#4173A1",
+    fontFamily: "serif",
     padding: 15,
     borderRadius: 10,
     alignItems: "center",
@@ -239,12 +250,14 @@ const styles = StyleSheet.create({
   },
   discardButton: {
     backgroundColor: "#D9534F",
+    fontFamily: "serif",
     padding: 15,
     borderRadius: 10,
     alignItems: "center",
   },
   buttonText: {
     color: "#fff",
+    fontFamily: "serif",
     fontSize: 16,
     fontWeight: "bold",
   },

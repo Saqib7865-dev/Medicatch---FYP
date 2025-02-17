@@ -103,8 +103,6 @@ const ArticleDetails = () => {
                 }
               );
               if (resp.ok) {
-                Alert.alert("Success", "Article deleted successfully.");
-
                 setArticles((prevArticles) =>
                   prevArticles.filter((article) => article._id !== params._id)
                 );
@@ -214,65 +212,80 @@ const styles = StyleSheet.create({
   container: {
     padding: 20,
     backgroundColor: "#e8f5fa",
+    fontFamily: "serif",
+    flex: 1,
   },
   backButton: {
     marginBottom: 20,
+    fontFamily: "serif",
   },
   articleImage: {
     width: "100%",
     height: 200,
+    fontFamily: "serif",
     borderRadius: 10,
     marginBottom: 15,
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
+    fontFamily: "serif",
     marginBottom: 10,
   },
   date: {
     fontSize: 14,
     color: "#555",
+    fontFamily: "serif",
     marginBottom: 20,
   },
   content: {
     fontSize: 16,
     lineHeight: 24,
+    fontFamily: "serif",
     marginBottom: 20,
   },
   adminActions: {
     flexDirection: "row",
     justifyContent: "space-between",
+    fontFamily: "serif",
     marginBottom: 20,
   },
   actionButton: {
     flex: 1,
     padding: 10,
+    fontFamily: "serif",
     borderRadius: 10,
     alignItems: "center",
     marginHorizontal: 5,
   },
   editButton: {
     backgroundColor: "#4CAF50",
+    fontFamily: "serif",
   },
   deleteButton: {
     backgroundColor: "#F44336",
+    fontFamily: "serif",
   },
   actionButtonText: {
     color: "#fff",
     fontSize: 16,
+    fontFamily: "serif",
     fontWeight: "bold",
   },
   feedbackSection: {
     marginTop: 20,
+    fontFamily: "serif",
   },
   feedbackHeader: {
     fontSize: 18,
+    fontFamily: "serif",
     fontWeight: "bold",
     marginBottom: 10,
   },
   feedbackCard: {
     backgroundColor: "#fff",
     padding: 10,
+    fontFamily: "serif",
     borderRadius: 10,
     marginBottom: 10,
     shadowColor: "#000",
@@ -283,21 +296,25 @@ const styles = StyleSheet.create({
   },
   feedbackUser: {
     fontSize: 14,
+    fontFamily: "serif",
     fontWeight: "bold",
     marginBottom: 5,
   },
   feedbackText: {
     fontSize: 14,
+    fontFamily: "serif",
     color: "#555",
   },
   noFeedbackText: {
     fontSize: 14,
+    fontFamily: "serif",
     color: "#777",
     textAlign: "center",
     marginBottom: 10,
   },
   feedbackInput: {
     padding: 10,
+    fontFamily: "serif",
     borderWidth: 1,
     borderColor: "#D1D9E6",
     borderRadius: 10,
@@ -308,12 +325,14 @@ const styles = StyleSheet.create({
   submitButton: {
     backgroundColor: "#4173A1",
     padding: 10,
+    fontFamily: "serif",
     borderRadius: 10,
     alignItems: "center",
   },
   submitButtonText: {
     color: "#fff",
     fontSize: 16,
+    fontFamily: "serif",
     fontWeight: "bold",
   },
 });

@@ -1,5 +1,5 @@
 import { Link, useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -116,7 +116,7 @@ const loginScreen = () => {
         placeholder="Username"
         keyboardType="email-address"
         value={email}
-        onChangeText={(text) => setEmail(text)}
+        onChangeText={(text) => setEmail(text.trim())}
       />
 
       <TextInput
@@ -143,7 +143,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
+    fontFamily: "serif",
+
     alignItems: "center",
+    height: "100%",
     backgroundColor: "#e8f5fa",
     padding: 20,
   },
@@ -151,11 +154,15 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
     marginBottom: 20,
+    fontFamily: "serif",
+
     resizeMode: "contain",
   },
   title: {
     fontSize: 28,
     fontWeight: "600",
+    fontFamily: "serif",
+
     color: "#333",
     marginBottom: 30,
   },
@@ -164,6 +171,8 @@ const styles = StyleSheet.create({
     padding: 15,
     marginVertical: 10,
     borderWidth: 1,
+    fontFamily: "serif",
+
     borderColor: "#D1D9E6",
     borderRadius: 10,
     backgroundColor: "#FFFFFF",
@@ -181,6 +190,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
     marginTop: 20,
+    fontFamily: "serif",
     shadowColor: "#e8f5fa",
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.4,
@@ -191,11 +201,14 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 18,
     fontWeight: "bold",
+    fontFamily: "serif",
   },
   Link: {
     color: "#4173A1",
     fontWeight: "bold",
     fontSize: 16,
+    fontFamily: "serif",
+
     marginTop: 10,
   },
 });

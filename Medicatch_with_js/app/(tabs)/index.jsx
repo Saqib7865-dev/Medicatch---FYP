@@ -17,7 +17,6 @@ import { useRouter } from "expo-router";
 import { getToken, removeToken } from "../../utils/tokenStorage";
 import SideDrawer from "../components/side-drawer";
 import { useAppContext } from "../context/context";
-import { useNotification } from "../context/NotificationsContext";
 
 const quotes = [
   "An apple a day keeps the doctor away.",
@@ -39,17 +38,15 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [medicineName, setMedicineName] = useState("");
 
-  const { expoPushToken, notification, error } = useNotification();
-
   useEffect(() => {
     const checkAuthentication = async () => {
       const token = await getToken();
       if (!token) {
-        router.replace("/(auth)/LoginScreen"); // Redirect before rendering
+        router.replace("/(auth)/LoginScreen");
       } else {
         setIsAuthenticated(true);
       }
-      setIsLoading(false); // Stop the loading indicator
+      setIsLoading(false);
     };
 
     const handleAppStateChange = async (nextAppState) => {
@@ -84,8 +81,7 @@ const Home = () => {
           throw new Error("Failed to fetch articles");
         }
         const data = await response.json();
-        if (data.length === 0) {
-        } else {
+        if (data && data.length > 0) {
           setArticles(data);
           setIsLoading(false);
         }
@@ -93,7 +89,6 @@ const Home = () => {
         Alert.alert("Error", error.message);
       } finally {
         setLoading(false);
-        console.log("Articles: ", articles);
       }
     };
     if (isAuthenticated) {
@@ -110,10 +105,8 @@ const Home = () => {
   }
 
   if (!isAuthenticated) {
-    return null; // Avoid rendering anything if unauthenticated
+    return null;
   }
-  // console.log(user);
-  // if (error) return <>Met with an error</>;
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {/* <SideDrawer isOpen={true} /> */}
@@ -165,7 +158,6 @@ const Home = () => {
           <TouchableOpacity>
             <Text
               style={styles.viewAllText}
-              // onPress={() => router.push("/(auth)/LoginScreen")}
               onPress={() => router.push("/Screens/HealthArticles")}
             >
               View All
@@ -191,7 +183,12 @@ const Home = () => {
               >
                 <View style={styles.articleCard}>
                   <Image
-                    source={require("./../../assets/home1.png")}
+                    // source={require("./../../assets/home1.png")}
+                    source={{
+                      uri: `http://192.168.0.103:3001/uploads/${
+                        article?.image?.split("\\")[1]
+                      }`,
+                    }}
                     style={styles.articleImage}
                   />
                   <View style={styles.overlay}>
@@ -213,19 +210,23 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     backgroundColor: "#e8f5fa",
+    fontFamily: "serif",
     padding: 20,
   },
   header: {
+    fontFamily: "serif",
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 20,
   },
   welcomeText: {
     fontSize: 24,
+    fontFamily: "serif",
     fontWeight: "bold",
     marginLeft: 10,
   },
   quoteContainer: {
+    fontFamily: "serif",
     backgroundColor: "#228a03",
     padding: 15,
     borderRadius: 10,
@@ -238,11 +239,13 @@ const styles = StyleSheet.create({
   },
   quoteText: {
     fontSize: 16,
+    fontFamily: "serif",
     fontStyle: "italic",
     color: "#fff",
     textAlign: "center",
   },
   searchContainer: {
+    fontFamily: "serif",
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 20,
@@ -251,6 +254,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     borderWidth: 1,
+    fontFamily: "serif",
     borderColor: "#D1D9E6",
     borderRadius: 10,
     backgroundColor: "#fff",
@@ -258,6 +262,8 @@ const styles = StyleSheet.create({
   },
   searchButton: {
     backgroundColor: "#4173A1",
+    fontFamily: "serif",
+
     padding: 10,
     borderRadius: 10,
     marginLeft: 10,
@@ -265,21 +271,28 @@ const styles = StyleSheet.create({
   articlesHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
+    fontFamily: "serif",
+
     alignItems: "center",
     marginBottom: 10,
   },
   articlesTitle: {
     fontSize: 18,
     fontWeight: "bold",
+    fontFamily: "serif",
   },
   viewAllText: {
     fontSize: 14,
     color: "#4173A1",
+    fontFamily: "serif",
+
     fontWeight: "bold",
   },
   articlesDescription: {
     fontSize: 14,
     color: "#555",
+    fontFamily: "serif",
+
     marginBottom: 20,
     lineHeight: 20,
   },
@@ -298,19 +311,27 @@ const styles = StyleSheet.create({
     position: "relative",
     marginBottom: 10,
     borderRadius: 10,
+    fontFamily: "serif",
+
     overflow: "hidden",
   },
   articleImage: {
     width: "100%",
+    fontFamily: "serif",
+
     height: 120,
   },
   row: {
     flexDirection: "row",
+    fontFamily: "serif",
+
     justifyContent: "space-between",
   },
   overlay: {
     position: "absolute",
     bottom: 0,
+    fontFamily: "serif",
+
     left: 0,
     right: 0,
     backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background
@@ -324,14 +345,19 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 14,
     fontWeight: "bold",
+    fontFamily: "serif",
   },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
+    fontFamily: "serif",
+
     alignItems: "center",
   },
   loadingText: {
     marginTop: 10,
+    fontFamily: "serif",
+
     fontSize: 16,
     color: "#3798CE",
   },

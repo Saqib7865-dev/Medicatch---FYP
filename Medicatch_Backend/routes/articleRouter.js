@@ -22,6 +22,7 @@ articleRouter.put(
   "/:id",
   // verifyToken,
   //  allowRole(["admin"]),
+  upload.single("image"),
   updateAnArticle
 );
 articleRouter.delete(

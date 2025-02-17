@@ -142,11 +142,13 @@ export default PharmacyLocation;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    fontFamily: "serif",
   },
   searchContainer: {
     position: "absolute",
     top: 10,
     width: "100%",
+    fontFamily: "serif",
     zIndex: 10, // Ensure the search bar is above the map
   },
   map: {
@@ -161,20 +163,24 @@ const styles = StyleSheet.create({
     backgroundColor: "#4173A1",
     padding: 15,
     borderRadius: 10,
+    fontFamily: "serif",
     alignItems: "center",
   },
   confirmButtonText: {
     color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "bold",
+    fontFamily: "serif",
   },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    fontFamily: "serif",
   },
   loadingText: {
     fontSize: 16,
+    fontFamily: "serif",
     color: "#666",
   },
 });
