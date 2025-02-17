@@ -10,6 +10,9 @@ const PharmacyDetails = ({ onUpdate, onDelete, deleteLoading }) => {
   const router = useRouter();
   const [csvFile, setCsvFile] = useState(null); // State to store selected CSV file
   const [pharmacy, setPharmacy] = useState({});
+
+  const [uploadLoading, setUploadLoading] = useState(false);
+
   const [loading, setLoading] = useState(false);
 
   console.log(user);
@@ -89,6 +92,7 @@ const PharmacyDetails = ({ onUpdate, onDelete, deleteLoading }) => {
 
   const handleCSVUpload = async () => {
     try {
+      setUploadLoading(true);
       const result = await DocumentPicker.getDocumentAsync({
         type: "text/comma-separated-values", // Only allow CSV files
         copyToCacheDirectory: true,
@@ -100,7 +104,7 @@ const PharmacyDetails = ({ onUpdate, onDelete, deleteLoading }) => {
 
         Alert.alert("Selected", "CSV file Selected");
         console.log("uploaded.................................");
-
+        setUploadLoading(false);
         return result;
         // Alert.alert("Success", `CSV file selected: ${result.name}`);
       } else {
@@ -109,6 +113,8 @@ const PharmacyDetails = ({ onUpdate, onDelete, deleteLoading }) => {
     } catch (error) {
       console.error("Error selecting file:", error);
       Alert.alert("Error", "Failed to select file.");
+    } finally {
+      setUploadLoading(false);
     }
   };
 
@@ -175,11 +181,14 @@ const PharmacyDetails = ({ onUpdate, onDelete, deleteLoading }) => {
             {/* Upload Stock Button */}
             <TouchableOpacity
               style={styles.actionButton}
+              disabled={uploadLoading}
               onPress={() => {
                 addPharmStock(csvFile);
               }}
             >
-              <Text style={styles.buttonText}>Upload Stock File</Text>
+              <Text style={styles.buttonText}>
+                {uploadLoading ? "..." : "Upload Stock File"}
+              </Text>
             </TouchableOpacity>
 
             {/* Update Pharmacy Button */}

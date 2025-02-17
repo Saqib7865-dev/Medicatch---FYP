@@ -66,7 +66,7 @@ const loginScreen = () => {
         headers: {
           "content-type": "application/json",
         },
-        body: JSON.stringify({ username: "New", password: "11223344" }),
+        body: JSON.stringify({ username: "Admin", password: "11223344" }),
       });
 
       let userLoginJson = await userLogin.json();

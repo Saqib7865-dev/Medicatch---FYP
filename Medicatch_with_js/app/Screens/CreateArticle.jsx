@@ -109,6 +109,18 @@ const CreateArticle = () => {
       console.log(`http://172.16.100.46:3001/articles/${params._id}`);
 
       console.log(user.role);
+
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("content", content);
+      if (image) {
+        formData.append("image", {
+          uri: image.uri,
+          name: image?.fileName,
+          type: image.mimeType,
+        });
+      }
+
       const response = await fetch(
         `http://172.16.100.46:3001/articles/${params._id}`,
         {
