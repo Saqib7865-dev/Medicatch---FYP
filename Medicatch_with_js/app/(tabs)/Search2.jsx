@@ -30,7 +30,7 @@ const calculateDistance = (lat1, lon1, lat2, lon2) => {
 
 const MedicineSearch = () => {
   const { user, contextualMed } = useAppContext();
-  const [availabilityAlert, setAvailabilityAlert] = useState(false);
+  const [showAvailAlert, setShowAvailAlert] = useState(false);
   const [medicineName, setMedicineName] = useState("");
   const [stores, setStores] = useState([]);
   const [userLocation, setUserLocation] = useState(null);
@@ -107,9 +107,10 @@ const MedicineSearch = () => {
             "No Results",
             "No stores found for the requested medicine."
           );
+          setShowAvailAlert(true);
           return;
         }
-
+        setShowAvailAlert(false);
         const transformedStores = data
           .filter((store) => store.pharmacy.quantity > 0) // Ensure stock exists
           .map((store, index) => ({
@@ -210,19 +211,21 @@ const MedicineSearch = () => {
       {isLoading ? (
         <ActivityIndicator size="large" color="#4173A1" />
       ) : stores.length === 0 ? (
-        <TouchableOpacity
-          style={{
-            backgroundColor: "#FF8C00",
-            padding: 15,
-            borderRadius: 10,
-            alignItems: "center",
-          }}
-          onPress={() => handleSetAlert(medicineName, user.id)}
-        >
-          <Text style={{ color: "#fff", fontWeight: "bold" }}>
-            Set Availability Alert
-          </Text>
-        </TouchableOpacity>
+        <>
+          {showAvailAlert && (
+            <TouchableOpacity
+              style={{
+                backgroundColor: "#FF8C00",
+                padding: 15,
+                borderRadius: 10,
+                alignItems: "center",
+              }}
+              onPress={() => handleSetAlert(medicineName, user.id)}
+            >
+              <Text style={styles.buttonText}>Set Availability Alert</Text>
+            </TouchableOpacity>
+          )}
+        </>
       ) : (
         <FlatList
           data={stores}

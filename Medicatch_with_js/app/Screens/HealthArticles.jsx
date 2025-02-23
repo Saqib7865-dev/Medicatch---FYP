@@ -80,7 +80,9 @@ const HealthArticles = () => {
   const displayedArticles =
     searchedArticles.length > 0 || searchQuery.trim() !== ""
       ? searchedArticles
-      : articles;
+      : [...articles].sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        );
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
